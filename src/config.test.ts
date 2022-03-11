@@ -10,6 +10,7 @@ describe('config', () => {
   test('When environment variables are provided, then config should have their values.', () => {
     const port = 8080
     process.env.PORT = port.toString()
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { default: config } = require('config')
     expect(config).toEqual({
       port
@@ -17,6 +18,7 @@ describe('config', () => {
   })
 
   test('When no environment variables are provided, then config should have default values.', () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { default: config } = require('config')
     expect(config).toEqual({
       port: 3000

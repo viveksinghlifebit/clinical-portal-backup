@@ -20,7 +20,9 @@ const validateApiResponse = (
   }
 }
 
-export const _shouldValidationBeSkipped =
-  (_: OpenApiBackend.Context, ctx: Koa.ParameterizedContext<App.State, App.Context>): boolean => ctx.res.headersSent
+export const _shouldValidationBeSkipped = (
+  _: OpenApiBackend.Context,
+  ctx: Koa.ParameterizedContext<App.State, App.Context>
+): boolean => ctx.res.headersSent
 
 export default validateApiResponse
