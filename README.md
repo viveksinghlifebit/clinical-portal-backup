@@ -1,2 +1,2 @@
-# lifebit-node-api-template
-Lifebit node api template
+# Clinical-portal-backend
+Clinical portal 
