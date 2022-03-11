@@ -1,0 +1,158 @@
+openapi: 3.0.3
+
+info:
+  title: REST API TEMPLATE
+  version: 1.0.0
+  description: Lifebit platform REST API template
+servers:
+  - url: http://localhost:3000
+    description: REST API TEMPLATE
+
+paths:
+  /health:
+    get:
+      summary: Server health status
+      operationId: getHealth
+      tags:
+        - health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                required:
+                  - status
+    post:
+      summary: Set server health status
+      operationId: postHealth
+      tags:
+        - health
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: ['ok', 'down']
+              required:
+                - status
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  responses:
+    ### General Errors ###
+    BadRequest:
+      description: The request could not be understood by the server due to bad syntax.
+      content:
+        application/json:
+          ### Commented out for fixing https://app.zenhub.com/workspaces/lifebit-platform-5aa6276b1224bb03d13f0e82/issues/lifebit-ai/lifebit-platform/12220
+          ### the reasons are still unknown, so this should be investigated further. It has little impact on the validation process, since it is
+          ### related to an error message
+          # schema:
+          #   $ref: '#/components/schemas/ErrorResponseObject'
+          example:
+            message: The request could not be understood by the server due to bad syntax.
+            statusCode: 400
+            errorName: 'Bad Request'
+            time: '1970-01-01T00:00:00Z'
+    Unauthorized:
+      description: The user lacks valid authentication credentials for the target resource.
+      content:
+        application/json:
+          ### Commented out for fixing https://app.zenhub.com/workspaces/lifebit-platform-5aa6276b1224bb03d13f0e82/issues/lifebit-ai/lifebit-platform/12220
+          ### the reasons are still unknown, so this should be investigated further. It has little impact on the validation process, since it is
+          ### related to an error message
+          # schema:
+          #   $ref: '#/components/schemas/ErrorResponseObject'
+          example:
+            message: The user lacks valid authentication credentials for the target resource.
+            statusCode: 401
+            errorName: 'Unauthorized'
+            time: '1970-01-01T00:00:00Z'
+    Forbidden:
+      description: The user might not have the necessary permissions for a resource.
+      content:
+        application/json:
+          ### Commented out for fixing https://app.zenhub.com/workspaces/lifebit-platform-5aa6276b1224bb03d13f0e82/issues/lifebit-ai/lifebit-platform/12220
+          ### the reasons are still unknown, so this should be investigated further. It has little impact on the validation process, since it is
+          ### related to an error message
+          # schema:
+          #   $ref: '#/components/schemas/ErrorResponseObject'
+          example:
+            message: The user might not have the necessary permissions for a resource.
+            statusCode: 403
+            errorName: 'Forbidden'
+            time: '1970-01-01T00:00:00Z'
+    UnauthorizedUser:
+      description: Current user access only
+    UserNotFound:
+      description: User not found
+    NotFound:
+      description: The resource was not found.
+      content:
+        application/json:
+          ### Commented out for fixing https://app.zenhub.com/workspaces/lifebit-platform-5aa6276b1224bb03d13f0e82/issues/lifebit-ai/lifebit-platform/12220
+          ### the reasons are still unknown, so this should be investigated further. It has little impact on the validation process, since it is
+          ### related to an error message
+          # schema:
+          #   $ref: '#/components/schemas/ErrorResponseObject'
+          example:
+            message: The resource was not found.
+            statusCode: 404
+            errorName: 'NotFound'
+            time: '1970-01-01T00:00:00Z'
+    Conflict:
+      description: The request could not be completed due to a conflict with the current state of the target resource.
+      content:
+        application/json:
+          ### Commented out for fixing https://app.zenhub.com/workspaces/lifebit-platform-5aa6276b1224bb03d13f0e82/issues/lifebit-ai/lifebit-platform/12220
+          ### the reasons are still unknown, so this should be investigated further. It has little impact on the validation process, since it is
+          ### related to an error message
+          # schema:
+          #   $ref: '#/components/schemas/ErrorResponseObject'
+          example:
+            message: The request could not be completed due to a conflict with the current state of the target resource.
+            statusCode: 409
+            errorName: 'Conflict'
+            time: '1970-01-01T00:00:00Z'
+    InternalServerError:
+      description: Internal Server Error.
+      content:
+        application/json:
+          ### Commented out for fixing https://app.zenhub.com/workspaces/lifebit-platform-5aa6276b1224bb03d13f0e82/issues/lifebit-ai/lifebit-platform/12220
+          ### the reasons are still unknown, so this should be investigated further. It has little impact on the validation process, since it is
+          ### related to an error message
+          # schema:
+          #   $ref: '#/components/schemas/ErrorResponseObject'
+          example:
+            message: Internal Server Error
+            statusCode: 500
+            errorName: 'Conflict'
+            time: '1970-01-01T00:00:00Z'
+    BadGateway:
+      description: Bad Gateway
+    Unexpected:
+      description: Unexpected error.
+    ResourceNotFound:
+      description: Resource not found

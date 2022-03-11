@@ -1,0 +1,56 @@
+{
+  "name": "lifebit-node-api-template",
+  "version": "1.0.0",
+  "description": "Lifebit node api template",
+  "main": "./src/index.ts",
+  "scripts": {
+    "compile": "tsc && npm run postCompile",
+    "postCompile": "cp ./src/api/validation/specification.yaml ./dist/api/validation/",
+    "prod": "npm run compile && node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/index.js",
+    "start": "nodemon --watch 'src/**' --ignore 'src/**/*.spec.ts' --ignore 'src/**/*.test.ts' --exec 'ts-node' --files -r tsconfig-paths/register src/index.ts",
+    "test": "jest",
+    "lint": "eslint --ext ts src"
+  },
+  "dependencies": {
+    "@koa/router": "^10.0.0",
+    "@types/koa-bodyparser": "^4.3.2",
+    "cors": "^2.8.5",
+    "helmet": "^4.2.0",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "morgan": "^1.10.0",
+    "openapi-backend": "^3.6.3",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.9",
+    "@types/jest": "^26.0.19",
+    "@types/koa": "^2.11.6",
+    "@types/koa__router": "^8.0.3",
+    "@types/morgan": "^1.9.2",
+    "@types/node": "^14.14.14",
+    "@types/supertest": "^2.0.10",
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
+    "@typescript-eslint/parser": "^4.10.0",
+    "eslint": "^7.15.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.6",
+    "prettier": "2.2.1",
+    "supertest": "^6.0.1",
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.3"
+  },
+  "keywords": [
+    "lifebit",
+    "node",
+    "api",
+    "template"
+  ],
+  "author": "lifebit"
+}
