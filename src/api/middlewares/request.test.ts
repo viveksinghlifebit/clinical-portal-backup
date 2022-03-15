@@ -9,7 +9,7 @@ describe('request', () => {
   afterEach(jest.resetAllMocks)
 
   describe('koaMorgan', () => {
-    const ctx: Koa.Context = {} as any
+    const ctx: Koa.Context = ({} as unknown) as Koa.Context
     const next = jest.fn().mockResolvedValue({})
 
     afterEach(jest.resetAllMocks)

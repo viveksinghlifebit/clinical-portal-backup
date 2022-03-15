@@ -3,7 +3,7 @@ declare namespace App {
     statusCode: import('enums').HttpStatusCodes
     code?: string
     message: string
-    details?: any
+    details?: unknown
     time: string
   }
 

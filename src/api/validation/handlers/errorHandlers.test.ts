@@ -12,7 +12,7 @@ describe('generateErrorHandler', () => {
 
   const mockErrorHandler = _generateErrorHandler(mockError)
 
-  const mockContext: OpenApiBackend.Context = {
+  const mockContext: OpenApiBackend.Context = ({
     validation: {
       valid: false,
       errors: []
@@ -20,8 +20,8 @@ describe('generateErrorHandler', () => {
     operation: {
       operationId: 'mockOperation'
     }
-  } as any
-  const mockCtx: Koa.ParameterizedContext<App.State, App.Context> = {
+  } as unknown) as OpenApiBackend.Context
+  const mockCtx: Koa.ParameterizedContext<App.State, App.Context> = ({
     request: {
       method: HttpMethods.Get,
       path: '/'
@@ -30,7 +30,7 @@ describe('generateErrorHandler', () => {
       statusCode: HttpStatusCodes.OK,
       statusMessage: 'mockStatusMessage'
     }
-  } as any
+  } as unknown) as Koa.ParameterizedContext<App.State, App.Context>
 
   test('If validation failed, check that the error message contains such information and status code is 400.', () => {
     mockContext.validation = {

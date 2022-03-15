@@ -4,8 +4,8 @@ abstract class AbstractHttpError extends Error implements App.ErrorForm {
   status: HttpStatusCodes
   message: string
   errorName?: string
-  details?: any
-  constructor(message: string, status: number, errorName?: string, details?: any) {
+  details?: unknown
+  constructor(message: string, status: number, errorName?: string, details?: unknown) {
     super(message)
     this.status = status
     this.message = message

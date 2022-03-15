@@ -17,7 +17,6 @@ export const error = async (ctx: Koa.Context, next: Koa.Next): Promise<void> => 
 
     ctx.status = errorResponse.statusCode
     ctx.body = errorResponse
-    console.log('Asdasd', error)
     log.error(error)
   }
 }
@@ -30,6 +29,6 @@ const _extractHttpErrorFromError = (err: Error): AbstractHttpError => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const _mapErrorToHttpError = (_: any): AbstractHttpError => {
+const _mapErrorToHttpError = (_: unknown): AbstractHttpError => {
   return new InternalServerErrorHttpError()
 }

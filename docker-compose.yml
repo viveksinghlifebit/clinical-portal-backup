@@ -1,0 +1,12 @@
+# This docker-compose file is primarily intended for local development and testing/CI purposes
+
+version: '3'
+services:
+  clinical-portal:
+    build: .
+    ports:
+      - '3005:3005'
+    env_file:
+      - .env
+    environment:
+      - PORT=3005

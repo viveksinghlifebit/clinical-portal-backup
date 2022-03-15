@@ -3,8 +3,8 @@ import { ResponseValidationHttpError } from 'api/http-errors'
 
 import * as validateApiResponse from './validateApiResponse'
 
-const mockValidateResponseWithoutErrors = () => ({ valid: true, errors: null })
-const mockValidateResponseWithErrors = () => ({
+const mockValidateResponseWithoutErrors = (): { valid: boolean; errors: null } => ({ valid: true, errors: null })
+const mockValidateResponseWithErrors = (): { valid: boolean; errors: Record<string, string>[] } => ({
   valid: false,
   errors: [
     {
@@ -21,16 +21,16 @@ describe('validateApiResponse', () => {
   let ctx: Koa.ParameterizedContext<App.State, App.Context>
 
   beforeEach(() => {
-    c = {
+    c = ({
       api: {
         validateResponse: jest.fn().mockReturnValue(mockValidateResponseWithoutErrors())
       }
-    } as any
-    ctx = {
+    } as unknown) as OpenApiBackend.Context
+    ctx = ({
       res: {
         headersSent: false
       }
-    } as any
+    } as unknown) as Koa.ParameterizedContext<App.State, App.Context>
     jest.spyOn(validateApiResponse, '_shouldValidationBeSkipped')
   })
 

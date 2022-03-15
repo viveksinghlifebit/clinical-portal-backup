@@ -19,7 +19,7 @@ describe('health', () => {
   })
 
   describe('GET /health', () => {
-    const request = () => supertest(server).get('/health')
+    const request = (): supertest.Test => supertest(server).get('/health')
 
     test('When request health, then expect to successfully respond 200.', async () => {
       const expectedStatus = 200
@@ -31,7 +31,7 @@ describe('health', () => {
   })
 
   describe('POST /health', () => {
-    const request = (status?: string) => supertest(server).post('/health').send({ status })
+    const request = (status?: string): supertest.Test => supertest(server).post('/health').send({ status })
 
     test('When submit health, then expect to successfully repond 200 with the given status.', async () => {
       const expectedStatus = 200

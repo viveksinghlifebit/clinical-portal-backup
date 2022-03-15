@@ -14,7 +14,7 @@ describe('loadEndpoints', () => {
   beforeEach(() => {
     // The "as any" is just so we can provide a document to the function instead of a
     // path to the specification file, which makes for easier testing.
-    jest.spyOn(thisModule, '_getApiSpecification').mockReturnValue(mockSpecification as any)
+    jest.spyOn(thisModule, '_getApiSpecification').mockReturnValue(mockSpecification)
     jest.spyOn(app, 'use')
   })
 

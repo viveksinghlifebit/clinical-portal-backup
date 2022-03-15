@@ -8,7 +8,7 @@ describe('error', () => {
   let next: jest.Mock
 
   beforeEach(() => {
-    ctx = {} as any
+    ctx = ({} as unknown) as Koa.Context
   })
 
   afterEach(jest.restoreAllMocks)

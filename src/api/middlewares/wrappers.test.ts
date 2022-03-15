@@ -2,10 +2,10 @@ import { koasify, Handler } from './wrappers'
 
 describe('wrappers', () => {
   describe('koasify', () => {
-    const ctx: Koa.Context = {
+    const ctx: Koa.Context = ({
       req: {},
       res: {}
-    } as any
+    } as unknown) as Koa.Context
     const handler: Handler = jest.fn().mockImplementation((_req, _res, callback) => {
       callback()
     })

@@ -1,7 +1,8 @@
 import { HttpStatusCodes, HttpMethods } from 'enums'
 import { BadRequestHttpError } from 'api/http-errors'
 
-export const getMockApiSpecification = () => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getMockApiSpecification = (): any => ({
   openapi: '3.0.3',
   info: {
     title: 'Test API',
