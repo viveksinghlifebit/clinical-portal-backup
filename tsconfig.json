@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "paths": {
-      "@core/*": ["core/*"]
+      "@core/*": ["core/*"],
+      "@schemas/*": ["services/schemas/*"]
     },
-    "target": "es5",
+    "target": "esnext",
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "dist",

@@ -44,7 +44,8 @@ export const getMockDocumentedEndpointsInfo = (): App.EndpointsInfo => ({
       ctx.status = HttpStatusCodes.OK
       ctx.body = 'OK!'
     },
-    middlewares: []
+    middlewares: [],
+    postMiddlewares: []
   },
   testError: {
     method: HttpMethods.Get,
@@ -52,7 +53,8 @@ export const getMockDocumentedEndpointsInfo = (): App.EndpointsInfo => ({
     operation: async () => {
       throw new BadRequestHttpError('Error!')
     },
-    middlewares: []
+    middlewares: [],
+    postMiddlewares: []
   }
 })
 
@@ -64,6 +66,7 @@ export const getMockNonDocumentedEndpointsInfo = (): App.EndpointsInfo => ({
       ctx.status = HttpStatusCodes.OK
       ctx.body = 'non documented!'
     },
-    middlewares: []
+    middlewares: [],
+    postMiddlewares: []
   }
 })

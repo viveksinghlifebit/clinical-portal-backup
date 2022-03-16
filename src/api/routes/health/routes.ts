@@ -21,12 +21,14 @@ export const routes: App.EndpointsInfo = {
     method: HttpMethods.Get,
     path: '/health',
     operation: getHealth,
-    middlewares: []
+    middlewares: [],
+    postMiddlewares: []
   },
   postHealth: {
     method: HttpMethods.Post,
     path: '/health',
     operation: postHealth,
-    middlewares: []
+    middlewares: [],
+    postMiddlewares: []
   }
 }

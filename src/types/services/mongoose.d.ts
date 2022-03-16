@@ -4,8 +4,9 @@ declare namespace Mongoose {
   type Model<T> = import('mongoose').Model<T>
   type ObjectId = import('mongoose').Types.ObjectId
 
-  type QueryConditions = Record<string, unknown>
+  type QueryConditions = Record<string, 0 | 1>
 
+  type ProjectConditions = Record<string, 0 | 1>
   interface Config {
     uri: string | undefined
     options?: Record<string, unknown>

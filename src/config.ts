@@ -1,3 +1,5 @@
+import { castEnvToBoolOrUseDefault } from 'utils'
+
 const requireProcessEnv = (name: string): string => {
   if (!process.env[name] || ['None', ''].includes(process.env[name] as string)) {
     throw new Error(`You must set the ${name} environment variable`)
@@ -40,7 +42,8 @@ const config: App.Config = {
     mongooseMaster: {
       uri: process.env.LIFEBIT_MONGODB_URI_MASTER
     }
-  }
+  },
+  hkgiEnvironmentEnabled: castEnvToBoolOrUseDefault('HKGI_ENVIRONMENT_ENABLED', false)
 }
 
 export default config

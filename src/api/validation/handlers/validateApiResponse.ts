@@ -1,6 +1,5 @@
 import { HttpStatusCodes } from 'enums'
 import { log } from 'services/log'
-import { ResponseValidationHttpError } from 'api/http-errors'
 
 const validateApiResponse = (
   c: OpenApiBackend.Context,
@@ -15,8 +14,14 @@ const validateApiResponse = (
   log.debug(`Response.data: ${JSON.stringify(ctx.body)}`)
   log.debug(`ValidResponse: ${JSON.stringify(validatedResponse)}`)
   // Return a 500 if the validation failed
+
+  ctx.state = {
+    ...ctx.state,
+    responseStatusCode: ctx.status,
+    responseBody: ctx.body
+  }
   if (validatedResponse.errors) {
-    throw new ResponseValidationHttpError('Response validation failed.', validatedResponse.errors)
+    log.error('Response validation failed.', validatedResponse.errors)
   }
 }
 

@@ -19,3 +19,13 @@ export enum HttpMethods {
   Delete = 'delete',
   Options = 'options'
 }
+
+// AuditTrail
+export enum AuditLevel {
+  Debug = 'debug',
+  Info = 'info',
+  Warn = 'warning',
+  Error = 'error',
+  Crit = 'critical',
+  Fatal = 'fatal'
+}

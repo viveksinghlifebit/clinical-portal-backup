@@ -11,5 +11,6 @@ declare namespace App {
     masterKey: string
     jwtSecret: string
     mongoMulti: Mongoose.Multi
+    hkgiEnvironmentEnabled: boolean
   }
 }

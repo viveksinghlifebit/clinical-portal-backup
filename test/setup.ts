@@ -1,3 +1,7 @@
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { cleanUpDB, setupDB } from './setupDB'
+import mongoose, { Mongoose } from 'mongoose'
+
 jest.mock('../src/services/log')
 jest.mock('../src/api/middlewares/auth', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,3 +17,21 @@ const setupRequiredProcessEnv = (): void => {
 }
 
 setupRequiredProcessEnv()
+
+let mongoServer: MongoMemoryServer
+let mongoORM: Mongoose
+
+beforeAll(async () => {
+  const db = await setupDB()
+  mongoServer = db.mongoServer
+  mongoORM = db.mongoORM
+})
+
+afterAll(async () => {
+  await mongoose.disconnect()
+  await mongoServer.stop()
+})
+
+afterEach(async () => {
+  await cleanUpDB(mongoORM)
+})

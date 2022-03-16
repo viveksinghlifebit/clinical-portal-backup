@@ -43,8 +43,8 @@ describe('generateErrorHandler', () => {
       expect.objectContaining({
         statusCode: HttpStatusCodes.BadRequest,
         code: mockErrorName,
-        message: `validation failed for operation ${mockContext!.operation!.operationId} with error ${JSON.stringify(
-          mockContext!.validation!.errors
+        message: `validation failed for operation ${mockContext.operation.operationId} with error ${JSON.stringify(
+          mockContext.validation.errors
         )}`
       })
     )

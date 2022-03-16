@@ -11,6 +11,7 @@ declare namespace App {
     path: string
     operation: EndpointOperation
     middlewares: EndpointMiddleware[]
+    postMiddlewares: EndpointMiddleware[]
   }
 
   type EndpointsInfo = { [id: string]: EndpointInfo }

@@ -57,9 +57,9 @@ describe('validateApiResponse', () => {
     expect(c.api.validateResponse).toHaveBeenCalledTimes(1)
   })
 
-  test('When there are validation errors, expect to throw a HTTP ResponseValidation error.', () => {
+  test('When there are validation errors, expect not to throw.', () => {
     c.api.validateResponse = jest.fn().mockReturnValue(mockValidateResponseWithErrors())
-    expect(() => validateApiResponse.default(c, ctx)).toThrow(ResponseValidationHttpError)
+    expect(() => validateApiResponse.default(c, ctx)).not.toThrow(ResponseValidationHttpError)
     expect(validateApiResponse._shouldValidationBeSkipped).toHaveBeenCalledTimes(1)
     expect(c.api.validateResponse).toHaveBeenCalledTimes(1)
   })

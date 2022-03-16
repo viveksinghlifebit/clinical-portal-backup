@@ -1,11 +1,12 @@
 import * as connection from 'services/mongoose/connections'
 import { Types } from 'mongoose'
 export class UserRepository {
-  static findById(id: string, projection?: Mongoose.QueryConditions): Promise<User.Attribute | null> {
-    return connection.usersConnection.collection('users').findOne({ _id: new Types.ObjectId(id) }, projection)
+  static findById(id: string, projection?: Mongoose.ProjectConditions): Promise<User.Attribute | null> {
+    return connection.usersConnection
+      .collection('users')
+      .findOne({ _id: new Types.ObjectId(id) }, { projection }) as Promise<User.Attribute>
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   static async findOne(criteria: { [key: string]: string }): Promise<User.Attribute> {
     return (await connection.usersConnection.collection('users').findOne(criteria)) as User.Attribute
   }

@@ -23,12 +23,5 @@ export const error = async (ctx: Koa.Context, next: Koa.Next): Promise<void> => 
 
 const _extractHttpErrorFromError = (err: Error): AbstractHttpError => {
   if (err instanceof AbstractHttpError) return err
-  // To implement new non Http Error classes
-  else if (err instanceof (() => 'NonHttpError')) return _mapErrorToHttpError(error)
   else return new InternalServerErrorHttpError()
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const _mapErrorToHttpError = (_: unknown): AbstractHttpError => {
-  return new InternalServerErrorHttpError()
 }

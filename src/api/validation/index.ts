@@ -29,8 +29,24 @@ export const loadEndpoints = async (
   for (const endpoint of Object.values(endpointsInfo)) {
     router[endpoint.method](
       endpoint.path,
-      ...endpoint.middlewares,
-      (ctx: Koa.ParameterizedContext<App.State, App.Context>) => openApi.handleRequest(ctx.request as Request, ctx)
+      ...[
+        ...endpoint.middlewares,
+        async (ctx: Koa.ParameterizedContext<App.State, App.Context>, next: Koa.Next) => {
+          try {
+            await openApi.handleRequest(ctx.request as Request, ctx)
+          } catch (err) {
+            ctx.state = {
+              ...ctx.state,
+              error: err
+            }
+            throw err
+          } finally {
+            if (endpoint.postMiddlewares.length > 0) {
+              await next()
+            }
+          }
+        }
+      ]
     )
   }
 
