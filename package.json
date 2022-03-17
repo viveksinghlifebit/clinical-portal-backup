@@ -1,8 +1,13 @@
 {
-  "name": "lifebit-node-api-template",
+  "name": "clinical-portal-backend",
   "version": "1.0.0",
-  "description": "Lifebit node api template",
+  "description": "Clinical Portal Backend",
   "main": "./src/index.ts",
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.4.0"
+    }
+  },
   "scripts": {
     "compile": "tsc && npm run postCompile",
     "postCompile": "cp ./src/api/validation/specification.yaml ./dist/api/validation/",

@@ -1,0 +1,12 @@
+clinical-portal:
+  build:
+    context: .
+    dockerfile: Dockerfile
+  cached: true
+
+clinical-portal-test:
+  build:
+    context: .
+    dockerfile: test/Dockerfile
+  encrypted_env_file: .env.encrypted
+  cached: true

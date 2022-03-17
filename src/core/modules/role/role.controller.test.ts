@@ -76,7 +76,7 @@ describe('Role', () => {
   })
 
   describe('deleteRole', () => {
-    const mockRole = () => {
+    const mockRole = (): void => {
       Role.deleteOne = jest.fn()
     }
 

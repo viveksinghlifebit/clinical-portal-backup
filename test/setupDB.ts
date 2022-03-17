@@ -7,7 +7,7 @@ export const setupDB = async (): Promise<{
   mongoServer: MongoMemoryServer
   mongoORM: Mongoose
 }> => {
-  const mongoServer = await MongoMemoryServer.create({ binary: { version: '3.6.12' } })
+  const mongoServer = await MongoMemoryServer.create()
   const mongoUri = mongoServer.getUri('test-db')
   const mongoConn = mongoose.createConnection(mongoUri)
   const multiConnection = {
