@@ -1,4 +1,4 @@
-import { IllegalArgumentError, InvalidStateError, ResourceNotFoundError } from '../../../errors'
+import { IllegalArgumentError, InvalidStateError, ResourceNotFoundError } from 'errors'
 import mongoose from 'mongoose'
 import { TeamBuilder, UserBuilder, getMockedMongoQueryInstance } from 'testUtils'
 import { UserRepository } from '@core/repos'
