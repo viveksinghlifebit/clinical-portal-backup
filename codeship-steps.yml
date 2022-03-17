@@ -1,4 +1,4 @@
-- name: clinical-portal
+- name: Clinical-Portal
   type: serial
   steps:
     - name: Code-Analysis
