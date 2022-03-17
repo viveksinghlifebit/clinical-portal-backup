@@ -1,15 +1,18 @@
-- name: code-analysis
+- name: clinical-portal
   type: serial
   steps:
-    - name: 'build'
+    - name: Code-Analysis
       type: parallel
       steps:
-        - name: compile
+        - name: Compile
           service: clinical-portal-test
           command: npm run compile
-        - name: lint
+        - name: Lint
           service: clinical-portal-test
           command: npm run lint
-        - name: test
+        - name: Prettier
+          service: clinical-portal-test
+          command: npm run test:prettier
+        - name: Test
           service: clinical-portal-test
           command: npm run test
