@@ -15,7 +15,7 @@ export default {
     '/src/testUtils/'
   ],
   coverageProvider: 'v8',
-  coverageReporters: ['text', 'html'],
+  coverageReporters: ['text', 'html', 'json-summary'],
   coverageThreshold: {
     global: {
       branches: 75,
