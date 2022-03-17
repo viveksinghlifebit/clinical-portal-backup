@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { log } from 'services/log'
 // TODO: Uncomments connections once Models & Repositories are migrated to the new struture
-export let masterConnection: Mongoose.Connection
+export let clinicalPortalConnection: Mongoose.Connection
 export let usersConnection: Mongoose.Connection
 export let exportConnection: Mongoose.Connection
 export let participantsConnection: Mongoose.Connection
@@ -12,8 +12,8 @@ const logConnected = (name: string): void => {
 }
 
 export const init = async (mongoMulti: Mongoose.Multi): Promise<void> => {
-  const [masterConn, usersConn, exportConn, participantsConn, genomarkersConn] = await Promise.all([
-    mongoose.createConnection(`${mongoMulti.mongooseMaster.uri}`).on('connected', () => logConnected('MASTER')),
+  const [clinicalPortalConn, usersConn, exportConn, participantsConn, genomarkersConn] = await Promise.all([
+    mongoose.createConnection(`${mongoMulti.mongooseClinicalPortal.uri}`).on('connected', () => logConnected('MASTER')),
     mongoose.createConnection(`${mongoMulti.mongooseUsers.uri}`).on('connected', () => logConnected('USER')),
     // mongoose.createConnection(mongoMulti.mongooseFilters.uri, {
     //   ...options,
@@ -28,7 +28,7 @@ export const init = async (mongoMulti: Mongoose.Multi): Promise<void> => {
       .on('connected', () => logConnected('GENOMARKERS'))
   ])
 
-  masterConnection = masterConn
+  clinicalPortalConnection = clinicalPortalConn
   usersConnection = usersConn
   // filtersConnection = filtersConn
   exportConnection = exportConn

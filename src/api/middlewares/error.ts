@@ -1,5 +1,5 @@
 import { log } from 'services/log'
-import { AbstractHttpError, InternalServerErrorHttpError } from 'api/http-errors'
+import { AbstractHttpError, InternalServerErrorHttpError } from 'errors/http-errors'
 
 export const error = async (ctx: Koa.Context, next: Koa.Next): Promise<void> => {
   try {

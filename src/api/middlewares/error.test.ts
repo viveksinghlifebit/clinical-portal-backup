@@ -1,5 +1,5 @@
 import { HttpStatusCodes } from 'enums'
-import { BadRequestHttpError } from 'api/http-errors'
+import { BadRequestHttpError } from 'errors/http-errors'
 
 import { error } from './error'
 

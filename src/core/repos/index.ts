@@ -1,3 +1,2 @@
-import { UserRepository } from './UserRepository'
-
-export { UserRepository }
+export * from './UserRepository'
+export * from './TeamRepository'

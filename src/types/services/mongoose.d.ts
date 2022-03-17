@@ -4,7 +4,7 @@ declare namespace Mongoose {
   type Model<T> = import('mongoose').Model<T>
   type ObjectId = import('mongoose').Types.ObjectId
 
-  type QueryConditions = Record<string, 0 | 1>
+  type QueryConditions = Record<string, unknown>
 
   type ProjectConditions = Record<string, 0 | 1>
   interface Config {
@@ -18,11 +18,11 @@ declare namespace Mongoose {
     mongooseExport: Config
     mongooseParticipants: Config
     mongooseGenomarkers: Config
-    mongooseMaster: Config
+    mongooseClinicalPortal: Config
   }
 
   interface Connections {
-    masterConnection: Connection
+    clinicalPortalConnection: Connection
     usersConnection: Connection
     // filtersConnection: Connection
     exportConnection: Connection

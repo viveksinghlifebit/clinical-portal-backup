@@ -2,7 +2,7 @@
   "compilerOptions": {
     "paths": {
       "@core/*": ["core/*"],
-      "@schemas/*": ["services/schemas/*"]
+      "@schemas": ["services/schemas/index"]
     },
     "target": "esnext",
     "module": "commonjs",

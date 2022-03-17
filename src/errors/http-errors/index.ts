@@ -5,7 +5,7 @@ import ForbiddenHttpError from './ForbiddenHttpError'
 import NotFoundHttpError from './NotFoundHttpError'
 import UnauthorizedHttpError from './UnauthorizedHttpError'
 import ConflictHttpError from './ConflictHttpError'
-import ResponseValidationHttpError from './/ResponseValidationHttpError'
+import ResponseValidationHttpError from './ResponseValidationHttpError'
 import CustomHttpError from './CustomHttpError'
 
 export {

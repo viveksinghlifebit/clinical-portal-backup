@@ -1,5 +1,5 @@
 import { HttpMethods, HttpStatusCodes } from 'enums'
-import { CustomHttpError } from 'api/http-errors'
+import { CustomHttpError } from 'errors/http-errors'
 
 import { _generateErrorHandler } from './errorHandlers'
 

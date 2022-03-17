@@ -17,6 +17,6 @@ export const db = {
     url: config.mongoMulti.mongooseGenomarkers.uri
   },
   mongooseMaster: {
-    url: config.mongoMulti.mongooseMaster.uri
+    url: config.mongoMulti.mongooseClinicalPortal.uri
   }
 }

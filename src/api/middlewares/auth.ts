@@ -2,7 +2,7 @@
  * TODO - Remove this file once we have the gateway in-place
  */
 import config from 'config'
-import { UnauthorizedHttpError } from 'api/http-errors'
+import { UnauthorizedHttpError } from 'errors/http-errors'
 import passport from 'passport'
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
 import { Strategy as LocalAPIKeyStrategy } from 'passport-localapikey-update'
@@ -10,11 +10,7 @@ import { Strategy as LocalAPIKeyStrategy } from 'passport-localapikey-update'
 import { UserRepository } from '@core/repos'
 import { log } from 'services/log'
 
-const getAuthenticatedUser = async (
-  authStrategies: string[],
-  ctx: Koa.Context,
-  next: Koa.Next
-): Promise<User.Attribute> => {
+const getAuthenticatedUser = async (authStrategies: string[], ctx: Koa.Context, next: Koa.Next): Promise<User> => {
   let user = null
   for (let i = 0; i < authStrategies.length && !user; i++) {
     const authStrategy = authStrategies[i] as string
@@ -25,7 +21,7 @@ const getAuthenticatedUser = async (
 
     try {
       user = await new Promise((resolve, reject) => {
-        passport.authenticate(authStrategy, { session: false }, (err, authenticatedUser: User.Attribute) => {
+        passport.authenticate(authStrategy, { session: false }, (err, authenticatedUser: User) => {
           return err || !authenticatedUser ? reject(err) : resolve(authenticatedUser)
         })(ctx.request)
       })
@@ -37,7 +33,7 @@ const getAuthenticatedUser = async (
   if (!user) {
     throw new UnauthorizedHttpError()
   }
-  return user as User.Attribute
+  return user as User
 }
 export const auth = (authStrategies: string[]) => async (ctx: Koa.Context, next: Koa.Next): Promise<void> => {
   try {
@@ -46,9 +42,10 @@ export const auth = (authStrategies: string[]) => async (ctx: Koa.Context, next:
     }
     const user = await getAuthenticatedUser(authStrategies, ctx, next)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;((ctx.request as unknown) as any).logIn(user, { session: false }, (err: any) => {
+    ;((ctx.request as unknown) as any).logIn(user, { session: false }, async (err: any) => {
       if (err) throw new UnauthorizedHttpError()
-      next()
+      ctx.user = user
+      await next()
     })
   } catch (error) {
     log.error(error)

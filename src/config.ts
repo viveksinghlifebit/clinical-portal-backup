@@ -9,7 +9,6 @@ const requireProcessEnv = (name: string): string => {
 
 const config: App.Config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
-  masterKey: requireProcessEnv('MASTER_KEY'),
   jwtSecret: requireProcessEnv('JWT_SECRET'),
   mongoMulti: {
     mongooseUsers: {
@@ -39,11 +38,12 @@ const config: App.Config = {
     mongooseGenomarkers: {
       uri: process.env.LIFEBIT_MONGODB_URI_GENOMARKERS
     },
-    mongooseMaster: {
+    mongooseClinicalPortal: {
       uri: process.env.LIFEBIT_MONGODB_URI_MASTER
     }
   },
-  hkgiEnvironmentEnabled: castEnvToBoolOrUseDefault('HKGI_ENVIRONMENT_ENABLED', false)
+  hkgiEnvironmentEnabled: castEnvToBoolOrUseDefault('HKGI_ENVIRONMENT_ENABLED', false),
+  adminTeamId: process.env.ADMIN_TEAM_ID ?? '5f7c8696d6ea46288645a89f'
 }
 
 export default config

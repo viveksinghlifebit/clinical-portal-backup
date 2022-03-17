@@ -10,3 +10,7 @@ export const middlewares: Koa.Middleware[] = [
   koaCors,
   koaBodyParser
 ]
+
+export * from './auth'
+export * from './rbac'
+export * from './team'

@@ -11,7 +11,7 @@ export const setupDB = async (): Promise<{
   const mongoUri = mongoServer.getUri('test-db')
   const mongoConn = mongoose.createConnection(mongoUri)
   const multiConnection = {
-    masterConnection: mongoConn,
+    clinicalPortalConnection: mongoConn,
     usersConnection: mongoConn,
     exportConnection: mongoConn,
     participantsConnection: mongoConn,
@@ -35,7 +35,7 @@ export const setupDB = async (): Promise<{
     mongooseGenomarkers: {
       uri: mongoUri
     },
-    mongooseMaster: {
+    mongooseClinicalPortal: {
       uri: mongoUri
     }
   })

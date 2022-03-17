@@ -1,6 +1,6 @@
 import { HttpStatusCodes } from 'enums'
 import { log } from 'services/log'
-import { NotFoundHttpError, BadRequestHttpError, AbstractHttpError } from 'api/http-errors'
+import { NotFoundHttpError, BadRequestHttpError, AbstractHttpError } from 'errors/http-errors'
 
 export const _generateErrorHandler = (err: AbstractHttpError): OpenApiBackend.Handler => (
   c: OpenApiBackend.Context,

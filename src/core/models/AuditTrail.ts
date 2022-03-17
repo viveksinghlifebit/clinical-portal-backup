@@ -1,4 +1,4 @@
-import { AuditTrailSchema } from '@schemas/AuditTrail.schema'
+import { AuditTrailSchema } from '@schemas'
 
 export const auditTrailModelName = 'AuditTrail'
 

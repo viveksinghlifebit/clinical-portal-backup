@@ -11,7 +11,8 @@ export default {
     '/src/services/mongoose/',
     '/src/api/middlewares/auth.ts',
     '/src/api/routes/index.ts',
-    '/src/index.ts'
+    '/src/index.ts',
+    '/src/testUtils/'
   ],
   coverageProvider: 'v8',
   coverageReporters: ['text', 'html'],
@@ -25,7 +26,7 @@ export default {
   moduleDirectories: ['node_modules', '<rootDir>/src'],
   moduleNameMapper: {
     'src/(.*)': '<rootDir>/src/$1',
-    '@schemas/(.*)': '<rootDir>/src/services/schemas/$1',
+    '@schemas': '<rootDir>/src/services/schemas/index.ts',
     '@core/(.*)': '<rootDir>/src/core/$1'
   },
   roots: ['<rootDir>/src'],

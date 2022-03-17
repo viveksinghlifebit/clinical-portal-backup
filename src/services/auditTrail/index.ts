@@ -2,7 +2,7 @@ import { omit } from 'lodash'
 import { Types } from 'mongoose'
 import config from 'config'
 import { AuditLevel } from 'enums'
-import { AuditTrailService } from 'modules/auditTrail/auditTrail.controller'
+import { AuditTrailService } from '@core/modules'
 
 export const auditTrail = async ({ request: req, state, response: res }: Koa.Context): Promise<void> => {
   const auditLogLevel = state.error ? AuditLevel.Error : AuditLevel.Info

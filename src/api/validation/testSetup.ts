@@ -1,5 +1,5 @@
 import { HttpStatusCodes, HttpMethods } from 'enums'
-import { BadRequestHttpError } from 'api/http-errors'
+import { BadRequestHttpError } from 'errors/http-errors'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getMockApiSpecification = (): any => ({

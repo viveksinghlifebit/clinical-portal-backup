@@ -3,7 +3,7 @@ import Koa from 'koa'
 import Router from '@koa/router'
 
 import { createOpenApiBackend } from 'services/openapi-backend'
-import { NotFoundHttpError } from 'api/http-errors'
+import { NotFoundHttpError } from 'errors/http-errors'
 
 import operations from './operations'
 import { Request } from 'openapi-backend'
@@ -72,7 +72,7 @@ const _getOperationMapFromEndpointsInfoMap = (
 
 const _wrapOpenApiContext = (operation: App.EndpointOperation): OpenApiBackend.Handler => (
   _: OpenApiBackend.Context,
-  ctx: Koa.ParameterizedContext<App.State, App.Context>
-) => operation(ctx)
+  ctx: Koa.ParameterizedContext<App.State, App.Context> & { user: User; team: Team }
+) => operation(ctx, { user: ctx.user, team: ctx.team })
 
 export const _getApiSpecification = (relativePath: string): string => path.resolve(__dirname, relativePath)

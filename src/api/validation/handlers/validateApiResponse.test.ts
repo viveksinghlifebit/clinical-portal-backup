@@ -1,5 +1,5 @@
 import { HttpStatusCodes } from 'enums'
-import { ResponseValidationHttpError } from 'api/http-errors'
+import { ResponseValidationHttpError } from 'errors/http-errors'
 
 import * as validateApiResponse from './validateApiResponse'
 

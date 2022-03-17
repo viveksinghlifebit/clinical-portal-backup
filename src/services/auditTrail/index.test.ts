@@ -1,4 +1,4 @@
-import { AuditTrailService } from 'modules/auditTrail/auditTrail.controller'
+import { AuditTrailService } from '@core/modules/auditTrail/auditTrail.controller'
 import config from 'config'
 import { auditTrail } from '.'
 describe('auditTrail', () => {
