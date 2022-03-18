@@ -1,11 +1,4 @@
-import { castEnvToBoolOrUseDefault } from 'utils'
-
-const requireProcessEnv = (name: string): string => {
-  if (!process.env[name] || ['None', ''].includes(process.env[name] as string)) {
-    throw new Error(`You must set the ${name} environment variable`)
-  }
-  return process.env[name] as string
-}
+import { castEnvToBoolOrUseDefault, requireProcessEnv } from 'utils'
 
 const config: App.Config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000,

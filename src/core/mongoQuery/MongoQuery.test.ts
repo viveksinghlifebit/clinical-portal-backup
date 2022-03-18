@@ -23,6 +23,15 @@ describe('MongoQuery', () => {
       const mongoQuery = new MongoQuery(Model).withUser(user)
       expect(mongoQuery._query).toMatchObject({ user })
     })
+
+    test('When called, then it should add $exists as false if User is not passed.', () => {
+      const mongoQuery = new MongoQuery(Model).withUser((null as unknown) as User)
+      expect(mongoQuery._query).toMatchObject({
+        user: {
+          $exists: false
+        }
+      })
+    })
   })
 
   describe('withOwner', () => {
@@ -30,6 +39,15 @@ describe('MongoQuery', () => {
       const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
       const mongoQuery = new MongoQuery(Model).withOwner(owner)
       expect(mongoQuery._query).toMatchObject({ owner })
+    })
+
+    test('When called, then it should add $exists as false if owner is not passed.', () => {
+      const mongoQuery = new MongoQuery(Model).withOwner((null as unknown) as User)
+      expect(mongoQuery._query).toMatchObject({
+        owner: {
+          $exists: false
+        }
+      })
     })
   })
 
@@ -138,6 +156,14 @@ describe('MongoQuery', () => {
       const mongoQuery = new MongoQuery(Model).withSearch(['email'], searchTerm)
       expect(mongoQuery._query.$or[0].email.$regex.source).toEqual(excapedSearchTerm)
     })
+
+    test('When withSearch is used two times then it should concatenate the $or', () => {
+      const searchTerm = 'searchTerm-test+(1)'
+      const excapedSearchTerm = 'searchTerm-test\\+\\(1\\)'
+      const mongoQuery = new MongoQuery(Model).withSearch(['email'], searchTerm).withSearch(['name'], searchTerm)
+      expect(mongoQuery._query.$or[0].email.$regex.source).toEqual(excapedSearchTerm)
+      expect(mongoQuery._query.$or.length).toEqual(2)
+    })
   })
 
   describe('withExtraExactSearch', () => {
@@ -164,6 +190,12 @@ describe('MongoQuery', () => {
       const order = -1
       const mongoQuery = new MongoQuery(Model).withSort(`${sortBy} ${order}`)
       expect(mongoQuery._sort).toEqual({ [sortBy]: order })
+    })
+
+    test('When called with a string and order is not mentioned, then it should add sort itself to the sort attribute.', () => {
+      const sortBy = 'name'
+      const mongoQuery = new MongoQuery(Model).withSort(`${sortBy}`)
+      expect(mongoQuery._sort).toEqual({ [sortBy]: -1 })
     })
 
     test('When called with an empty string, then it should keep the default sort attribute.', () => {

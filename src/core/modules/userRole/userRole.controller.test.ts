@@ -1,7 +1,7 @@
 import { IllegalArgumentError, InvalidStateError, ResourceNotFoundError } from 'errors'
 import mongoose from 'mongoose'
 import { TeamBuilder, UserBuilder, getMockedMongoQueryInstance } from 'testUtils'
-import { UserRepository } from '@core/repos'
+import { TeamRepository, UserRepository } from '@core/repos'
 import { RolesRoutes } from 'enums'
 import { InvitationUserRole, Role, UserRole } from '@core/models'
 
@@ -27,7 +27,9 @@ describe('UserRole', () => {
     const mockAggregationUserRole = (value: unknown): void => {
       UserRole.aggregate = jest.fn().mockResolvedValue([value])
     }
+
     afterEach(jest.restoreAllMocks)
+
     test('should return user roles', async () => {
       const userRole = new UserRole()
       const role = new Role()
@@ -67,7 +69,48 @@ describe('UserRole', () => {
       expect(userWithRoles).toMatchObject(aggregationMockResult)
     })
 
-    test(`should create userRole if userRole is not present`, async () => {
+    test(`should create userRole as Nurse if we don't have invitationUserRole`, async () => {
+      mockUserRepositoryFindById({ email: 'test' })
+      const role = new Role()
+      role.name = 'Admin'
+      role.displayName = 'Admin'
+      role.permissions = [
+        {
+          name: RolesRoutes.Cohort,
+          access: {
+            create: true,
+            delete: true,
+            read: true,
+            update: true
+          }
+        }
+      ]
+      mockUserRoleFindOne(null)
+      mockRoleFindOne(role)
+      const aggregationMockResult = {
+        _id: new mongoose.Types.ObjectId().toHexString(),
+        roles: [
+          {
+            _id: role._id.toHexString(),
+            name: role.name,
+            displayName: role.displayName
+          }
+        ],
+        userId: new mongoose.Types.ObjectId().toHexString(),
+        team: new mongoose.Types.ObjectId().toHexString()
+      }
+      mockAggregationUserRole(aggregationMockResult)
+      mockInvitationUserRole(null)
+
+      const userWithRoles = await UserRoleService.createBaseUserRole({
+        user: ({ _id: new mongoose.Types.ObjectId() } as unknown) as User,
+        team: ({ _id: new mongoose.Types.ObjectId() } as unknown) as Team
+      })
+
+      expect(userWithRoles).toMatchObject(aggregationMockResult)
+    })
+
+    test(`should throw error if userRole is not present`, async () => {
       mockUserRepositoryFindById(null)
       await expect(
         UserRoleService.createBaseUserRole({
@@ -232,17 +275,17 @@ describe('UserRole', () => {
   })
 
   describe('listUserRolesPaginated', () => {
-    const mockUserRole = (value: unknown): void => {
+    const mockUserRole = (value?: unknown): void => {
       UserRole.find = jest.fn().mockReturnValue({
         populate: () => ({
-          sort: () => [value]
+          sort: () => (value ? [value] : undefined)
         })
       })
     }
-    const mockInvitationUserRole = (value: unknown): void => {
+    const mockInvitationUserRole = (value?: unknown): void => {
       InvitationUserRole.find = jest.fn().mockReturnValue({
         populate: () => ({
-          sort: () => [value]
+          sort: () => (value ? [value] : undefined)
         })
       })
     }
@@ -250,6 +293,24 @@ describe('UserRole', () => {
       UserRepository.find = jest.fn().mockResolvedValue(value)
     }
     afterEach(jest.clearAllMocks)
+
+    test('When called and if UserRolesNotPresent and InvitationUserRoleNotPresent then return empty list', async () => {
+      getMockedMongoQueryInstance()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      mockUserRole()
+      mockInvitationUserRole()
+
+      const result = await UserRoleService.listUserRolesPaginated({ user, team })
+
+      expect(result).toMatchObject({
+        pageSize: 0,
+        pageNumber: 0,
+        totalCount: 0,
+        totalPages: 0,
+        data: []
+      })
+    })
 
     test('When called, then it should call the proper methods.', async () => {
       const mongoQuery = getMockedMongoQueryInstance()
@@ -277,7 +338,9 @@ describe('UserRole', () => {
         ]
       })
       mockUserRepository([{ _id: userId, name: 'test', surname: 'test-surname' }])
+
       const result = await UserRoleService.listUserRolesPaginated({ user, team })
+
       expect(mongoQuery.withTeamOrOwner).toHaveBeenCalledWith(user, team)
       expect(mongoQuery.compile).toHaveBeenCalled()
       expect(UserRole.find).toHaveBeenCalled()
@@ -325,6 +388,32 @@ describe('UserRole', () => {
     }
     afterEach(jest.clearAllMocks)
 
+    test('When called, then it should throw error if valid ObjectId is not passed', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+
+      await expect(
+        UserRoleService.updateUserRole({
+          userId: 'test',
+          roles: ['test-role-name'],
+          team
+        })
+      ).rejects.toThrowError(new IllegalArgumentError('email or userId is missing'))
+    })
+
+    test('When called, then it should throw error if Role are not present', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const userId = new mongoose.Types.ObjectId()
+      mockRole(null)
+
+      await expect(
+        UserRoleService.updateUserRole({
+          userId: userId.toHexString(),
+          roles: ['test-role-name'],
+          team
+        })
+      ).rejects.toThrowError(new IllegalArgumentError('Role is invalid'))
+    })
+
     test('When called, then it should call the proper methods when userId is used.', async () => {
       const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
@@ -346,11 +435,13 @@ describe('UserRole', () => {
         }
       ]
       mockRole(roleIds)
+
       const result = await UserRoleService.updateUserRole({
         userId: userId.toHexString(),
         roles: ['test-role-name'],
         team
       })
+
       expect(Role.find).toHaveBeenCalled()
       expect(UserRole.findOneAndUpdate).toHaveBeenCalled()
       expect(UserRole.findOneAndUpdate).toHaveBeenCalledWith(
@@ -370,6 +461,60 @@ describe('UserRole', () => {
         surname: 'test-surname',
         teamName: 'team'
       })
+    })
+
+    test('When called, then it should throw error if userRole is not found.', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const userId = new mongoose.Types.ObjectId()
+      mockUserRole(null)
+      mockUserRepository({ _id: userId, name: 'test', surname: 'test-surname' })
+      const roleIds = [
+        {
+          _id: new mongoose.Types.ObjectId(),
+          name: 'test-role-name',
+          displayName: 'test-role-displayName'
+        }
+      ]
+      mockRole(roleIds)
+
+      await expect(
+        UserRoleService.updateUserRole({
+          userId: userId.toHexString(),
+          roles: ['test-role-name'],
+          team
+        })
+      ).rejects.toThrowError(new IllegalArgumentError('User role cannot be updated'))
+    })
+
+    test('When called, then it should throw error if user is not found.', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const userId = new mongoose.Types.ObjectId()
+      mockUserRole({
+        userId: userId,
+        rolesIds: [
+          {
+            name: 'test-role-name',
+            displayName: 'test-role-displayName'
+          }
+        ]
+      })
+      mockUserRepository(null)
+      const roleIds = [
+        {
+          _id: new mongoose.Types.ObjectId(),
+          name: 'test-role-name',
+          displayName: 'test-role-displayName'
+        }
+      ]
+      mockRole(roleIds)
+
+      await expect(
+        UserRoleService.updateUserRole({
+          userId: userId.toHexString(),
+          roles: ['test-role-name'],
+          team
+        })
+      ).rejects.toThrowError(new IllegalArgumentError('User is invalid'))
     })
 
     test('When called, then it should call the proper methods when email is used.', async () => {
@@ -393,7 +538,9 @@ describe('UserRole', () => {
       ]
       mockInvitationUserRole({ email, isInvitationAccepted: false, roleIds })
       mockRole(roleIds)
+
       const result = await UserRoleService.updateUserRole({ email, roles: ['test-role-name'], team })
+
       expect(Role.find).toHaveBeenCalled()
       expect(InvitationUserRole.findOneAndUpdate).toHaveBeenCalled()
       expect(InvitationUserRole.findOneAndUpdate).toHaveBeenCalledWith(
@@ -409,6 +556,76 @@ describe('UserRole', () => {
           }
         ],
         teamName: 'team'
+      })
+    })
+
+    test('When called, then it should throw error if invitation UserRole is not present for that email', async () => {
+      jest.spyOn(TeamRepository, 'findOne').mockResolvedValue((null as unknown) as Team)
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const email = 'test@test.com'
+      mockUserRole({
+        userId: email,
+        rolesIds: [
+          {
+            name: 'test-role-name',
+            displayName: 'test-role-displayName'
+          }
+        ]
+      })
+      const roleIds = [
+        {
+          _id: new mongoose.Types.ObjectId(),
+          name: 'test-role-name',
+          displayName: 'test-role-displayName'
+        }
+      ]
+      mockInvitationUserRole(null)
+      mockRole(roleIds)
+
+      await expect(UserRoleService.updateUserRole({ email, roles: ['test-role-name'], team })).rejects.toThrowError(
+        new IllegalArgumentError('User role cannot be updated')
+      )
+    })
+
+    test('When called, then it should create invitedUser if it is not present for that email', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      InvitationUserRole.create = jest.fn()
+      jest.spyOn(TeamRepository, 'findOne').mockResolvedValue(team)
+
+      const email = 'test@test.com'
+      mockUserRole({
+        userId: email,
+        rolesIds: [
+          {
+            name: 'test-role-name',
+            displayName: 'test-role-displayName'
+          }
+        ]
+      })
+      const roleIds = [
+        {
+          _id: new mongoose.Types.ObjectId(),
+          name: 'test-role-name',
+          displayName: 'test-role-displayName'
+        }
+      ]
+      mockInvitationUserRole(null)
+      mockRole(roleIds)
+
+      const result = await UserRoleService.updateUserRole({ email, roles: ['test-role-name'], team })
+
+      expect(InvitationUserRole.create).toHaveBeenCalled()
+
+      expect(result).toMatchObject({
+        name: 'Member',
+        teamName: team.name,
+        email,
+        roles: [
+          {
+            name: roleIds[0]?.name,
+            displayName: roleIds[0]?.displayName
+          }
+        ]
       })
     })
   })
@@ -458,6 +675,37 @@ describe('UserRole', () => {
         surname: 'test-surname',
         teamName: 'team'
       })
+    })
+
+    test('When called, then it should return null if user is not found', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const userId = new mongoose.Types.ObjectId()
+      mockUserRepository(null)
+
+      const result = await UserRoleService.createUserRole({ userId: userId.toHexString(), roles: ['Admin'], team })
+
+      expect(result).toBe(null)
+    })
+  })
+
+  describe('getUsersRoles', () => {
+    afterEach(jest.restoreAllMocks)
+    test('When called, should return userRoles', async () => {
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const item = ({
+        _id: new mongoose.Types.ObjectId(),
+        roles: [{ displayName: 'name' }],
+        team,
+        userId: 'userId'
+      } as unknown) as UserRole.View
+      jest.spyOn(UserRole, 'getUserRolesWithRolesByAggregation').mockResolvedValue([item])
+
+      await expect(
+        UserRoleService.getUsersRoles({
+          users: [new mongoose.Types.ObjectId()],
+          team
+        })
+      ).resolves.toMatchObject([{ ...item, roles: ['name'] }])
     })
   })
 

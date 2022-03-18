@@ -22,7 +22,7 @@ const auditTrailSchema: Partial<Record<keyof AuditTrail.Attributes, SchemaTypeOp
   timestamp: {
     type: Number,
     required: true,
-    default: () => Date.now(),
+    default: Date.now(),
     immutable: true,
     index: true
   },

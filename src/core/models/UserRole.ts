@@ -25,7 +25,7 @@ UserRoleSchema.methods = {
 async function findByUserAndTeamId(
   userId: Mongoose.ObjectId,
   teamId: Mongoose.ObjectId
-): Promise<UserRole.View | void> {
+): Promise<UserRole.View | null> {
   const userRole = await UserRole.findOne({
     userId: userId,
     team: teamId
@@ -34,6 +34,8 @@ async function findByUserAndTeamId(
   if (userRole) {
     return userRole.view()
   }
+
+  return null
 }
 
 async function getUserRolesWithRolesByAggregation({

@@ -182,6 +182,11 @@ export class UserRoleService {
     roles: string[]
     team: Team
   }): Promise<UserRole.RolesPopulatedView | null> {
+    const user = await UserRepository.findOne({ _id: userId })
+    if (!user) {
+      return null
+    }
+
     const selectedRoles = await Role.find({
       name: {
         $in: roles
@@ -192,10 +197,7 @@ export class UserRoleService {
       team: team._id,
       rolesIds: selectedRoles.map(({ _id }) => _id)
     })
-    const user = await UserRepository.findOne({ _id: userId })
-    if (!user) {
-      return null
-    }
+
     return {
       id: String(userRole.userId),
       name: user.name,
@@ -224,7 +226,7 @@ export class UserRoleService {
         const clinicalRole = invitationUserRole.rolesIds as mongoose.Types.ObjectId[]
         rolesIds.push(...clinicalRole)
       } else {
-        const clinicalRole = (await Role.findOne({ name: 'Nurse' }).lean()) as Role.Document
+        const clinicalRole = (await Role.findOne({ name: 'Nurse' })) as Role.Document
         rolesIds.push(clinicalRole)
       }
       await UserRole.create({
