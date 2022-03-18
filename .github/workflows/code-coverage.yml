@@ -26,7 +26,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          npm run test:badges
+          sudo npm run test:badges
           git push
       - uses: repo-sync/pull-request@v2
         with:
@@ -35,4 +35,4 @@ jobs:
           destination_branch: 'main'
           pr_title: '[Automated] Merge changelog into main'
           pr_body: 'Pull request create by release Github Action.'
-          pr_label: 'Team: analysis,Team: data'
+          pr_label: 'team: data'
