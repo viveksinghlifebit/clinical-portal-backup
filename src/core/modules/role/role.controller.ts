@@ -16,7 +16,6 @@ export class RoleService {
     const { sort, skip, pagination } = await mongoQuery
       .withPagination(paginationReq.pageNumber, paginationReq.pageSize)
       .compile()
-    console.log(sort, skip, pagination)
 
     const data = await Role.find({}).sort(sort).skip(skip).limit(pagination.pageSize)
     return {
