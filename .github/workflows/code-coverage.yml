@@ -1,9 +1,12 @@
 name: code-coverage-workflow
 on:
-  workflow_dispatch:
+  schedule:
+    # Runs every Satarday at 00:00
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+    - cron: '0 0 * * 6'
 jobs:
   release:
-    name: Release
+    name: Generate badges code-coverage
     runs-on: ubuntu-latest
     container: node:16.4.0-buster
     steps:
@@ -20,12 +23,14 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         run: npm i
-      - name: Run release
+      - name: Generate Badges
         run: |
           chmod -R 777 ./badges
           git config user.name github-actions
           git config user.email github-actions@github.com
           npm run test:badges
+          git add ./badges
+          git commit -m "Automated code-coverage"
           git push
       - uses: repo-sync/pull-request@v2
         with:
