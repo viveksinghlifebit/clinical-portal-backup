@@ -23,3 +23,5 @@ coverage
 .DS_STORE
 
 codeship.aes
+
+*.env

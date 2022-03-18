@@ -2,3 +2,10 @@ node_modules
 coverage
 .vscode
 dist
+codeship.aes
+codeship-services.yml
+codeship-steps.yml
+badges
+.env
+.codeship
+.github

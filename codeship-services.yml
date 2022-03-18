@@ -10,3 +10,13 @@ clinical-portal-test:
     dockerfile: test/Dockerfile
   encrypted_env_file: .env.encrypted
   cached: true
+
+lifebit-dockercfg:
+  image: codeship/aws-ecr-dockercfg-generator
+  encrypted_env_file: .codeship/envs/lifebit-prod.env.encrypted # contains Secret, AccessKey, Region
+  add_docker: true
+
+lifebit-hkgi-dockercfg:
+  image: codeship/aws-ecr-dockercfg-generator
+  encrypted_env_file: .codeship/envs/hkgi-prod.env.encrypted # contains Secret, AccessKey, Region
+  add_docker: true

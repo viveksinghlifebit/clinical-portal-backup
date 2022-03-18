@@ -16,3 +16,42 @@
         - name: Test
           service: clinical-portal-test
           command: npm run test
+# - name: LIFEBIT ECR PUSH
+#   type: parallel
+#   tag: ^(hkgi-production|hkgi-staging|dev-sdlc|main|staging|production|cohort-syn|demo|silence-prod|jnj-uat)$
+#   dockercfg_service: lifebit-dockercfg
+#   steps:
+#     - name: 'Clinical-portal-backend'
+#       service: clinical-portal
+#       type: serial
+#       steps:
+#         - name: 'COMMIT ID'
+#           type: push
+#           image_tag: '{{ .CommitID }}'
+#           image_name: 529661837159.dkr.ecr.eu-west-1.amazonaws.com/lifebit-platform/clinical-portal-backend
+#           registry: https://529661837159.dkr.ecr.eu-west-1.amazonaws.com
+#         - name: 'BRANCH'
+#           type: push
+#           image_tag: '{{ .Branch }}'
+#           image_name: 529661837159.dkr.ecr.eu-west-1.amazonaws.com/lifebit-platform/clinical-portal-backend
+#           registry: https://529661837159.dkr.ecr.eu-west-1.amazonaws.com
+
+# - name: HKGI ECR PUSH
+#   type: parallel
+#   tag: ^(hkgi-production|hkgi-staging|master)$
+#   dockercfg_service: lifebit-hkgi-dockercfg
+#   steps:
+#     - name: 'Clinical-portal-backend'
+#       service: clinical-portal
+#       type: serial
+#       steps:
+#         - name: 'COMMIT ID'
+#           type: push
+#           image_tag: '{{ .CommitID }}'
+#           image_name: 826333358823.dkr.ecr.ap-east-1.amazonaws.com/lifebit-platform/cohort-browser
+#           registry: https://826333358823.dkr.ecr.ap-east-1.amazonaws.com
+#         - name: 'BRANCH'
+#           type: push
+#           image_tag: '{{ .Branch }}'
+#           image_name: 826333358823.dkr.ecr.ap-east-1.amazonaws.com/lifebit-platform/cohort-browser
+#           registry: https://826333358823.dkr.ecr.ap-east-1.amazonaws.com
