@@ -13,7 +13,7 @@ jest.mock('./createApp', () => mockCreateApp)
 jest.mock('./api/validation', () => ({ loadEndpoints: mockLoadEndpoints }))
 jest.mock('./api/routes', () => mockRoutes)
 
-describe.skip('app', () => {
+describe('app', () => {
   afterAll(jest.restoreAllMocks)
 
   test('When successfully loaded, then it should call the appropriate methods.', async () => {

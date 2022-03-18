@@ -37,6 +37,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: 'code-coverage'
           destination_branch: 'main'
-          pr_title: '[Automated] Merge changelog into main'
+          pr_title: '[Automated] Merge code-coverage into main'
           pr_body: 'Pull request create by release Github Action.'
           pr_label: 'team: data'
