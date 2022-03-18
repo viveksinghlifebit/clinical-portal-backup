@@ -4,12 +4,12 @@ on:
 jobs:
   mirror_job:
     runs-on: ubuntu-latest
-    name: Code freeze - Mirror hkgi-int (master) branch to hkgi-staging branch
+    name: Code freeze - Mirror hkgi-int (main) branch to hkgi-staging branch
     steps:
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-      - name: Checkout master Branch
+      - name: Checkout main Branch
         uses: actions/checkout@v2
         with:
           ref: 'hkgi-staging'
@@ -29,5 +29,5 @@ jobs:
         uses: google/mirror-branch-action@v1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          source: 'master'
+          source: 'main'
           dest: 'hkgi-staging'
