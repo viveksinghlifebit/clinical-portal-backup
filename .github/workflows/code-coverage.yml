@@ -1,0 +1,36 @@
+name: code-coverage-workflow
+on:
+  workflow_dispatch:
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    container: node:16.4.0-buster
+    steps:
+      - uses: actions/checkout@v2
+      - uses: everlytic/branch-merge@1.1.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_ref: 'main'
+          target_branch: 'test-coverage'
+          commit_message_template: '[Automated] Code-coverage {source_ref} into target {target_branch}'
+      - uses: actions/checkout@v2
+        with:
+          ref: 'test-coverage'
+          fetch-depth: 0
+      - name: Install dependencies
+        run: npm i
+      - name: Run release
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          npm run test:badges
+          git push
+      - uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_branch: 'test-coverage'
+          destination_branch: 'main'
+          pr_title: '[Automated] Merge changelog into main'
+          pr_body: 'Pull request create by release Github Action.'
+          pr_label: 'Team: analysis,Team: data'
