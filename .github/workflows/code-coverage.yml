@@ -22,6 +22,7 @@ jobs:
         run: npm i --unsafe-perm=true
       - name: Run release
         run: |
+          chmod -R 777 ./badges
           git config user.name github-actions
           git config user.email github-actions@github.com
           npm run test:badges
