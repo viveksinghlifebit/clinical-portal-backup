@@ -19,7 +19,7 @@ jobs:
           ref: 'code-coverage'
           fetch-depth: 0
       - name: Install dependencies
-        run: npm i --unsafe-perm=true
+        run: npm i
       - name: Run release
         run: |
           chmod -R 777 ./badges
