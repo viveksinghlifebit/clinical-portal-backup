@@ -52,6 +52,7 @@ COPY *.sh .
 
 ARG COMMIT_ID
 ENV COMMIT_ID=${COMMIT_ID:-non-codeship-version}
+ENV NODE_ENV=prod
 
 EXPOSE 3005
 
