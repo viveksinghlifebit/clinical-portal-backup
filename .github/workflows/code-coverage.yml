@@ -19,10 +19,10 @@ jobs:
           ref: 'code-coverage'
           fetch-depth: 0
       - name: Install dependencies
-        run: sudo npm i
+        run: npm i
       - name: Run release
         run: |
-          chown $UID:$GID -R 
+          chown $UID:$UID -R ./
           git config user.name github-actions
           git config user.email github-actions@github.com
           npm run test:badges
