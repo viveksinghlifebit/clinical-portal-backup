@@ -1,0 +1,33 @@
+name: HKGI Code Freeze INT -> STG
+on:
+  workflow_dispatch:
+jobs:
+  mirror_job:
+    runs-on: ubuntu-latest
+    name: Code freeze - Mirror hkgi-int (master) branch to hkgi-staging branch
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      - name: Checkout master Branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'hkgi-staging'
+      - name: Create hkgi-staging Release
+        id: oldsnapshot
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.date.outputs.date }}-hkgi-staging
+          release_name: ${{ steps.date.outputs.date }}-hkgi-staging
+          commitish: hkgi-staging
+          draft: false
+          prerelease: false
+      - name: Mirror action step
+        id: mirror
+        uses: google/mirror-branch-action@v1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          source: 'master'
+          dest: 'hkgi-staging'
