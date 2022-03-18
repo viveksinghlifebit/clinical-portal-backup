@@ -5,9 +5,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    container:
-      image: node:16.4.0-buster
-      options: --user root
+    container: node:16.4.0-buster
     steps:
       - uses: actions/checkout@v2
       - uses: everlytic/branch-merge@1.1.2
@@ -21,7 +19,7 @@ jobs:
           ref: 'code-coverage'
           fetch-depth: 0
       - name: Install dependencies
-        run: npm i
+        run: sudo npm i
       - name: Run release
         run: |
           chown $UID:$GID -R 
