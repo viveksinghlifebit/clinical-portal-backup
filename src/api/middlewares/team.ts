@@ -1,11 +1,10 @@
 import _ from 'lodash'
-
 import { log as logger } from 'services/log'
 import { TeamRepository } from '@core/repos'
 import config from 'config'
 import { ForbiddenHttpError } from 'errors/http-errors'
 
-type Middleware = (ctx: Koa.Context, next: Koa.Next) => Promise<void>
+type Middleware = (ctx: Koa.Context) => Promise<void>
 /**
  * @param {Object} req - Express request.
  * @returns {string} Team id.
@@ -28,10 +27,12 @@ export const ifTeamSpecifiedDo = (middlewares: Middleware[] | Middleware[][]) =>
   }
   if (!getTeamIdFromRequest(ctx)) {
     await next()
-  }
-  const flatMiddleware = middlewares.flatMap((mid) => mid)
-  for (const middleware of flatMiddleware) {
-    await middleware(ctx, next)
+  } else {
+    const flatMiddleware = middlewares.flatMap((mid) => mid)
+    for await (const middlewares of flatMiddleware) {
+      await middlewares(ctx)
+    }
+    await next()
   }
 }
 
@@ -40,7 +41,7 @@ export const ifTeamSpecifiedDo = (middlewares: Middleware[] | Middleware[][]) =>
  * Fetches team and sets it in express req object as .team.
  * Responds with 403 if team id is not specified or if team does not exist.
  */
-export const getTeam = async (ctx: Koa.Context, next: Koa.Next): Promise<void> => {
+export const getTeam = async (ctx: Koa.Context): Promise<void> => {
   const teamId = getTeamIdFromRequest(ctx)
   if (!teamId) {
     logger.debug('Team ID is missing.')
@@ -53,35 +54,32 @@ export const getTeam = async (ctx: Koa.Context, next: Koa.Next): Promise<void> =
   }
 
   ctx.team = team
-  await next()
 }
 
 /**
  * Expects req.team to be set. Responds with 403 if team is not active.
  */
-export const checkTeamIsActive = async (ctx: Koa.Context, next: Koa.Next): Promise<void> => {
+export const checkTeamIsActive = async (ctx: Koa.Context): Promise<void> => {
   const team = ctx.team
   if (!team) throw Error('This middleware expects req.team to be set.')
   if (team.deactivated) {
     throw new ForbiddenHttpError('TeamId is not allowed')
   }
-  await next()
 }
 
 /**
  * Express middleware, expects req.user.id and team id to be set.
  * Responds with 403 if team or membership don't exist or are not active.
  */
-export const getTeamAndTeamMembershipAndCheckTheyAreActive: Middleware[] = [getTeam, checkTeamIsActive]
+export const getTeamAndTeamMembershipAndCheckTheyAreActive = [getTeam, checkTeamIsActive]
 
 /**
  * Expects req.team to be set. Responds with 403 if team is not admin.
  */
-export const checkTeamIsAdmin = async (ctx: Koa.Context, next: Koa.Next): Promise<void> => {
+export const checkTeamIsAdmin = async (ctx: Koa.Context): Promise<void> => {
   const team = ctx.team
   if (!team) throw Error('This middleware expects req.team to be set.')
   if (team._id.toString() !== config.adminTeamId) {
     throw new ForbiddenHttpError('TeamId is not allowed')
   }
-  await next()
 }

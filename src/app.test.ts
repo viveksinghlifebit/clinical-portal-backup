@@ -1,3 +1,5 @@
+import config from 'config'
+
 const mockApp = {
   listen: jest.fn()
 }
@@ -22,7 +24,7 @@ describe('app', () => {
     await require('./app')
     expect(mockCreateApp).toHaveBeenCalledTimes(1)
     expect(mockLoadEndpoints).toHaveBeenCalledTimes(1)
-    expect(mockLoadEndpoints).toHaveBeenCalledWith(mockApp, mockRoutes)
+    expect(mockLoadEndpoints).toHaveBeenCalledWith(mockApp, mockRoutes, config.apiPrefix)
     expect(mockInitDB).toHaveBeenCalledTimes(1)
     expect(mockApp.listen).toHaveBeenCalledTimes(1)
   })

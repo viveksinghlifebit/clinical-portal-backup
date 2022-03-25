@@ -7,6 +7,7 @@ declare namespace App {
   }
 
   interface Config {
+    apiPrefix: string
     port: number
     jwtSecret: string
     mongoMulti: Mongoose.Multi

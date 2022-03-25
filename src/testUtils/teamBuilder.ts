@@ -10,7 +10,7 @@ export class TeamBuilder {
     return this
   }
 
-  public withId(id: Mongoose.ObjectId): TeamBuilder {
+  public withId(id: string): TeamBuilder {
     this.item._id = id
     return this
   }

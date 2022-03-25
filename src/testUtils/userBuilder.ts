@@ -15,7 +15,7 @@ export class UserBuilder {
     return this
   }
 
-  public withId(id: Mongoose.ObjectId): UserBuilder {
+  public withId(id: string): UserBuilder {
     this.item._id = id
     return this
   }

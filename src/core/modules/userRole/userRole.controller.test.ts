@@ -296,8 +296,8 @@ describe('UserRole', () => {
 
     test('When called and if UserRolesNotPresent and InvitationUserRoleNotPresent then return empty list', async () => {
       getMockedMongoQueryInstance()
-      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       mockUserRole()
       mockInvitationUserRole()
 
@@ -314,9 +314,9 @@ describe('UserRole', () => {
 
     test('When called, then it should call the proper methods.', async () => {
       const mongoQuery = getMockedMongoQueryInstance()
-      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
 
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
 
       const userId = new mongoose.Types.ObjectId()
       mockUserRole({
@@ -389,7 +389,7 @@ describe('UserRole', () => {
     afterEach(jest.clearAllMocks)
 
     test('When called, then it should throw error if valid ObjectId is not passed', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
 
       await expect(
         UserRoleService.updateUserRole({
@@ -401,7 +401,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should throw error if Role are not present', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
       mockRole(null)
 
@@ -415,7 +415,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should call the proper methods when userId is used.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
       mockUserRole({
         userId: userId,
@@ -464,7 +464,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should throw error if userRole is not found.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
       mockUserRole(null)
       mockUserRepository({ _id: userId, name: 'test', surname: 'test-surname' })
@@ -487,7 +487,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should throw error if user is not found.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
       mockUserRole({
         userId: userId,
@@ -518,7 +518,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should call the proper methods when email is used.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const email = 'test@test.com'
       mockUserRole({
         userId: email,
@@ -561,7 +561,7 @@ describe('UserRole', () => {
 
     test('When called, then it should throw error if invitation UserRole is not present for that email', async () => {
       jest.spyOn(TeamRepository, 'findOne').mockResolvedValue((null as unknown) as Team)
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const email = 'test@test.com'
       mockUserRole({
         userId: email,
@@ -588,7 +588,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should create invitedUser if it is not present for that email', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       InvitationUserRole.create = jest.fn()
       jest.spyOn(TeamRepository, 'findOne').mockResolvedValue(team)
 
@@ -643,7 +643,7 @@ describe('UserRole', () => {
     afterEach(jest.clearAllMocks)
 
     test('When called, then it should call the proper methods.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
       mockUserRole({
         userId: userId,
@@ -678,7 +678,7 @@ describe('UserRole', () => {
     })
 
     test('When called, then it should return null if user is not found', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId()
       mockUserRepository(null)
 
@@ -691,7 +691,7 @@ describe('UserRole', () => {
   describe('getUsersRoles', () => {
     afterEach(jest.restoreAllMocks)
     test('When called, should return userRoles', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const item = ({
         _id: new mongoose.Types.ObjectId(),
         roles: [{ displayName: 'name' }],
@@ -717,7 +717,7 @@ describe('UserRole', () => {
     afterEach(jest.clearAllMocks)
 
     test('When called, then it should call the proper methods.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const userId = new mongoose.Types.ObjectId().toHexString()
       mockUserRole()
       await UserRoleService.deleteUserRole({ userId: userId, team })
@@ -742,7 +742,7 @@ describe('UserRole', () => {
     afterEach(jest.clearAllMocks)
 
     test('When called with roles which are not present in DB, then it should throw error.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const params = [{ email: 'test', roles: ['Nurse', 'test'] }]
       mockRoleFind([{ name: 'Nurse', _id: new mongoose.Types.ObjectId() }])
       mockInvitationUserRoleFind([])
@@ -752,7 +752,7 @@ describe('UserRole', () => {
     })
 
     test('When called with email which are present in DB, then it should throw error.', async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const params = [{ email: 'test', roles: ['Nurse'] }]
       mockRoleFind([{ name: 'Nurse', _id: new mongoose.Types.ObjectId() }])
       mockInvitationUserRoleFind([{ email: 'test' }])
@@ -762,7 +762,7 @@ describe('UserRole', () => {
     })
 
     test(`When called with email which doesn't exists in DB and correct roles, then it should call the proper methods.`, async () => {
-      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const params = [{ email: 'test', roles: ['Nurse'] }]
       mockRoleFind([{ name: 'Nurse', _id: new mongoose.Types.ObjectId() }])
       mockInvitationUserRoleFind([])

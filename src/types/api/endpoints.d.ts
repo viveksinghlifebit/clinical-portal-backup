@@ -17,7 +17,7 @@ declare namespace App {
     method: import('enums').HttpMethods
     path: string
     operation: EndpointOperation
-    middlewares: EndpointMiddleware[]
+    middlewares: any
     postMiddlewares: EndpointMiddleware[]
   }
 

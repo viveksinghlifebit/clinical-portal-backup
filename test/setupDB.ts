@@ -39,11 +39,6 @@ export const setupDB = async (): Promise<{
       uri: mongoUri
     }
   })
-  // jest.spyOn(connections, 'exportConnection').mockReturnValue(mongoConn)
-  // jest.spyOn(connections, 'genomarkersConnection').mockReturnValue(mongoConn)
-  // jest.spyOn(connections, 'masterConnection').mockReturnValue(mongoConn)
-  // jest.spyOn(connections, 'participantsConnection').mockReturnValue(mongoConn)
-
   await mongoose.connect(mongoUri)
   return { mongoServer, mongoORM: mongoose }
 }

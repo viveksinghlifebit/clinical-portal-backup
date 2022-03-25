@@ -1,5 +1,5 @@
 interface User {
-  _id: Mongoose.ObjectId
+  _id: Mongoose.ObjectId | string
   name: string
   surname: string
   email: string

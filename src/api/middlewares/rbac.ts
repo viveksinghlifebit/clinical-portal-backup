@@ -27,11 +27,11 @@ const reqMethodToRbacAction: Record<string, RBACAction> = {
 export const rbacMiddleware = (resource: RolesRoutes, featureEnabled = false) => {
   return async (ctx: Koa.Context, next: Koa.Next): Promise<void> => {
     if (!featureEnabled) {
-      next()
+      await next()
       return
     }
 
-    const userId = ctx.user?._id
+    const userId = ctx.user?._id as Types.ObjectId
     if (!userId) {
       throw new UnauthorizedHttpError()
     }

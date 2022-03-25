@@ -2,7 +2,6 @@ import { RoleService, UserRoleService } from '@core/modules'
 import { HttpMethods, RolesRoutes, HttpStatusCodes } from 'enums'
 import { rbac, auth } from 'api/middlewares'
 import { getTeamAndTeamMembershipAndCheckTheyAreActive, ifTeamSpecifiedDo } from 'api/middlewares/team'
-
 import { auditTrail } from 'services/auditTrail'
 
 const getUserRoles: App.EndpointOperation = async (
@@ -12,7 +11,7 @@ const getUserRoles: App.EndpointOperation = async (
   const data = await UserRoleService.listUserRolesPaginated({ user, team })
   const response = sendResponseAsPerData<App.PaginationResponse<UserRole.RolesPopulatedView>>(data)
   ctx.status = response.status
-  ctx.body = data
+  ctx.body = response.data
 }
 
 const updateUserRoles: App.EndpointOperation = async (
@@ -27,7 +26,7 @@ const updateUserRoles: App.EndpointOperation = async (
   const data = await UserRoleService.updateUserRole({ userId, roles, email, team })
   const response = sendResponseAsPerData<UserRole.RolesPopulatedView>(data)
   ctx.status = response.status
-  ctx.body = data
+  ctx.body = response.data
 }
 
 const deleteUserRoles: App.EndpointOperation = async (
@@ -137,14 +136,14 @@ const sendResponseAsPerData = <T>(data: T): { status: HttpStatusCodes; data?: T 
 export const accessControlRoutes: App.EndpointsInfo = {
   getUserRoles: {
     method: HttpMethods.Get,
-    path: 'access-control/user-roles',
+    path: '/access-control/user-roles',
     operation: getUserRoles,
     middlewares: [auth(['token', 'apikey']), ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])],
     postMiddlewares: [auditTrail]
   },
   updateUserRoles: {
     method: HttpMethods.Put,
-    path: 'access-control/user-roles',
+    path: '/access-control/user-roles',
     operation: updateUserRoles,
     middlewares: [
       auth(['token', 'apikey']),
@@ -155,7 +154,7 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   deleteUserRoles: {
     method: HttpMethods.Delete,
-    path: 'access-control/user-roles',
+    path: '/access-control/user-roles',
     operation: deleteUserRoles,
     middlewares: [
       auth(['token', 'apikey']),
@@ -166,7 +165,7 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   createUserRole: {
     method: HttpMethods.Post,
-    path: 'access-control/user-roles',
+    path: '/access-control/user-roles',
     operation: createUserRole,
     middlewares: [
       auth(['token', 'apikey']),
@@ -177,21 +176,21 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   getMyUserRoles: {
     method: HttpMethods.Get,
-    path: 'access-control/roles/me',
+    path: '/access-control/roles/me',
     operation: getMyUserRoles,
     middlewares: [auth(['token', 'apikey']), ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])],
     postMiddlewares: [auditTrail]
   },
   createBaseUserRole: {
     method: HttpMethods.Post,
-    path: 'access-control/roles/me',
+    path: '/access-control/roles/me',
     operation: createBaseUserRole,
     middlewares: [auth(['token', 'apikey']), ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])],
     postMiddlewares: [auditTrail]
   },
   createRole: {
     method: HttpMethods.Post,
-    path: 'access-control/roles',
+    path: '/access-control/roles',
     operation: createRole,
     middlewares: [
       auth(['token', 'apikey']),
@@ -202,7 +201,7 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   updateRole: {
     method: HttpMethods.Put,
-    path: 'access-control/roles',
+    path: '/access-control/roles',
     operation: updateRole,
     middlewares: [
       auth(['token', 'apikey']),
@@ -213,7 +212,7 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   deleteRole: {
     method: HttpMethods.Delete,
-    path: 'access-control/roles',
+    path: '/access-control/roles',
     operation: deleteRole,
     middlewares: [
       auth(['token', 'apikey']),
@@ -224,7 +223,7 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   getRolesList: {
     method: HttpMethods.Get,
-    path: 'access-control/roles',
+    path: '/access-control/roles',
     operation: getRolesList,
     middlewares: [
       auth(['token', 'apikey']),
@@ -235,7 +234,7 @@ export const accessControlRoutes: App.EndpointsInfo = {
   },
   inviteUserRole: {
     method: HttpMethods.Post,
-    path: 'access-control/invited-role',
+    path: '/access-control/invited-role',
     operation: inviteUserRole,
     middlewares: [
       auth(['token', 'apikey']),

@@ -1,6 +1,7 @@
 import { castEnvToBoolOrUseDefault, requireProcessEnv } from 'utils'
 
 const config: App.Config = {
+  apiPrefix: process.env.PATH_PREFIX ?? '/clinical-portal/v1',
   port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   jwtSecret: requireProcessEnv('JWT_SECRET'),
   mongoMulti: {

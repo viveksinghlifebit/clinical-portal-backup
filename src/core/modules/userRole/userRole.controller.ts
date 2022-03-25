@@ -244,7 +244,10 @@ export class UserRoleService {
    * @returns
    */
   static async getMyUserRole({ user, team }: { user: User; team: Team }): Promise<UserRole.View> {
-    const [item] = await UserRole.getUserRolesWithRolesByAggregation({ users: [user._id], team: team._id })
+    const [item] = await UserRole.getUserRolesWithRolesByAggregation({
+      users: [user._id as mongoose.Types.ObjectId],
+      team: team._id as mongoose.Types.ObjectId
+    })
     if (!item) {
       throw new ResourceNotFoundError(`User role doesn't exists`)
     }
@@ -262,7 +265,10 @@ export class UserRoleService {
    * @returns
    */
   static async getUsersRoles({ users, team }: { users: Mongoose.ObjectId[]; team: Team }): Promise<UserRole.View[]> {
-    const items: UserRole.View[] = await UserRole.getUserRolesWithRolesByAggregation({ users, team: team._id })
+    const items: UserRole.View[] = await UserRole.getUserRolesWithRolesByAggregation({
+      users,
+      team: team._id as mongoose.Types.ObjectId
+    })
     return items.map((item) => ({
       _id: item._id,
       roles: (item.roles as Role.View[]).map((x) => x.displayName),

@@ -19,7 +19,7 @@ describe('MongoQuery', () => {
 
   describe('withUser', () => {
     test('When called, then it should add user to the query attribute.', () => {
-      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
       const mongoQuery = new MongoQuery(Model).withUser(user)
       expect(mongoQuery._query).toMatchObject({ user })
     })
@@ -36,7 +36,7 @@ describe('MongoQuery', () => {
 
   describe('withOwner', () => {
     test('When called, then it should add owner to the query attribute.', () => {
-      const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
+      const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
       const mongoQuery = new MongoQuery(Model).withOwner(owner)
       expect(mongoQuery._query).toMatchObject({ owner })
     })
@@ -53,7 +53,7 @@ describe('MongoQuery', () => {
 
   describe('withTeam', () => {
     test('When called, then it should add team to the query attribute.', () => {
-      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const mongoQuery = new MongoQuery(Model).withTeam(team)
       expect(mongoQuery._query).toMatchObject({ team })
     })
@@ -61,15 +61,15 @@ describe('MongoQuery', () => {
 
   describe('withTeamOrUser', () => {
     test('When called with team specified, then it should add team to the query attribute.', () => {
-      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
-      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
+      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const mongoQuery = new MongoQuery(Model).withTeamOrUser(user, team)
       expect(mongoQuery._query).toMatchObject({ team })
       expect(mongoQuery._query).not.toMatchObject({ user })
     })
 
     test('When called without team specified, then it should add user to the query attribute.', () => {
-      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
       const mongoQuery = new MongoQuery(Model).withTeamOrUser(user, undefined)
       expect(mongoQuery._query).toMatchObject({ user, team: { $exists: false } })
     })
@@ -77,15 +77,15 @@ describe('MongoQuery', () => {
 
   describe('withTeamOrOwner', () => {
     test('When called with team specified, then it should add team to the query attribute.', () => {
-      const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
-      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
+      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const mongoQuery = new MongoQuery(Model).withTeamOrOwner(owner, team)
       expect(mongoQuery._query).toMatchObject({ team })
       expect(mongoQuery._query).not.toMatchObject({ owner })
     })
 
     test('When called without team specified, then it should add user to the query attribute.', () => {
-      const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
+      const owner: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
       const mongoQuery = new MongoQuery(Model).withTeamOrOwner(owner, undefined)
       expect(mongoQuery._query).toMatchObject({ owner, team: { $exists: false } })
     })
@@ -213,8 +213,8 @@ describe('MongoQuery', () => {
 
   describe('compile', () => {
     test('When called, then it should return the compiled query and sort.', () => {
-      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId()).withName('user').build()
-      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId()).withName('team').build()
+      const user: User = new UserBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('user').build()
+      const team: Team = new TeamBuilder().withId(new mongoose.Types.ObjectId().toHexString()).withName('team').build()
       const fields = {
         name: 'test',
         age: 20,

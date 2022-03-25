@@ -7,6 +7,7 @@ import { NotFoundHttpError } from 'errors/http-errors'
 
 import operations from './operations'
 import { Request } from 'openapi-backend'
+import { mapErrorWithContext } from 'api/middlewares/error'
 
 export const loadEndpoints = async (
   app: Koa<App.State, App.Context>,
@@ -39,13 +40,14 @@ export const loadEndpoints = async (
               ...ctx.state,
               error: err
             }
-            throw err
+            await mapErrorWithContext(ctx, err)
           } finally {
             if (endpoint.postMiddlewares.length > 0) {
               await next()
             }
           }
-        }
+        },
+        ...endpoint.postMiddlewares
       ]
     )
   }

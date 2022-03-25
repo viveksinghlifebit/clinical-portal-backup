@@ -13,5 +13,10 @@ declare namespace App {
     errorName?: string
     stack?: string
     query?: string
+    metadata?: {
+      status: import('enums').HttpStatusCodes
+      errorName: string
+      details: string
+    }
   }
 }

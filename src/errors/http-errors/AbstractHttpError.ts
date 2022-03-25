@@ -5,6 +5,11 @@ abstract class AbstractHttpError extends Error implements App.ErrorForm {
   message: string
   errorName?: string
   details?: unknown
+  metadata?: {
+    status: import('enums').HttpStatusCodes
+    errorName: string
+    details: string
+  }
   constructor(message: string, status: number, errorName?: string, details?: unknown) {
     super(message)
     this.status = status

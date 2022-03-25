@@ -1,5 +1,5 @@
 interface Team {
-  _id: Mongoose.ObjectId
+  _id: Mongoose.ObjectId | string
   name: string
   deactivated: boolean
   biobank: {

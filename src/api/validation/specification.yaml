@@ -9,7 +9,7 @@ servers:
     description: REST API TEMPLATE
 
 paths:
-  /health:
+  /clinical-portal/v1/health:
     get:
       summary: Server health status
       operationId: getHealth

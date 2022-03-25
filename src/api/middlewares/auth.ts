@@ -42,11 +42,8 @@ export const auth = (authStrategies: string[]) => async (ctx: Koa.Context, next:
     }
     const user = await getAuthenticatedUser(authStrategies, ctx, next)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;((ctx.request as unknown) as any).logIn(user, { session: false }, async (err: any) => {
-      if (err) throw new UnauthorizedHttpError()
-      ctx.user = user
-      await next()
-    })
+    ctx.user = user
+    await next()
   } catch (error) {
     log.error(error)
     throw error

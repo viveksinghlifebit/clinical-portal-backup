@@ -1,5 +1,5 @@
 import supertest from 'supertest'
-
+import config from 'config'
 import createApp from 'createApp'
 import { loadEndpoints } from 'api/validation'
 
@@ -10,7 +10,7 @@ describe('health', () => {
 
   beforeAll(async () => {
     const app = createApp()
-    await loadEndpoints(app, routes)
+    await loadEndpoints(app, routes, config.apiPrefix)
     server = app.listen()
   })
 
@@ -19,7 +19,7 @@ describe('health', () => {
   })
 
   describe('GET /health', () => {
-    const request = (): supertest.Test => supertest(server).get('/health')
+    const request = (): supertest.Test => supertest(server).get(`${config.apiPrefix}/health`)
 
     test('When request health, then expect to successfully respond 200.', async () => {
       const expectedStatus = 200
@@ -31,7 +31,8 @@ describe('health', () => {
   })
 
   describe('POST /health', () => {
-    const request = (status?: string): supertest.Test => supertest(server).post('/health').send({ status })
+    const request = (status?: string): supertest.Test =>
+      supertest(server).post(`${config.apiPrefix}/health`).send({ status })
 
     test('When submit health, then expect to successfully repond 200 with the given status.', async () => {
       const expectedStatus = 200

@@ -7,7 +7,7 @@ jest.mock('../src/api/middlewares/auth', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   auth: jest.fn(() => async (req: any, next: any) => {
     req.user = { _id: 'someUserId' }
-    next()
+    await next()
   })
 }))
 
