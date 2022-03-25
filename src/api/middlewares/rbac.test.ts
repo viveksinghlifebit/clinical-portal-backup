@@ -1,8 +1,10 @@
 import { RolesRoutes } from 'enums'
 import { UserRole, Role } from '@core/models'
-import { rbacMiddleware, rbac } from './rbac'
+import { rbacMiddleware, rbac, checkWhetherUserIsPermittedForTheAction } from './rbac'
 import mongoose from 'mongoose'
 import { ForbiddenHttpError, UnauthorizedHttpError } from 'errors/http-errors'
+import { RBACAction } from '@core/enums'
+import config from 'config'
 
 const data = {
   userRole: {
@@ -142,11 +144,10 @@ const applyRbac = async (mockContext: Koa.Context, mockNext: jest.Mock, featureF
   await rbacMiddleware(RolesRoutes.Cohort, featureFlag)(mockContext, mockNext)
 }
 
-afterEach(() => {
-  jest.restoreAllMocks()
-})
-
 describe('RBAC middleware', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   test('should call next with error status 403 when the user does not have the appropriate permission', async () => {
     const mockNext = jest.fn()
     const mockReq = req.basic()
@@ -276,5 +277,46 @@ describe('RBAC middleware', () => {
 
     expect(mockNext).toHaveBeenCalledTimes(1)
     expect(mockNext.mock.calls[0][0]).not.toBeDefined()
+  })
+
+  test('should throw forbidden error if userRole is not found', async () => {
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(undefined))
+
+    await expect(
+      applyRbac(
+        {
+          user: {
+            _id: new mongoose.Types.ObjectId()
+          },
+          query: {},
+          request: {
+            method: 'GET'
+          }
+        } as Koa.Context,
+        jest.fn()
+      )
+    ).rejects.toThrowError(new ForbiddenHttpError(`You don’t have the right permissions. Please contact your admin`))
+  })
+  describe('checkWhetherUserIsPermittedForTheAction', () => {
+    test('should return true if hkgiEnvironment is disabled', () => {
+      config.hkgiEnvironmentEnabled = false
+
+      expect(
+        checkWhetherUserIsPermittedForTheAction([] as Role.View[], {} as RolesRoutes, RBACAction.delete)
+      ).toBeTruthy()
+    })
+
+    test('should return true if role is access ', () => {
+      config.hkgiEnvironmentEnabled = true
+      expect(
+        checkWhetherUserIsPermittedForTheAction(
+          data.roles.cohortConflictingAccess(),
+          'cohort' as RolesRoutes,
+          RBACAction.read
+        )
+      ).toBeTruthy()
+
+      config.hkgiEnvironmentEnabled = false
+    })
   })
 })

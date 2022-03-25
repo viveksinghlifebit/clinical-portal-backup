@@ -4,18 +4,13 @@ import config from 'config'
 import { log as logger } from 'services/log'
 import { RolesRoutes } from 'enums'
 import { UserRole, Role } from '@core/models'
+import { RBACAction } from '@core/enums'
 
 const findUserRoles = async (userId: Mongoose.ObjectId, teamId: Mongoose.ObjectId): Promise<Role.View[]> => {
   const userRole = await UserRole.findByUserAndTeamId(userId, teamId)
   return userRole ? Role.findRolesByRoleIds(userRole.roles as string[]) : []
 }
 
-enum RBACAction {
-  delete = 'delete',
-  read = 'read',
-  update = 'update',
-  create = 'create'
-}
 const reqMethodToRbacAction: Record<string, RBACAction> = {
   delete: RBACAction.delete,
   get: RBACAction.read,

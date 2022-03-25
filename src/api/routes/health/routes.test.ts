@@ -18,6 +18,22 @@ describe('health', () => {
     server.close()
   })
 
+  describe('GET /not-found', () => {
+    const frequest = (): supertest.Test => supertest(server).get(`/not-found`)
+
+    test('When request is not-found, then expect to response with 404.', async () => {
+      const expectedStatus = 404
+      const expectedBody = {
+        code: 'NotFound',
+        message: 'The API endpoint does not exist.',
+        statusCode: 404,
+        time: expect.any(String)
+      }
+      const { status, body } = await frequest()
+      expect(status).toEqual(expectedStatus)
+      expect(body).toMatchObject(expectedBody)
+    })
+  })
   describe('GET /health', () => {
     const request = (): supertest.Test => supertest(server).get(`${config.apiPrefix}/health`)
 

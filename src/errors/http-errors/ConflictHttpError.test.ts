@@ -11,4 +11,12 @@ describe('ConflictHttpError', () => {
     expect(conflictHttpError.errorName).toEqual(HttpStatusCodes[HttpStatusCodes.Conflict])
     expect(conflictHttpError.message).toEqual(message)
   })
+
+  test('Should use message as Conflict if message is not used', () => {
+    const conflictHttpError = new ConflictHttpError()
+    expect(conflictHttpError).toBeInstanceOf(ConflictHttpError)
+    expect(conflictHttpError.status).toEqual(HttpStatusCodes.Conflict)
+    expect(conflictHttpError.errorName).toEqual(HttpStatusCodes[HttpStatusCodes.Conflict])
+    expect(conflictHttpError.message).toEqual('Conflict')
+  })
 })

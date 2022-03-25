@@ -22,9 +22,6 @@ export const ifTeamSpecifiedDo = (middlewares: Middleware[] | Middleware[][]) =>
   ctx: Koa.Context,
   next: Koa.Next
 ): Promise<void> => {
-  if (middlewares.length === 0) {
-    throw Error('middleware has to be non-empty array.')
-  }
   if (!getTeamIdFromRequest(ctx)) {
     await next()
   } else {

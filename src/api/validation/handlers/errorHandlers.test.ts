@@ -50,6 +50,26 @@ describe('generateErrorHandler', () => {
     )
   })
 
+  test('If status message is not received, check that the resulting error container is correct.', () => {
+    mockContext.validation = {
+      valid: true,
+      errors: null
+    }
+    mockErrorHandler(mockContext, {
+      ...mockCtx,
+      res: {
+        statusCode: HttpStatusCodes.OK
+      }
+    })
+    expect(mockCtx.status).toEqual(400)
+    expect(mockCtx.body).toMatchObject({
+      statusCode: 400,
+      code: mockErrorName,
+      message: 'validation failed for operation mockOperation with error []',
+      time: expect.any(String)
+    })
+  })
+
   test('If validation passed, check that the resulting error container is correct.', () => {
     mockContext.validation = {
       valid: true,

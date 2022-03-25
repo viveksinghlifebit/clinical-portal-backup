@@ -1,7 +1,7 @@
 import { HttpStatusCodes } from 'enums'
 import { BadRequestHttpError } from 'errors/http-errors'
 
-import { error } from './error'
+import { error, mapErrorWithContext } from './error'
 
 describe('error', () => {
   let ctx: Koa.Context
@@ -36,6 +36,26 @@ describe('error', () => {
       message: 'Bad Request.',
       details: undefined,
       time: expect.any(String)
+    })
+  })
+
+  describe('mapErrorWithContext', () => {
+    test('When called should return ctx status and body populated', () => {
+      const error = new BadRequestHttpError()
+      error.metadata = {
+        details: 'details',
+        errorName: 'errorName',
+        status: 400
+      }
+      mapErrorWithContext(ctx, error)
+      expect(ctx.status).toEqual(HttpStatusCodes.BadRequest)
+      expect(ctx.body).toEqual({
+        statusCode: HttpStatusCodes.BadRequest,
+        code: error.metadata.errorName,
+        message: 'Bad Request.',
+        details: error.metadata.details,
+        time: expect.any(String)
+      })
     })
   })
 })

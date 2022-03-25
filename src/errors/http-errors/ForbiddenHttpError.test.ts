@@ -11,4 +11,12 @@ describe('ForbiddenHttpError', () => {
     expect(forbiddenHttpError.errorName).toEqual(HttpStatusCodes[HttpStatusCodes.Forbidden])
     expect(forbiddenHttpError.message).toEqual(message)
   })
+
+  test('Should correctly create an instance of ForbiddenHttpError with message as Forbidden if not passed', () => {
+    const forbiddenHttpError = new ForbiddenHttpError()
+    expect(forbiddenHttpError).toBeInstanceOf(ForbiddenHttpError)
+    expect(forbiddenHttpError.status).toEqual(HttpStatusCodes.Forbidden)
+    expect(forbiddenHttpError.errorName).toEqual(HttpStatusCodes[HttpStatusCodes.Forbidden])
+    expect(forbiddenHttpError.message).toEqual('Forbidden.')
+  })
 })

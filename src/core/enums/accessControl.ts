@@ -126,3 +126,10 @@ export enum RolesRoutes {
   PatientWithdrawalRequest = 'PatientWithdrawalRequest',
   ViewWithdrawalPatient = 'viewWithdrawalPatient'
 }
+
+export enum RBACAction {
+  delete = 'delete',
+  read = 'read',
+  update = 'update',
+  create = 'create'
+}
