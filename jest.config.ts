@@ -10,6 +10,7 @@ export default {
     '/node_modules/',
     '/src/services/mongoose/',
     '/src/api/middlewares/auth.ts',
+    '/src/api/middlewares/team.ts',
     '/src/api/routes/index.ts',
     '/src/index.ts',
     '/src/testUtils/'
