@@ -12,7 +12,6 @@ jest.mock('../src/api/middlewares/auth', () => ({
 }))
 
 const setupRequiredProcessEnv = (): void => {
-  process.env.MASTER_KEY = 'test'
   process.env.JWT_SECRET = 'test'
 }
 

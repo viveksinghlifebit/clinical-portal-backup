@@ -19,8 +19,6 @@ describe('app', () => {
   afterAll(jest.restoreAllMocks)
 
   test('When successfully loaded, then it should call the appropriate methods.', async () => {
-    process.env.MASTER_KEY = 'test'
-    process.env.MASTER_KEY = 'JWT_SECRET'
     await require('./app')
     expect(mockCreateApp).toHaveBeenCalledTimes(1)
     expect(mockLoadEndpoints).toHaveBeenCalledTimes(1)
