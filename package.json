@@ -11,6 +11,7 @@
   "scripts": {
     "compile": "tsc && npm run postCompile",
     "postCompile": "cp ./src/api/validation/specification.yaml ./dist/api/validation/",
+    "start:server": "npm run compile && npm run prod",
     "prod": "NODE_PATH=./dist node ./dist/index.js",
     "start:dev": "npm run compile && node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/index.js",
     "start": "nodemon --watch 'src/**' --ignore 'src/**/*.spec.ts' --ignore 'src/**/*.test.ts' --exec 'ts-node' --files -r tsconfig-paths/register src/index.ts",
