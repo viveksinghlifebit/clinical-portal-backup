@@ -7,7 +7,7 @@ import { RoleService, UserRoleService } from 'core/modules'
 import { TeamRepository } from 'core/repos'
 import createApp from 'createApp'
 import { HttpStatusCodes } from 'enums'
-import { accessControlRoutes } from './accessControl.index'
+import { accessControlRoutes } from './routes'
 
 describe('Access control', () => {
   let server: Http.Server

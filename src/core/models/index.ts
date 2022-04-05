@@ -2,7 +2,7 @@ import * as auditTrail from './AuditTrail'
 import * as role from './Role'
 import * as userRole from './UserRole'
 import * as invitationUserRole from './InvitationUserRole'
-
+import * as workgroup from './Workgroup'
 export const init = (connections: Mongoose.Connections): void => {
   auditTrail.init(connections.clinicalPortalConnection)
 
@@ -12,9 +12,8 @@ export const init = (connections: Mongoose.Connections): void => {
   role.init(connections.clinicalPortalConnection)
   userRole.init(connections.clinicalPortalConnection)
   invitationUserRole.init(connections.clinicalPortalConnection)
-  /**
-   * Role based access control models
-   */
+
+  workgroup.init(connections.clinicalPortalConnection)
 }
 
 export { AuditTrail } from './AuditTrail'
