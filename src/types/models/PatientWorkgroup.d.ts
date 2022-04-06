@@ -2,7 +2,7 @@ declare namespace PatientWorkgroup {
   interface Attributes {
     _id: Mongoose.ObjectId
     markers: Array<CorePatient.PatientMarker>
-    comparisonFilters: Array<CorePatient.FilterId | unknown>
+    comparisonFilters: Array<Filter.FilterId | unknown>
     workgroup: string | Workgroup.Attributes
     description: string
     markersDefinition: Array<GenoMarker.Attributes>
@@ -24,6 +24,11 @@ declare namespace PatientWorkgroup {
     countByWorkgroupAndPatient(workgroupId: Mongoose.ObjectId, patient: Mongoose.ObjectId): Promise<number>
 
     countByWorkgroup(workgroupId: Mongoose.ObjectId): Promise<number>
+
+    getRefererredPatientsCountWithWorkGroup(
+      workgroupIds: string[],
+      user: User
+    ): Promise<{ workgroup: string; patients: number }[]>
   }
 
   interface View {

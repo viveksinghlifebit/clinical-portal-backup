@@ -4,8 +4,8 @@ declare namespace Workgroup {
     numberOfPatients: number
     team: Mongoose.ObjectId
     owner: Mongoose.ObjectId | User
-    createdAt: Date
-    updatedAt: Date
+    createdAt?: Date
+    updatedAt?: Date
   }
 
   interface Document extends Attributes, Mongoose.Document {
@@ -33,5 +33,9 @@ declare namespace Workgroup {
     numberOfPatients: number
     team: string
     owner: string | User
+  }
+
+  interface SearchData extends App.PaginationInfoResponse {
+    workgroups: Workgroup.View[]
   }
 }

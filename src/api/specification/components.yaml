@@ -217,3 +217,36 @@ schemas:
         items:
           type: string
         minItems: 1
+  WorkgroupCreateInput:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+  Workgroup:
+    type: object
+    properties:
+      _id:
+        $ref: '#/schemas/IdType'
+      name:
+        type: string
+      team:
+        $ref: '#/schemas/IdType'
+      owner:
+        $ref: '#/schemas/IdType'
+      numberOfPatients:
+        type: number
+    required:
+      - _id
+      - name
+      - team
+      - owner
+      - numberOfPatients
+  IdType:
+    oneOf:
+      - type: string
+      - $ref: '#/schemas/UUID'
+  UUID:
+    type: object
+    format: uuid

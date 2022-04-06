@@ -9,26 +9,26 @@ post:
     content:
       application/json:
         schema:
-          $ref: './components.yaml#/schemas/RBACRoles'
+          $ref: '../components.yaml#/schemas/RBACRoles'
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: './components.yaml#/schemas/RBACRoles'
+            $ref: '../components.yaml#/schemas/RBACRoles'
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
 get:
   summary: Get roles list for RBACPermissions
   operationId: getRolesList
   tags:
     - accessControl
   parameters:
-    - $ref: './components.yaml#/parameters/pageNumber'
-    - $ref: './components.yaml#/parameters/pageSize'
+    - $ref: '../components.yaml#/parameters/pageNumber'
+    - $ref: '../components.yaml#/parameters/pageSize'
   responses:
     '200':
       description: OK
@@ -36,17 +36,17 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: './components.yaml#/schemas/Pagination'
+              - $ref: '../components.yaml#/schemas/Pagination'
               - type: object
                 properties:
                   data:
                     type: array
                     items:
-                      $ref: './components.yaml#/schemas/RBACRoles'
+                      $ref: '../components.yaml#/schemas/RBACRoles'
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
 put:
   summary: Update existing roles for RBACPermissions
   operationId: updateRole
@@ -58,18 +58,18 @@ put:
     content:
       application/json:
         schema:
-          $ref: './components.yaml#/schemas/RBACRoles'
+          $ref: '../components.yaml#/schemas/RBACRoles'
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: './components.yaml#/schemas/RBACRoles'
+            $ref: '../components.yaml#/schemas/RBACRoles'
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
 delete:
   summary: Delete existing role for RBACPermissions
   operationId: deleteRole
@@ -96,6 +96,6 @@ delete:
           schema:
             type: object
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'

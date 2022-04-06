@@ -9,12 +9,14 @@ servers:
     description: REST API TEMPLATE
 paths:
   /clinical-portal/v1/access-control/user-roles:
-    $ref: './userRoles.yaml'
+    $ref: './access-control/userRoles.yaml'
   /clinical-portal/v1/access-control/roles/me:
-    $ref: './me.yaml'
+    $ref: './access-control/me.yaml'
   /clinical-portal/v1/access-control/invited-role:
-    $ref: './invitedRole.yaml'
+    $ref: './access-control/invitedRole.yaml'
   /clinical-portal/v1/access-control/roles:
-    $ref: './roles.yaml'
+    $ref: './access-control/roles.yaml'
   /clinical-portal/v1/health:
     $ref: './health.yaml'
+  /cohort-browser/v2/individual-browser/workgroup:
+    $ref: './individual-browser/workgroup.yaml'

@@ -1,8 +1,4 @@
 declare namespace CorePatient {
-  type PredefinedFilterId = number
-  type UserDefinedFilterId = string
-  type FilterId = PredefinedFilterId | UserDefinedFilterId
-
   class TierData {
     tier1: number
     tier2: number
@@ -57,7 +53,7 @@ declare namespace CorePatient {
   }
 
   interface PatientWorkgroupField {
-    filterId: FilterId
+    filterId: Filter.FilterId
     instance: Array<string>
     array: Array<string>
     userAdded: boolean

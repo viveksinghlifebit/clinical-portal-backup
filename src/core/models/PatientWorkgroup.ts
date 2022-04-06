@@ -1,3 +1,4 @@
+import { ClinicalRole } from '@core/enums'
 import { PatientWorkgroupSchema } from '@schemas'
 
 const patientModelName = 'PatientWorkgroup'
@@ -13,9 +14,81 @@ async function countByWorkgroup(workgroupId: PatientWorkgroup.Attributes['workgr
   return PatientWorkgroup.count({ workgroup: workgroupId })
 }
 
+/**
+ * Returns grouped patients with workgroupId
+ * @param workgroupIds string[]
+ * @param user User
+ * @returns
+ */
+async function getRefererredPatientsCountWithWorkGroup(
+  workgroupIds: string[],
+  user: User
+): Promise<{ workgroup: string; patients: number }[]> {
+  const roles = []
+  if (user.rbacRoles?.some(({ name }) => name === ClinicalRole.FieldSpecialist)) {
+    roles.push(ClinicalRole.FieldSpecialist)
+  }
+  if (user.rbacRoles?.some(({ name }) => name === ClinicalRole.ReferringClinician)) {
+    roles.push(ClinicalRole.ReferringClinician)
+  }
+  return PatientWorkgroup.aggregate([
+    {
+      $match: {
+        workgroup: { $in: workgroupIds }
+      }
+    },
+    {
+      $lookup: {
+        from: 'patients',
+        let: {
+          patientId: '$patient'
+        },
+        pipeline: [
+          {
+            $match: {
+              $and: [
+                {
+                  referringUsers: {
+                    $elemMatch: {
+                      name: String(user._id),
+                      type: {
+                        $in: roles
+                      }
+                    }
+                  }
+                },
+                {
+                  $expr: {
+                    $eq: ['$_id', '$$patientId']
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        as: 'patients'
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        workgroup: 1,
+        patients: { $size: '$patients' }
+      }
+    },
+    {
+      $group: {
+        _id: '$workgroup',
+        patients: { $sum: '$patients' }
+      }
+    }
+  ])
+}
+
 PatientWorkgroupSchema.statics = {
   countByWorkgroupAndPatient,
-  countByWorkgroup
+  countByWorkgroup,
+  getRefererredPatientsCountWithWorkGroup
 }
 
 function view(this: PatientWorkgroup.Document): PatientWorkgroup.View {

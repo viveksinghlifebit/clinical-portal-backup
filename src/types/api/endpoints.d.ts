@@ -38,4 +38,16 @@ declare namespace App {
     totalPages: number
     data: T[]
   }
+
+  interface SearchPagingSpecs {
+    pageNumber?: number
+    pageSize?: number
+    sortBy?: string
+    sortByType?: string
+  }
+  interface PaginationInfoResponse {
+    total: number
+    page: number
+    pages: number
+  }
 }

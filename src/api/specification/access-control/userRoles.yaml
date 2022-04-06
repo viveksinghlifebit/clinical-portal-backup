@@ -4,9 +4,9 @@ get:
   tags:
     - accessControl
   parameters:
-    - $ref: './components.yaml#/parameters/requiredTeamID'
-    - $ref: './components.yaml#/parameters/pageNumber'
-    - $ref: './components.yaml#/parameters/pageSize'
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../components.yaml#/parameters/pageNumber'
+    - $ref: '../components.yaml#/parameters/pageSize'
   responses:
     '200':
       description: OK
@@ -14,31 +14,31 @@ get:
         application/json:
           schema:
             allOf:
-              - $ref: './components.yaml#/schemas/Pagination'
+              - $ref: '../components.yaml#/schemas/Pagination'
               - type: object
                 properties:
                   data:
                     type: array
                     items:
-                      $ref: './components.yaml#/schemas/UserRoles'
+                      $ref: '../components.yaml#/schemas/UserRoles'
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
 delete:
   summary: Create users with roles associated within a team
   operationId: deleteUserRoles
   tags:
     - accessControl
   parameters:
-    - $ref: './components.yaml#/parameters/requiredTeamID'
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
   requestBody:
     description: Request body for adding role to the user
     required: true
     content:
       application/json:
         schema:
-          $ref: './components.yaml#/schemas/UserRolesOptionalInput'
+          $ref: '../components.yaml#/schemas/UserRolesOptionalInput'
   responses:
     '200':
       description: OK
@@ -47,56 +47,56 @@ delete:
           schema:
             type: object
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
 post:
   summary: Create users with roles associated within a team
   operationId: createUserRole
   tags:
     - accessControl
   parameters:
-    - $ref: './components.yaml#/parameters/requiredTeamID'
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
   requestBody:
     description: Request body for adding role to the user
     required: true
     content:
       application/json:
         schema:
-          $ref: './components.yaml#/schemas/UserRolesOptionalInput'
+          $ref: '../components.yaml#/schemas/UserRolesOptionalInput'
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: './components.yaml#/schemas/UserRoles'
+            $ref: '../components.yaml#/schemas/UserRoles'
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
 put:
   summary: Update user roles associated within the team
   operationId: updateUserRoles
   tags:
     - accessControl
   parameters:
-    - $ref: './components.yaml#/parameters/requiredTeamID'
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
   requestBody:
     description: Request body for adding role to the user
     required: true
     content:
       application/json:
         schema:
-          $ref: './components.yaml#/schemas/UserRolesInput'
+          $ref: '../components.yaml#/schemas/UserRolesInput'
   responses:
     '200':
       description: OK
       content:
         application/json:
           schema:
-            $ref: './components.yaml#/schemas/UserRoles'
+            $ref: '../components.yaml#/schemas/UserRoles'
     '400':
-      $ref: './components.yaml#/responses/BadRequest'
+      $ref: '../components.yaml#/responses/BadRequest'
     '500':
-      $ref: './components.yaml#/responses/InternalServerError'
+      $ref: '../components.yaml#/responses/InternalServerError'
