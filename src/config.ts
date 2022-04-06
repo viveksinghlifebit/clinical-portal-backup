@@ -37,7 +37,12 @@ const config: App.Config = {
     }
   },
   hkgiEnvironmentEnabled: castEnvToBoolOrUseDefault('HKGI_ENVIRONMENT_ENABLED', false),
-  adminTeamId: process.env.ADMIN_TEAM_ID ?? '5f7c8696d6ea46288645a89f'
+  adminTeamId: process.env.ADMIN_TEAM_ID ?? '5f7c8696d6ea46288645a89f',
+  mongooseFieldsEncryption: {
+    enabled: process.env.MONGOOSE_FIELD_ENCRYPTION_ENABLED === 'true',
+    salt: process.env.MONGOOSE_FIELD_ENCRYPTION_SALT || '', // must be a hex value of a random 16 byte buffer
+    secret: process.env.MONGOOSE_FIELD_ENCRYPTION_SECRET || '' // must be a hex value of a random 32 byte buffer
+  }
 }
 
 export default config

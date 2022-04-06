@@ -11,12 +11,6 @@ jest.mock('../src/api/middlewares/auth', () => ({
   })
 }))
 
-const setupRequiredProcessEnv = (): void => {
-  process.env.JWT_SECRET = 'test'
-}
-
-setupRequiredProcessEnv()
-
 let mongoServer: MongoMemoryServer
 let mongoORM: Mongoose
 

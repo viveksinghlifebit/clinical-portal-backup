@@ -13,5 +13,12 @@ declare namespace App {
     mongoMulti: Mongoose.Multi
     hkgiEnvironmentEnabled: boolean
     adminTeamId: string
+    mongooseFieldsEncryption: MongooseEncryption
+  }
+
+  type MongooseEncryption = {
+    enabled: boolean
+    salt: string
+    secret: string
   }
 }

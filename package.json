@@ -32,6 +32,7 @@
     "lodash": "^4.17.21",
     "module-alias": "^2.2.2",
     "mongoose": "^6.2.6",
+    "mongoose-field-encryption": "^5.0.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.4",
     "openapi-backend": "^3.9.2",

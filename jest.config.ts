@@ -3,6 +3,12 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 
+const setupRequiredProcessEnv = (): void => {
+  process.env.JWT_SECRET = 'test'
+}
+
+setupRequiredProcessEnv()
+
 export default {
   collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!<rootDir>/src/**/*.{test,d}.ts', '!<rootDir>/src/**/testSetup.ts'],

@@ -31,3 +31,8 @@ export enum PatientPedigreeFormat {
   Json = 'json',
   Tsv = 'tsv'
 }
+
+export enum PatientReferringUserType {
+  ReferringClinician = 'ReferringClinician',
+  FieldSpecialist = 'FieldSpecialist'
+}

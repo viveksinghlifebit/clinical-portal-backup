@@ -11,3 +11,5 @@ export const init = async (mongoMulti: Mongoose.Multi): Promise<void> => {
     usersConnection: connections.usersConnection
   })
 }
+
+export * from './encryption'

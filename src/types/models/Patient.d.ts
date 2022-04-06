@@ -48,6 +48,7 @@ declare namespace Patient {
     countByWorkgroupAndEid(workgroupId: string, eid: string): Promise<number>
     // TODO: remove once migrate to cohort v2
     countByWorkgroup(workgroupId: string): Promise<number>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateById(patientId: string, updateData: { [key: string]: any }): Promise<Document>
     getSearchableEncryptedFields?: () => string[]
   }
@@ -63,13 +64,13 @@ declare namespace Patient {
     surname: Attributes['surname']
     chineseName: Attributes['chineseName']
     chineseSurname: Attributes['chineseSurname']
-    dateOfBirth: string
+    dateOfBirth: string | undefined
     email: Attributes['email']
     phoneNumber: Attributes['phoneNumber']
     addresses: Attributes['addresses']
-    familyId: string
+    familyId: string | undefined
     owner: string | User
-    team: string | Team
+    team: string | Team | undefined
     consentForms?: ConsentFormView[]
     samples?: PatientSample.View[]
     sequencingLibrary?: PatientSampleSequencingLibrary.View[]
@@ -165,6 +166,7 @@ declare namespace Patient {
     id: string
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type PedigreeDataEditable = Record<string, any> & {
     name: string
     display_name: string
