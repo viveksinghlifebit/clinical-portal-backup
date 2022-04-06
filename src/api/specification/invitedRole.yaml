@@ -1,0 +1,24 @@
+post:
+  summary: Create invited user with provided role
+  operationId: inviteUserRole
+  tags:
+    - accessControl
+  parameters:
+    - $ref: './components.yaml#/parameters/requiredTeamID'
+  requestBody:
+    description: Request body for adding role to the user
+    required: true
+    content:
+      application/json:
+        schema:
+          type: array
+          minItems: 1
+          items:
+            $ref: './components.yaml#/schemas/InviteUserRolesInput'
+  responses:
+    '201':
+      description: OK
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'

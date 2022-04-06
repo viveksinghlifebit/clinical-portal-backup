@@ -5,7 +5,7 @@ RUN apk add --no-cache \
         g++ \
         make \
         python3 \
-        py-pip
+        py-pip \
 # Create app directory
 
 RUN pip3 install awscli

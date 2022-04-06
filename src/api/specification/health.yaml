@@ -1,0 +1,48 @@
+get:
+  summary: Server health status
+  operationId: getHealth
+  tags:
+    - health
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+            required:
+              - status
+post:
+  summary: Set server health status
+  operationId: postHealth
+  tags:
+    - health
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: ['ok', 'down']
+          required:
+            - status
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'

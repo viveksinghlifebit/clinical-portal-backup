@@ -1,0 +1,20 @@
+openapi: 3.0.3
+
+info:
+  title: REST API TEMPLATE
+  version: 1.0.0
+  description: Lifebit platform REST API template
+servers:
+  - url: http://localhost:3000
+    description: REST API TEMPLATE
+paths:
+  /clinical-portal/v1/access-control/user-roles:
+    $ref: './userRoles.yaml'
+  /clinical-portal/v1/access-control/roles/me:
+    $ref: './me.yaml'
+  /clinical-portal/v1/access-control/invited-role:
+    $ref: './invitedRole.yaml'
+  /clinical-portal/v1/access-control/roles:
+    $ref: './roles.yaml'
+  /clinical-portal/v1/health:
+    $ref: './health.yaml'

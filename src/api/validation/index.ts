@@ -21,7 +21,7 @@ export const loadEndpoints = async (
     ...operations
   }
 
-  const openApi = createOpenApiBackend(handlers, _getApiSpecification('./specification.yaml'))
+  const openApi = createOpenApiBackend(handlers, _getApiSpecification('../specification/openapi.yaml'))
 
   await openApi.init()
 

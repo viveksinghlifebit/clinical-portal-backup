@@ -1,0 +1,36 @@
+get:
+  summary: Get user roles with permissions
+  operationId: getMyUserRoles
+  tags:
+    - accessControl
+  parameters:
+    - $ref: './components.yaml#/parameters/requiredTeamID'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './components.yaml#/schemas/MyUserRoles'
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'
+post:
+  summary: Create user roles with a default permission
+  operationId: createBaseUserRole
+  tags:
+    - accessControl
+  parameters:
+    - $ref: './components.yaml#/parameters/requiredTeamID'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './components.yaml#/schemas/MyUserRoles'
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'

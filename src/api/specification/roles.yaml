@@ -1,0 +1,101 @@
+post:
+  summary: Create new roles for RBACPermissions
+  operationId: createRole
+  tags:
+    - accessControl
+  requestBody:
+    description: Request body for adding role
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/schemas/RBACRoles'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './components.yaml#/schemas/RBACRoles'
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'
+get:
+  summary: Get roles list for RBACPermissions
+  operationId: getRolesList
+  tags:
+    - accessControl
+  parameters:
+    - $ref: './components.yaml#/parameters/pageNumber'
+    - $ref: './components.yaml#/parameters/pageSize'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: './components.yaml#/schemas/Pagination'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: './components.yaml#/schemas/RBACRoles'
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'
+put:
+  summary: Update existing roles for RBACPermissions
+  operationId: updateRole
+  tags:
+    - accessControl
+  requestBody:
+    description: Request body for updating role
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: './components.yaml#/schemas/RBACRoles'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: './components.yaml#/schemas/RBACRoles'
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'
+delete:
+  summary: Delete existing role for RBACPermissions
+  operationId: deleteRole
+  tags:
+    - accessControl
+  requestBody:
+    description: Request body for deleting role
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required:
+            - name
+          properties:
+            name:
+              type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      $ref: './components.yaml#/responses/BadRequest'
+    '500':
+      $ref: './components.yaml#/responses/InternalServerError'
