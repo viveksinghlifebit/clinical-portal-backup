@@ -58,8 +58,7 @@ export class WorkgroupService {
     const page = pageNumber ?? 0
     const sort = sortBy && sortByType ? { [sortBy]: sortByType } : { createdAt: -1 }
     const criteria = await constructWorkgroupsSearchCriteria(searchCriteria, teamId)
-
-    const allWorkgroups = await Workgroup.findWorkgroups(criteria, { perPage, page }, sort ? { sorting: sort } : {})
+    const allWorkgroups = await Workgroup.findWorkgroups(criteria, { perPage, page }, { sorting: sort })
     let workgroups = allWorkgroups.map((workgroup) => workgroup.view())
     const count = await Workgroup.countWorkgroups(criteria)
     let numberOfPages = 0

@@ -88,7 +88,9 @@ describe('PatientWorkgroup', () => {
         }
       ])
     })
-    test('s', async () => {
+
+    afterEach(jest.restoreAllMocks)
+    test('should call the aggregation with valid parameters', async () => {
       const user = new UserBuilder()
         .withName('User')
         .withId(new Types.ObjectId().toHexString())

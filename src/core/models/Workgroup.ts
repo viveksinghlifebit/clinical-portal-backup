@@ -47,7 +47,6 @@ async function findWorkgroups(
     .limit(perPage)
     .skip(perPage * page)
     .sort(sorting)
-    .lean()
 }
 
 /**

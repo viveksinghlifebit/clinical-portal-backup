@@ -74,9 +74,7 @@ describe('Workgroup', () => {
       mockFind.mockReturnValue({
         limit: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
-            sort: jest.fn().mockReturnValue({
-              lean: jest.fn().mockResolvedValue([getWorkgroup()])
-            })
+            sort: jest.fn().mockReturnValue([getWorkgroup()])
           })
         })
       })
