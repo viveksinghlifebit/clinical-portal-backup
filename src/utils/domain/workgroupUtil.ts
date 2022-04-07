@@ -43,7 +43,7 @@ export const constructWorkgroupsSearchCriteria = async (
   teamId: string
 ): Promise<Mongoose.QueryConditions> => {
   const baseCriteria: Mongoose.QueryConditions = { team: teamId }
-  if (!searchCriteria) {
+  if (searchCriteria.length === 0) {
     return baseCriteria
   }
   const results = await Promise.all(searchCriteria.map(getSearchCriteria))

@@ -16,9 +16,19 @@ describe('Workgroup Utils: Testing constructWorkgroupsSearchCriteria()', () => {
       columnHeader: 'owner',
       value: 'cb-test'
     },
+
     {
       columnHeader: 'createdAt',
       low: '2020-11-01',
+      high: '2021-03-31'
+    },
+    {
+      columnHeader: 'test',
+      high: '2021-03-31',
+      value: 'test'
+    },
+    {
+      columnHeader: 'test-1',
       high: '2021-03-31'
     }
   ]
@@ -45,8 +55,22 @@ describe('Workgroup Utils: Testing constructWorkgroupsSearchCriteria()', () => {
       createdAt: {
         $gte: '2020-11-01',
         $lte: '2021-03-31'
+      },
+      test: {
+        $in: /test/i
+      },
+      'test-1': {
+        $lte: '2021-03-31'
       }
     })
     expect(mockedFindUsersFn).toHaveBeenCalledWith('cb-test')
+  })
+
+  test('Should return base criteria if no search criteria is passed', async () => {
+    const criteria = await constructWorkgroupsSearchCriteria([], team._id as string)
+
+    expect(criteria).toStrictEqual({
+      team: team._id
+    })
   })
 })
