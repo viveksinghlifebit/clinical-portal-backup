@@ -1,4 +1,6 @@
+import { ClinicalRole } from '@core/enums'
 import { Types } from 'mongoose'
+import { UserBuilder } from 'testUtils'
 import { PatientWorkgroup } from './PatientWorkgroup'
 describe('PatientWorkgroup', () => {
   const getWorkgroup = (): PatientWorkgroup.Attributes => ({
@@ -73,6 +75,46 @@ describe('PatientWorkgroup', () => {
     test('When called, then it it should return count.', async () => {
       const result = await PatientWorkgroup.countByWorkgroup(new Types.ObjectId())
       expect(result).toBe(10)
+    })
+  })
+
+  describe('getRefererredPatientsCountWithWorkGroup', () => {
+    let aggregateSpy: jest.SpyInstance
+    beforeEach(() => {
+      aggregateSpy = jest.spyOn(PatientWorkgroup, 'aggregate').mockResolvedValue([
+        {
+          workgroup: 'test',
+          patients: 2
+        }
+      ])
+    })
+    test('s', async () => {
+      const user = new UserBuilder()
+        .withName('User')
+        .withId(new Types.ObjectId().toHexString())
+        .withRbacRoles(ClinicalRole.FieldSpecialist)
+        .withRbacRoles(ClinicalRole.ReferringClinician)
+        .build()
+      const result = await PatientWorkgroup.getRefererredPatientsCountWithWorkGroup(['test'], user)
+      expect(result).toEqual([{ patients: 2, workgroup: 'test' }])
+      expect(aggregateSpy).toHaveBeenCalled()
+      expect(aggregateSpy).toHaveBeenCalledWith([
+        { $match: { workgroup: { $in: ['test'] } } },
+        {
+          $lookup: {
+            as: 'patients',
+            from: 'patients',
+            let: { patientId: '$patient' },
+            pipeline: [
+              {
+                $match: expect.any(Object)
+              }
+            ]
+          }
+        },
+        { $project: { _id: 0, patients: { $size: '$patients' }, workgroup: 1 } },
+        { $group: { _id: '$workgroup', patients: { $sum: '$patients' } } }
+      ])
     })
   })
 })
