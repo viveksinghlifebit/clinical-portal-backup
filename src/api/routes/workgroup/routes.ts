@@ -14,7 +14,7 @@ const createWorkgroupHandler: App.EndpointOperation = async (
   c.body = workgroup
 }
 
-export const routes: App.EndpointsInfo = {
+export const workgroupRoutes: App.EndpointsInfo = {
   createWorkgroup: {
     method: HttpMethods.Post,
     path: '/individual-browser/workgroup',

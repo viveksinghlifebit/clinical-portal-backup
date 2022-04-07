@@ -18,5 +18,5 @@ paths:
     $ref: './access-control/roles.yaml'
   /clinical-portal/v1/health:
     $ref: './health.yaml'
-  /cohort-browser/v2/individual-browser/workgroup:
+  /clinical-portal/v1/individual-browser/workgroup:
     $ref: './individual-browser/workgroup.yaml'
