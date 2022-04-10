@@ -1,0 +1,32 @@
+post:
+  operationId: searchWorkgroups
+  description: Searches workgroups
+  parameters:
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../components.yaml#/parameters/pageSize'
+    - $ref: '../components.yaml#/parameters/pageNumber'
+    - name: sortBy
+      in: query
+      description: Field to sort by
+      required: false
+      schema:
+        type: string
+    - name: sortType
+      in: query
+      description: Type to sort by
+      required: false
+      schema:
+        type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components.yaml#/schemas/WorkgroupsSearchCriteria'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object

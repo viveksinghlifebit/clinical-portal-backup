@@ -23,15 +23,14 @@ describe('Workgroup', () => {
     await mongoose.disconnect()
     await server.close()
   })
+  beforeEach(() => {
+    jest.spyOn(TeamRepository, 'findById').mockResolvedValue(team)
+  })
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
 
   describe('POST /individual-browser/workgroup', () => {
-    beforeEach(() => {
-      jest.spyOn(TeamRepository, 'findById').mockResolvedValue(team)
-    })
-    afterEach(() => {
-      jest.restoreAllMocks()
-    })
-
     test('should create workgroup', async () => {
       const { status, body } = await supertestRequest(server)
         .post(`${config.apiPrefix}/individual-browser/workgroup`)
@@ -56,14 +55,7 @@ describe('Workgroup', () => {
   })
 
   describe('DELETE /individual-browser/workgroup/:id', () => {
-    beforeEach(() => {
-      jest.spyOn(TeamRepository, 'findById').mockResolvedValue(team)
-    })
-    afterEach(() => {
-      jest.restoreAllMocks()
-    })
-
-    test('should create workgroup', async () => {
+    test('should delete the workgroup', async () => {
       const createdWorkgroup = await Workgroup.create({
         name: 'test',
         numberOfPatients: 2,
@@ -76,8 +68,46 @@ describe('Workgroup', () => {
         .query({
           teamId: team._id
         })
-
+      const dbResult = await Workgroup.findById(createdWorkgroup._id)
+      expect(dbResult).toBeNull()
       expect(body).toEqual({})
+      expect(status).toBe(HttpStatusCodes.OK)
+    })
+  })
+
+  describe('POST /individual-browser/workgroup/search', () => {
+    test('should search the workgroup', async () => {
+      const workgroupToSearch = await Workgroup.create({
+        name: 'test',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: user._id
+      })
+
+      await Workgroup.create({
+        name: 'should-not-come',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: user._id
+      })
+
+      const { status, body } = await supertestRequest(server)
+        .post(`${config.apiPrefix}/individual-browser/workgroup/search?pageNumber=0&pageSize=10`)
+        .query({
+          teamId: team._id
+        })
+        .send({ criteria: [{ columnHeader: 'name', value: 'test' }] })
+      expect(body).toEqual({
+        page: 0,
+        pages: 1,
+        total: 1,
+        workgroups: [
+          {
+            ...workgroupToSearch.view(),
+            owner: null
+          }
+        ]
+      })
       expect(status).toBe(HttpStatusCodes.OK)
     })
   })

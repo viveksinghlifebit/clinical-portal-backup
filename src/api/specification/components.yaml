@@ -257,3 +257,56 @@ schemas:
   UUID:
     type: object
     format: uuid
+  WorkgroupsSearchCriteria:
+    type: object
+    properties:
+      criteria:
+        type: array
+        items:
+          type: object
+          properties:
+            column:
+              $ref: '#/schemas/FilterColumnType'
+            columnHeader:
+              type: string
+            value:
+              type: string
+            values:
+              type: array
+              items:
+                type: string
+            contains:
+              type: array
+              items:
+                type: string
+            high:
+              oneOf:
+                - type: number
+                - type: string
+            low:
+              oneOf:
+                - type: number
+                - type: string
+  FilterColumnType:
+    type: object
+    properties:
+      id:
+        $ref: '#/schemas/FilterId'
+      instance:
+        type: string
+      array:
+        $ref: '#/schemas/ArrayType'
+      value:
+        oneOf:
+          - type: string
+          - type: integer
+  FilterId:
+    oneOf:
+      - type: string
+      - type: integer
+  ArrayType:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: ['exact', 'min', 'max', 'avg', 'all']

@@ -4,6 +4,10 @@ import { ifTeamSpecifiedDo, rbac, auth, getTeamAndTeamMembershipAndCheckTheyAreA
 import { HttpMethods, HttpStatusCodes } from 'enums'
 import { auditTrail } from 'services/auditTrail'
 
+interface SearchRequestBody {
+  criteria: Filter.SearchItem[]
+}
+
 const createWorkgroupHandler: App.EndpointOperation = async (
   c: Koa.ParameterizedContext<App.State, App.Context>,
   { team, user }: App.AuthenticatedCloudOs
@@ -21,6 +25,24 @@ const deleteWorkgroupHandler: App.EndpointOperation = async (c: Koa.Parameterize
   await WorkgroupService.deleteWorkgroup(workgroupId as string, teamId as string)
   c.status = HttpStatusCodes.OK
   c.body = {}
+}
+
+const searchWorkgroupHandler: App.EndpointOperation = async (
+  c: Koa.ParameterizedContext<App.State, App.Context<SearchRequestBody>>,
+  { user }: App.AuthenticatedCloudOs
+) => {
+  const { criteria } = c.request.body
+  const { teamId } = c.request.query
+  const { pageNumber, pageSize, sortBy, sortType } = c.request.query
+
+  const workgroupsData = await WorkgroupService.searchWorkgroups(criteria, teamId as string, user, {
+    pageNumber: parseInt(pageNumber as string),
+    pageSize: parseInt(pageSize as string),
+    sortBy: sortBy as string,
+    sortByType: sortType as string
+  })
+  c.status = HttpStatusCodes.OK
+  c.body = workgroupsData
 }
 
 export const workgroupRoutes: App.EndpointsInfo = {
@@ -42,6 +64,17 @@ export const workgroupRoutes: App.EndpointsInfo = {
     middlewares: [
       auth(['token', 'apikey']),
       rbac(RolesRoutes.IndividualBrowserWorkGroup),
+      ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
+    ],
+    postMiddlewares: [auditTrail]
+  },
+  searchWorkgroups: {
+    method: HttpMethods.Post,
+    path: '/individual-browser/workgroup/search',
+    operation: searchWorkgroupHandler,
+    middlewares: [
+      auth(['token', 'apikey']),
+      rbac(RolesRoutes.IndividualBrowserWorkGroupSearch),
       ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
     ],
     postMiddlewares: [auditTrail]

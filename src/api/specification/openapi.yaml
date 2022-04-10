@@ -22,3 +22,5 @@ paths:
     $ref: './individual-browser/workgroup.yaml'
   /clinical-portal/v1/individual-browser/workgroup/{id}:
     $ref: './individual-browser/workgroupById.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/search:
+    $ref: './individual-browser/workgroupSearch.yaml'
