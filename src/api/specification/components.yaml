@@ -87,6 +87,13 @@ parameters:
     required: true
     schema:
       type: string
+  optionalTeamID:
+    name: teamId
+    in: query
+    description: Team ID
+    required: false
+    schema:
+      type: string
 
 schemas:
   RBACRoles:

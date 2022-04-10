@@ -14,11 +14,31 @@ const createWorkgroupHandler: App.EndpointOperation = async (
   c.body = workgroup
 }
 
+const deleteWorkgroupHandler: App.EndpointOperation = async (c: Koa.ParameterizedContext<App.State, App.Context>) => {
+  const workgroupId = c.params?.id
+  const { teamId } = c.request.query
+
+  await WorkgroupService.deleteWorkgroup(workgroupId as string, teamId as string)
+  c.status = HttpStatusCodes.OK
+  c.body = {}
+}
+
 export const workgroupRoutes: App.EndpointsInfo = {
   createWorkgroup: {
     method: HttpMethods.Post,
     path: '/individual-browser/workgroup',
     operation: createWorkgroupHandler,
+    middlewares: [
+      auth(['token', 'apikey']),
+      rbac(RolesRoutes.IndividualBrowserWorkGroup),
+      ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
+    ],
+    postMiddlewares: [auditTrail]
+  },
+  deleteWorkgroup: {
+    method: HttpMethods.Delete,
+    path: '/individual-browser/workgroup/:id',
+    operation: deleteWorkgroupHandler,
     middlewares: [
       auth(['token', 'apikey']),
       rbac(RolesRoutes.IndividualBrowserWorkGroup),

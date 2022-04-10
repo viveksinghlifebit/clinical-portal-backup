@@ -10,6 +10,6 @@ declare namespace Koa {
     state: StateT
     user?: User
     team?: Team
-    params?: { [key: string]: string }
+    params?: Record<string, string>
   } & CustomT
 }
