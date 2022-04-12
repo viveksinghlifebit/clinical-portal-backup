@@ -1,6 +1,6 @@
-import { WorkgroupSchema } from '@schemas'
+import { WorkgroupSchema } from '@schemas';
 
-export const workgroupModelName = 'Workgroup'
+export const workgroupModelName = 'Workgroup';
 
 /**
  * MODEL METHODS
@@ -13,22 +13,22 @@ function view(this: Workgroup.Document): Workgroup.View {
     numberOfPatients: this.numberOfPatients,
     team: this.team.toHexString(),
     owner: String(this.owner)
-  }
+  };
 }
 
 WorkgroupSchema.methods = {
   view
-}
+};
 
 /**
  * MODEL Static Methods
  */
 async function saveWorkgroup(workgroup: Workgroup.Attributes): Promise<Workgroup.Document> {
-  return Workgroup.create(workgroup)
+  return Workgroup.create(workgroup);
 }
 
 async function deleteWorkgroups(query: Record<string, unknown>): Promise<void> {
-  await Workgroup.remove(query)
+  await Workgroup.remove(query);
 }
 
 /**
@@ -46,7 +46,7 @@ async function findWorkgroups(
   return Workgroup.find(conditions)
     .limit(perPage)
     .skip(perPage * page)
-    .sort(sorting)
+    .sort(sorting);
 }
 
 /**
@@ -54,7 +54,7 @@ async function findWorkgroups(
  * @returns Promise<number>
  */
 async function countWorkgroups(conditions: Record<string, unknown>): Promise<number> {
-  return Workgroup.count(conditions)
+  return Workgroup.count(conditions);
 }
 
 /**
@@ -63,7 +63,7 @@ async function countWorkgroups(conditions: Record<string, unknown>): Promise<num
  * @param teamId  the team
  */
 async function findByNameAndTeam(name: string, teamId: string): Promise<Workgroup.Document | null> {
-  return Workgroup.findOne({ team: teamId, name: name })
+  return Workgroup.findOne({ team: teamId, name: name });
 }
 
 /**
@@ -75,7 +75,7 @@ async function findByTermAndTeam(term: string, teamId: string): Promise<Array<Wo
   return Workgroup.find({
     team: teamId,
     name: { $regex: new RegExp(term), $options: 'i' }
-  })
+  });
 }
 
 /**
@@ -84,7 +84,7 @@ async function findByTermAndTeam(term: string, teamId: string): Promise<Array<Wo
  * @param teamId  the team
  */
 async function findByIdAndTeam(id: string, teamId: string): Promise<Workgroup.Document | null> {
-  return Workgroup.findOne({ _id: id, team: teamId })
+  return Workgroup.findOne({ _id: id, team: teamId });
 }
 
 WorkgroupSchema.statics = {
@@ -95,14 +95,14 @@ WorkgroupSchema.statics = {
   findByNameAndTeam,
   findByTermAndTeam,
   findByIdAndTeam
-}
+};
 
 /**
  * MODEL INITIALIZATION
  */
 
-export let Workgroup: Workgroup.Model
+export let Workgroup: Workgroup.Model;
 
 export const init = (connection: Mongoose.Connection): void => {
-  Workgroup = connection.model<Workgroup.Document, Workgroup.Model>(workgroupModelName, WorkgroupSchema)
-}
+  Workgroup = connection.model<Workgroup.Document, Workgroup.Model>(workgroupModelName, WorkgroupSchema);
+};

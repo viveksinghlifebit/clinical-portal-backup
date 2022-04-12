@@ -1,1 +1,1 @@
-export * from './workgroup.controller'
+export * from './workgroup.controller';

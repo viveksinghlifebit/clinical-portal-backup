@@ -1,61 +1,40 @@
 declare namespace CorePatient {
-  class TierData {
-    tier1: number
-    tier2: number
-    tier3: number
-  }
-
-  class TierDataDiseases extends TierData {
-    gene: string
-    phenotype: string
-  }
-
   class PatientMarker {
-    _id?: string
-    cn: string
-    location: string
+    _id?: string;
+    cn: string;
+    location: string;
   }
 
   class WorkgroupPatientCreateInput {
-    workgroupName: string
-    patientId: string
-    description: string
+    workgroupName: string;
+    patientId: string;
+    description: string;
   }
-
-  class TierDiseasesDistribution extends TierData {
-    _id: TierPhenotypeGene
-    gene: string
-  }
-
-  class TierPhenotypeGene {
-    phenotype: string
-    marker: string
-  }
-  type TierType = 'TIER1' | 'TIER2' | 'TIER3'
 
   class SearchPatientMarkerInput {
-    pageNumber?: number
-    pageSize?: number
-    filters?: Array<SearchPatientMarkerFilter>
+    pageNumber?: number;
+    pageSize?: number;
+    filters?: Array<SearchPatientMarkerFilter>;
     sort?: {
-      by: string
-      order: number
-    }
+      by: string;
+      order: number;
+    };
   }
 
   class SearchPatientMarkerFilter {
-    columnHeader: string
-    value?: string | number
-    values?: Array<string | number>
-    contains?: Array<string | number>
-    low?: string | number
-    high?: string | number
+    columnHeader: string;
+    value?: string | number;
+    values?: Array<string | number>;
+    contains?: Array<string | number>;
+    low?: string | number;
+    high?: string | number;
   }
 
   interface PatientWorkgroupField {
-    filterId: Filter.FilterId
-    instance: Array<string>
-    array: Array<string>
-    userAdded: boolean
+    label: string;
+    filterId: Filter.FilterId;
+    instance: Array<string>;
+    array: Array<string>;
+    userAdded?: boolean;
   }
 }

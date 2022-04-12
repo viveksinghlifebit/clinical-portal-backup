@@ -1,6 +1,6 @@
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash';
 
-import { SequenceIdNames } from '../../enums'
+import { SequenceIdNames } from 'enums';
 import {
   searchableEncryptedFields,
   AddressSchema,
@@ -9,27 +9,27 @@ import {
   PatientSchema,
   addressSchemaRaw,
   nextOfKinsSchemaRaw
-} from '@schemas'
-import { SequenceId } from './SequenceId'
+} from '@schemas';
+import { SequenceId } from './SequenceId';
 
-export const patientModelName = 'Patient'
+const patientModelName = 'Patient';
 
 /**
  * MODEL STATICS
  */
 
 export async function generateID(): Promise<string> {
-  const sequenceId = await SequenceId.getNextByName(SequenceIdNames.Patient)
-  return sequenceId.toPadString()
+  const sequenceId = await SequenceId.getNextByName(SequenceIdNames.Patient);
+  return sequenceId.toPadString();
 }
 
 export function dateOfBirthFromString(value: string): Patient.Attributes['dateOfBirth'] {
-  const date = new Date(value)
+  const date = new Date(value);
   return {
     year: date.getFullYear().toString(),
     month: (date.getMonth() + 1).toString(),
     day: date.getDate().toString()
-  }
+  };
 }
 
 async function updateById(
@@ -37,7 +37,7 @@ async function updateById(
   updateData: Partial<Patient.Model>
 ): Promise<
   | (Patient.Document & {
-      _id: Mongoose.ObjectId
+      _id: Mongoose.ObjectId;
     })
   | null
 > {
@@ -45,11 +45,11 @@ async function updateById(
     { _id: patientId },
     { $set: updateData },
     { runValidators: true, context: 'query', new: true }
-  ).exec()
+  ).exec();
 }
 
 function getSearchableEncryptedFields(): string[] {
-  return searchableEncryptedFields
+  return searchableEncryptedFields;
 }
 
 PatientSchema.statics = {
@@ -57,7 +57,7 @@ PatientSchema.statics = {
   dateOfBirthFromString,
   updateById,
   getSearchableEncryptedFields
-}
+};
 
 const mapAddressProperties = (
   address: Patient.Address
@@ -66,14 +66,14 @@ const mapAddressProperties = (
   address2: address.address2,
   area: address.area,
   cityAndCountry: address.cityAndCountry
-})
+});
 /**
  * MODEL METHODS
  */
 
 function view(this: Patient.Document): Patient.View {
-  const { dateOfBirth } = this.toJSON()
-  const dateOfBirthToUse = (dateOfBirth as unknown) as { year: number; month: number; day: number }
+  const { dateOfBirth } = this.toJSON();
+  const dateOfBirthToUse = (dateOfBirth as unknown) as { year: number; month: number; day: number };
   return {
     _id: this._id.toHexString(),
     i: this.i,
@@ -111,12 +111,12 @@ function view(this: Patient.Document): Patient.View {
     analysisEligibleTypesOthers: this.analysisEligibleTypesOthers,
     updatedBy: this.updatedBy ? this.updatedBy.toHexString() : this.owner.toHexString(),
     referringUsers: this.referringUsers
-  }
+  };
 }
 
 // don't overwrite the whole .methods object, instead add the view method to it
 // because schema.methods is also used by the mongoose-encrypt-field plugin
-PatientSchema.methods.view = view
+PatientSchema.methods.view = view;
 
 export function saveEncrypted(this: Patient.Document): Promise<Patient.Document> {
   // Use the .saveEncrypted() method instead of the .save() when,
@@ -129,55 +129,55 @@ export function saveEncrypted(this: Patient.Document): Promise<Patient.Document>
   // and the .saveEncrypted method prevents that.
   const mapAddress = (address: Record<string, unknown>): Patient.Address => {
     return Object.keys(addressSchemaRaw).reduce((acc, key) => {
-      acc[key] = address[key]
-      return acc
+      acc[key] = address[key];
+      return acc;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }, {} as any)
-  }
-  this.addresses = this.addresses.map(mapAddress)
+    }, {} as any);
+  };
+  this.addresses = this.addresses.map(mapAddress);
   this.nextsOfKin = this.nextsOfKin.map(
     (nextOfKin: Patient.NextOfKin): Patient.NextOfKin => {
       const obj: Partial<Patient.Attributes> = Object.keys(nextOfKinsSchemaRaw).reduce((acc, key) => {
-        acc[key] = nextOfKin[key as keyof Patient.NextOfKin]
-        return acc
+        acc[key] = nextOfKin[key as keyof Patient.NextOfKin];
+        return acc;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }, {} as any)
-      obj.addresses = nextOfKin.addresses.map(mapAddress)
-      return obj as Patient.NextOfKin
+      }, {} as any);
+      obj.addresses = nextOfKin.addresses.map(mapAddress);
+      return obj as Patient.NextOfKin;
     }
-  )
-  return this.save()
+  );
+  return this.save();
 }
-PatientSchema.method('saveEncrypted', saveEncrypted)
+PatientSchema.method('saveEncrypted', saveEncrypted);
 
 /**
  * MODEL MIDDLEWARES
  */
 
 export async function preSave(this: Patient.Document): Promise<void> {
-  if (this.isNew) this.i = await Patient.generateID()
-  if (!this.updatedBy) this.updatedBy = this.owner
+  if (this.isNew) this.i = await Patient.generateID();
+  if (!this.updatedBy) this.updatedBy = this.owner;
 }
 
-PatientSchema.pre<Patient.Document>('save', preSave)
+PatientSchema.pre<Patient.Document>('save', preSave);
 
 export function postSave(this: Patient.Document): void {
   if (this.decryptFieldsSync) {
-    this.decryptFieldsSync()
+    this.decryptFieldsSync();
   }
 }
 
-PatientSchema.post<Patient.Document>('save', postSave)
-AddressSchema.post('save', postSave)
-NextOfKinsSchema.post('save', postSave)
-DateOfBirthSchema.post('save', postSave)
+PatientSchema.post<Patient.Document>('save', postSave);
+AddressSchema.post('save', postSave);
+NextOfKinsSchema.post('save', postSave);
+DateOfBirthSchema.post('save', postSave);
 
 /**
  * MODEL INITIALIZATION
  */
 
-export let Patient: Patient.Model
+export let Patient: Patient.Model;
 
 export const init = (connection: Mongoose.Connection): void => {
-  Patient = connection.model<Patient.Document, Patient.Model>(patientModelName, PatientSchema)
-}
+  Patient = connection.model<Patient.Document, Patient.Model>(patientModelName, PatientSchema);
+};

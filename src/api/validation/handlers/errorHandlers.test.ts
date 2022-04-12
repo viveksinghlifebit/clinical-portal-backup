@@ -1,16 +1,16 @@
-import { HttpMethods, HttpStatusCodes } from 'enums'
-import { CustomHttpError } from 'errors/http-errors'
+import { HttpMethods, HttpStatusCodes } from 'enums';
+import { CustomHttpError } from 'errors/http-errors';
 
-import { _generateErrorHandler } from './errorHandlers'
+import { _generateErrorHandler } from './errorHandlers';
 
 describe('generateErrorHandler', () => {
-  const mockErrorCode = 456
-  const mockErrorName = 'Mock Error'
-  const mockErrorMessage = 'This is a mock error message.'
+  const mockErrorCode = 456;
+  const mockErrorName = 'Mock Error';
+  const mockErrorMessage = 'This is a mock error message.';
 
-  const mockError = new CustomHttpError(mockErrorMessage, mockErrorCode, mockErrorName)
+  const mockError = new CustomHttpError(mockErrorMessage, mockErrorCode, mockErrorName);
 
-  const mockErrorHandler = _generateErrorHandler(mockError)
+  const mockErrorHandler = _generateErrorHandler(mockError);
 
   const mockContext: OpenApiBackend.Context = ({
     validation: {
@@ -20,7 +20,7 @@ describe('generateErrorHandler', () => {
     operation: {
       operationId: 'mockOperation'
     }
-  } as unknown) as OpenApiBackend.Context
+  } as unknown) as OpenApiBackend.Context;
   const mockCtx: Koa.ParameterizedContext<App.State, App.Context> = ({
     request: {
       method: HttpMethods.Get,
@@ -30,15 +30,15 @@ describe('generateErrorHandler', () => {
       statusCode: HttpStatusCodes.OK,
       statusMessage: 'mockStatusMessage'
     }
-  } as unknown) as Koa.ParameterizedContext<App.State, App.Context>
+  } as unknown) as Koa.ParameterizedContext<App.State, App.Context>;
 
   test('If validation failed, check that the error message contains such information and status code is 400.', () => {
     mockContext.validation = {
       valid: false,
       errors: []
-    }
-    mockErrorHandler(mockContext, mockCtx)
-    expect(mockCtx.status).toEqual(HttpStatusCodes.BadRequest)
+    };
+    mockErrorHandler(mockContext, mockCtx);
+    expect(mockCtx.status).toEqual(HttpStatusCodes.BadRequest);
     expect(mockCtx.body).toEqual(
       expect.objectContaining({
         statusCode: HttpStatusCodes.BadRequest,
@@ -47,36 +47,36 @@ describe('generateErrorHandler', () => {
           mockContext.validation.errors
         )}`
       })
-    )
-  })
+    );
+  });
 
   test('If status message is not received, check that the resulting error container is correct.', () => {
     mockContext.validation = {
       valid: true,
       errors: null
-    }
+    };
     mockErrorHandler(mockContext, {
       ...mockCtx,
       res: {
         statusCode: HttpStatusCodes.OK
       }
-    })
-    expect(mockCtx.status).toEqual(400)
+    });
+    expect(mockCtx.status).toEqual(400);
     expect(mockCtx.body).toMatchObject({
       statusCode: 400,
       code: mockErrorName,
       message: 'validation failed for operation mockOperation with error []',
       time: expect.any(String)
-    })
-  })
+    });
+  });
 
   test('If validation passed, check that the resulting error container is correct.', () => {
     mockContext.validation = {
       valid: true,
       errors: null
-    }
-    mockErrorHandler(mockContext, mockCtx)
-    expect(mockCtx.status).toEqual(mockErrorCode)
+    };
+    mockErrorHandler(mockContext, mockCtx);
+    expect(mockCtx.status).toEqual(mockErrorCode);
     expect(mockCtx.body).toEqual(
       expect.objectContaining({
         statusCode: mockErrorCode,
@@ -84,6 +84,6 @@ describe('generateErrorHandler', () => {
         message: mockCtx.res.statusMessage,
         time: expect.any(String)
       })
-    )
-  })
-})
+    );
+  });
+});

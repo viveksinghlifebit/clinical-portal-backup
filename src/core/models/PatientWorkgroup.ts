@@ -1,17 +1,17 @@
-import { ClinicalRole } from '@core/enums'
-import { PatientWorkgroupSchema } from '@schemas'
+import { ClinicalRole } from '@core/enums';
+import { PatientWorkgroupSchema } from '@schemas';
 
-const patientModelName = 'PatientWorkgroup'
+const patientModelName = 'PatientWorkgroup';
 
 async function countByWorkgroupAndPatient(
   workgroupId: PatientWorkgroup.Attributes['workgroup'],
   patient: PatientWorkgroup.Attributes['patient']
 ): Promise<number> {
-  return PatientWorkgroup.count({ workgroup: workgroupId, patient })
+  return PatientWorkgroup.count({ workgroup: workgroupId, patient });
 }
 
 async function countByWorkgroup(workgroupId: PatientWorkgroup.Attributes['workgroup']): Promise<number> {
-  return PatientWorkgroup.count({ workgroup: workgroupId })
+  return PatientWorkgroup.count({ workgroup: workgroupId });
 }
 
 /**
@@ -24,12 +24,12 @@ async function getRefererredPatientsCountWithWorkGroup(
   workgroupIds: string[],
   user: User
 ): Promise<{ workgroup: string; patients: number }[]> {
-  const roles = []
+  const roles = [];
   if (user.rbacRoles?.some(({ name }) => name === ClinicalRole.FieldSpecialist)) {
-    roles.push(ClinicalRole.FieldSpecialist)
+    roles.push(ClinicalRole.FieldSpecialist);
   }
   if (user.rbacRoles?.some(({ name }) => name === ClinicalRole.ReferringClinician)) {
-    roles.push(ClinicalRole.ReferringClinician)
+    roles.push(ClinicalRole.ReferringClinician);
   }
   return PatientWorkgroup.aggregate([
     {
@@ -82,14 +82,14 @@ async function getRefererredPatientsCountWithWorkGroup(
         patients: { $sum: '$patients' }
       }
     }
-  ])
+  ]);
 }
 
 PatientWorkgroupSchema.statics = {
   countByWorkgroupAndPatient,
   countByWorkgroup,
   getRefererredPatientsCountWithWorkGroup
-}
+};
 
 function view(this: PatientWorkgroup.Document): PatientWorkgroup.View {
   return {
@@ -107,18 +107,18 @@ function view(this: PatientWorkgroup.Document): PatientWorkgroup.View {
     fields: this.fields,
     createdAt: this.createdAt.toISOString(),
     updatedAt: this.updatedAt.toISOString()
-  }
+  };
 }
 
 PatientWorkgroupSchema.methods = {
   view
-}
+};
 
-export let PatientWorkgroup: PatientWorkgroup.Model
+export let PatientWorkgroup: PatientWorkgroup.Model;
 
 export const init = (connection: Mongoose.Connection): void => {
   PatientWorkgroup = connection.model<PatientWorkgroup.Document, PatientWorkgroup.Model>(
     patientModelName,
     PatientWorkgroupSchema
-  )
-}
+  );
+};

@@ -1,18 +1,18 @@
-import * as connection from 'services/mongoose/connections'
-import { Types } from 'mongoose'
+import * as connection from 'services/mongoose/connections';
+import { Types } from 'mongoose';
 export class UserRepository {
   static findById(id: string, projection?: Mongoose.ProjectConditions): Promise<User | null> {
     return connection.usersConnection
       .collection('users')
-      .findOne({ _id: new Types.ObjectId(id) }, { projection }) as Promise<User>
+      .findOne({ _id: new Types.ObjectId(id) }, { projection }) as Promise<User>;
   }
 
   static async findOne(criteria: { [key: string]: unknown }): Promise<User> {
-    return (await connection.usersConnection.collection('users').findOne(criteria)) as User
+    return (await connection.usersConnection.collection('users').findOne(criteria)) as User;
   }
 
   static async find(criteria: Mongoose.QueryConditions): Promise<User[]> {
-    return (await connection.usersConnection.collection('users').find(criteria).toArray()) as User[]
+    return (await connection.usersConnection.collection('users').find(criteria).toArray()) as User[];
   }
 
   /**
@@ -28,7 +28,7 @@ export class UserRepository {
       .find({
         $or: [{ name: new RegExp(term, 'i') }, { surname: new RegExp(term, 'i') }]
       })
-      .toArray()) as User[]
-    return users.map((it) => it._id) as Mongoose.ObjectId[]
+      .toArray()) as User[];
+    return users.map((it) => it._id) as Mongoose.ObjectId[];
   }
 }

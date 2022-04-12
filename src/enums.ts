@@ -30,4 +30,4 @@ export enum AuditLevel {
   Fatal = 'fatal'
 }
 
-export * from '@core/enums'
+export * from '@core/enums';

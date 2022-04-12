@@ -1,4 +1,4 @@
-import { Schema, SchemaTypeOptions } from 'mongoose'
+import { Schema, SchemaTypeOptions } from 'mongoose';
 
 const patientWorkgroupSchema: Partial<Record<keyof PatientWorkgroup.Attributes, SchemaTypeOptions<unknown>>> = {
   workgroup: {
@@ -52,7 +52,7 @@ const patientWorkgroupSchema: Partial<Record<keyof PatientWorkgroup.Attributes, 
       }
     }
   ]
-}
+};
 
-const PatientWorkgroupSchema = new Schema(patientWorkgroupSchema, { timestamps: true })
-export { PatientWorkgroupSchema }
+const PatientWorkgroupSchema = new Schema(patientWorkgroupSchema, { timestamps: true });
+export { PatientWorkgroupSchema };

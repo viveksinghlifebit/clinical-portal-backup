@@ -12,12 +12,12 @@
  *   from its children.
  */
 export class DeploitError extends Error {
-  public code: number | undefined
+  public code: number | undefined;
   constructor(message?: string, code?: number) {
-    super(message)
-    this.code = code
-    this.name = this.constructor.name
-    Error.captureStackTrace(this, DeploitError)
+    super(message);
+    this.code = code;
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, DeploitError);
   }
 }
 
@@ -43,7 +43,7 @@ export class QueryOutOfRangeError extends DeploitError {}
 
 export class NotImplementedError extends DeploitError {
   constructor() {
-    super()
-    this.message = 'Not implemented.'
+    super();
+    this.message = 'Not implemented.';
   }
 }

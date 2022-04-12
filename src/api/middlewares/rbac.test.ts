@@ -1,10 +1,10 @@
-import { RolesRoutes } from 'enums'
-import { UserRole, Role } from '@core/models'
-import { rbacMiddleware, rbac, checkWhetherUserIsPermittedForTheAction } from './rbac'
-import mongoose from 'mongoose'
-import { ForbiddenHttpError, UnauthorizedHttpError } from 'errors/http-errors'
-import { RBACAction } from '@core/enums'
-import config from 'config'
+import { RolesRoutes } from 'enums';
+import { UserRole, Role } from '@core/models';
+import { rbacMiddleware, rbac, checkWhetherUserIsPermittedForTheAction } from './rbac';
+import mongoose from 'mongoose';
+import { ForbiddenHttpError, UnauthorizedHttpError } from 'errors/http-errors';
+import { RBACAction } from '@core/enums';
+import config from 'config';
 
 const data = {
   userRole: {
@@ -92,7 +92,7 @@ const data = {
       }).view()
     ]
   }
-}
+};
 
 const req = {
   basic: () =>
@@ -138,149 +138,153 @@ const req = {
         _id: 'user-1'
       }
     } as unknown) as Koa.Context)
-}
+};
 
 const applyRbac = async (mockContext: Koa.Context, mockNext: jest.Mock, featureFlag = true): Promise<void> => {
-  await rbacMiddleware(RolesRoutes.Cohort, featureFlag)(mockContext, mockNext)
-}
+  await rbacMiddleware(RolesRoutes.Cohort, featureFlag)(mockContext, mockNext);
+};
 
 describe('RBAC middleware', () => {
   afterEach(() => {
-    jest.restoreAllMocks()
-  })
+    jest.restoreAllMocks();
+  });
   test('should call next with error status 403 when the user does not have the appropriate permission', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.basic()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
-    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.resolve(data.roles.cohortNoAccess()))
+    const mockNext = jest.fn();
+    const mockReq = req.basic();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
+    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.resolve(data.roles.cohortNoAccess()));
 
     await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(
       new ForbiddenHttpError(`You don’t have the right permissions. Please contact your admin`)
-    )
-  })
+    );
+  });
 
   test('should call next with error status 403 when an error occured when fetching UserRoles', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.basic()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.reject('something bad happen'))
+    const mockNext = jest.fn();
+    const mockReq = req.basic();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.reject('something bad happen'));
     jest
       .spyOn(Role, 'findRolesByRoleIds')
-      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()))
+      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()));
 
     await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(
       new ForbiddenHttpError(`Could not find your RBAC role`)
-    )
-  })
+    );
+  });
 
   test('should call next with error status 403 when an error occured when fetching Roles', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.basic()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
-    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.reject('something went wrong'))
+    const mockNext = jest.fn();
+    const mockReq = req.basic();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
+    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.reject('something went wrong'));
 
     await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(
       new ForbiddenHttpError(`Could not find your RBAC role`)
-    )
-  })
+    );
+  });
 
   test('should call next with error status 403 when the requested action does not exist in the rbac actions', async () => {
-    const mockNext = jest.fn()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
+    const mockNext = jest.fn();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
     jest
       .spyOn(Role, 'findRolesByRoleIds')
-      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()))
-    const mockReq = req.notSupportedMethod()
+      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()));
+    const mockReq = req.notSupportedMethod();
 
     await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(
       new ForbiddenHttpError(`Could not identify the RBAC action`)
-    )
-  })
+    );
+  });
 
   test('should call next with error status 403 when the userRole is undefined', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.notSupportedMethod()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(undefined))
-    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.resolve(data.roles.cohortAllowReadAccess()))
+    const mockNext = jest.fn();
+    const mockReq = req.notSupportedMethod();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(undefined));
+    jest
+      .spyOn(Role, 'findRolesByRoleIds')
+      .mockImplementation(() => Promise.resolve(data.roles.cohortAllowReadAccess()));
 
     await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(
       new ForbiddenHttpError(`Could not identify the RBAC action`)
-    )
-  })
+    );
+  });
 
   test('should call next with error status 403 when the roles are an empty array', async () => {
-    const mockNext = jest.fn()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
-    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.resolve([]))
-    const mockReq = req.notSupportedMethod()
+    const mockNext = jest.fn();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
+    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.resolve([]));
+    const mockReq = req.notSupportedMethod();
 
     await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(
       new ForbiddenHttpError(`Could not identify the RBAC action`)
-    )
-  })
+    );
+  });
 
   test('Should call next with error status 401 when the user object doe not exist in the req', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.noUser()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
+    const mockNext = jest.fn();
+    const mockReq = req.noUser();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
     jest
       .spyOn(Role, 'findRolesByRoleIds')
-      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()))
+      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()));
 
-    await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(new UnauthorizedHttpError())
-  })
+    await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(new UnauthorizedHttpError());
+  });
 
   test('Should call next with error status 401 when the user object does not contain an _id', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.noUserId()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
+    const mockNext = jest.fn();
+    const mockReq = req.noUserId();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
     jest
       .spyOn(Role, 'findRolesByRoleIds')
-      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()))
+      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()));
 
-    await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(new UnauthorizedHttpError())
-  })
+    await expect(applyRbac(mockReq, mockNext)).rejects.toThrowError(new UnauthorizedHttpError());
+  });
 
   test('Should call next with with no err when the user has the appropriate permission', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.basic()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
-    jest.spyOn(Role, 'findRolesByRoleIds').mockImplementation(() => Promise.resolve(data.roles.cohortAllowReadAccess()))
+    const mockNext = jest.fn();
+    const mockReq = req.basic();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
+    jest
+      .spyOn(Role, 'findRolesByRoleIds')
+      .mockImplementation(() => Promise.resolve(data.roles.cohortAllowReadAccess()));
 
-    await applyRbac(mockReq, mockNext)
+    await applyRbac(mockReq, mockNext);
 
-    expect(mockNext).toHaveBeenCalledTimes(1)
-    expect(mockNext.mock.calls[0][0]).not.toBeDefined()
-  })
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    expect(mockNext.mock.calls[0][0]).not.toBeDefined();
+  });
 
   test('should call next with no err if featureFlag is disabled', async () => {
-    const mockNext = jest.fn()
-    const mockReq = req.basic()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
+    const mockNext = jest.fn();
+    const mockReq = req.basic();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
     jest
       .spyOn(Role, 'findRolesByRoleIds')
-      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()))
+      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()));
 
-    await applyRbac(mockReq, mockNext, false)
+    await applyRbac(mockReq, mockNext, false);
 
-    expect(mockNext).toHaveBeenCalledTimes(1)
-    expect(mockNext.mock.calls[0][0]).not.toBeDefined()
-  })
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    expect(mockNext.mock.calls[0][0]).not.toBeDefined();
+  });
 
   test('the rbac fn should return a middleware passing the feature flag to it', async () => {
-    const mockNext = jest.fn()
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()))
+    const mockNext = jest.fn();
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(data.userRole.basic()));
     jest
       .spyOn(Role, 'findRolesByRoleIds')
-      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()))
+      .mockImplementation(() => Promise.resolve(data.roles.cohortConflictingAccess()));
 
-    await rbac(RolesRoutes.Cohort)({} as Koa.Context, mockNext)
+    await rbac(RolesRoutes.Cohort)({} as Koa.Context, mockNext);
 
-    expect(mockNext).toHaveBeenCalledTimes(1)
-    expect(mockNext.mock.calls[0][0]).not.toBeDefined()
-  })
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    expect(mockNext.mock.calls[0][0]).not.toBeDefined();
+  });
 
   test('should throw forbidden error if userRole is not found', async () => {
-    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(undefined))
+    jest.spyOn(UserRole, 'findByUserAndTeamId').mockImplementation(() => Promise.resolve(undefined));
 
     await expect(
       applyRbac(
@@ -295,28 +299,28 @@ describe('RBAC middleware', () => {
         } as Koa.Context,
         jest.fn()
       )
-    ).rejects.toThrowError(new ForbiddenHttpError(`You don’t have the right permissions. Please contact your admin`))
-  })
+    ).rejects.toThrowError(new ForbiddenHttpError(`You don’t have the right permissions. Please contact your admin`));
+  });
   describe('checkWhetherUserIsPermittedForTheAction', () => {
     test('should return true if hkgiEnvironment is disabled', () => {
-      config.hkgiEnvironmentEnabled = false
+      config.hkgiEnvironmentEnabled = false;
 
       expect(
         checkWhetherUserIsPermittedForTheAction([] as Role.View[], {} as RolesRoutes, RBACAction.delete)
-      ).toBeTruthy()
-    })
+      ).toBeTruthy();
+    });
 
     test('should return true if role is access ', () => {
-      config.hkgiEnvironmentEnabled = true
+      config.hkgiEnvironmentEnabled = true;
       expect(
         checkWhetherUserIsPermittedForTheAction(
           data.roles.cohortConflictingAccess(),
           'cohort' as RolesRoutes,
           RBACAction.read
         )
-      ).toBeTruthy()
+      ).toBeTruthy();
 
-      config.hkgiEnvironmentEnabled = false
-    })
-  })
-})
+      config.hkgiEnvironmentEnabled = false;
+    });
+  });
+});

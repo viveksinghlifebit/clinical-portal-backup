@@ -1,6 +1,6 @@
-import { error } from './error'
-import { koaMorgan, koaBodyParser, setStartTimeAndRequestId } from './request'
-import { koaHelmet, koaCors } from './security'
+import { error } from './error';
+import { koaMorgan, koaBodyParser, setStartTimeAndRequestId } from './request';
+import { koaHelmet, koaCors } from './security';
 
 export const middlewares: Koa.Middleware[] = [
   setStartTimeAndRequestId,
@@ -9,8 +9,8 @@ export const middlewares: Koa.Middleware[] = [
   koaHelmet,
   koaCors,
   koaBodyParser
-]
+];
 
-export * from './auth'
-export * from './rbac'
-export * from './team'
+export * from './auth';
+export * from './rbac';
+export * from './team';

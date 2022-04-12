@@ -1,20 +1,20 @@
-import { HttpMethods } from 'enums'
+import { HttpMethods } from 'enums';
 
 interface PostHealthRequestBody {
-  status: string
+  status: string;
 }
 
 const getHealth: App.EndpointOperation = (ctx: Koa.ParameterizedContext<App.State, App.Context>) => {
-  ctx.body = { status: 'ok' }
-}
+  ctx.body = { status: 'ok' };
+};
 
 const postHealth: App.EndpointOperation = (
   ctx: Koa.ParameterizedContext<App.State, App.Context<PostHealthRequestBody>>
 ) => {
-  const { status } = ctx.request.body
+  const { status } = ctx.request.body;
 
-  ctx.body = { status }
-}
+  ctx.body = { status };
+};
 
 export const routes: App.EndpointsInfo = {
   getHealth: {
@@ -31,4 +31,4 @@ export const routes: App.EndpointsInfo = {
     middlewares: [],
     postMiddlewares: []
   }
-}
+};

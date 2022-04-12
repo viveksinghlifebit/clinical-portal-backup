@@ -1,4 +1,4 @@
-import { castEnvToBoolOrUseDefault, requireProcessEnv } from 'utils'
+import { castEnvToBoolOrUseDefault, requireProcessEnv } from 'utils';
 
 const config: App.Config = {
   apiPrefix: process.env.PATH_PREFIX ?? '/clinical-portal/v1',
@@ -42,7 +42,33 @@ const config: App.Config = {
     enabled: process.env.MONGOOSE_FIELD_ENCRYPTION_ENABLED === 'true',
     salt: process.env.MONGOOSE_FIELD_ENCRYPTION_SALT || '', // must be a hex value of a random 16 byte buffer
     secret: process.env.MONGOOSE_FIELD_ENCRYPTION_SECRET || '' // must be a hex value of a random 32 byte buffer
+  },
+  individualBrowser: {
+    patient: {
+      initFilters: [
+        {
+          filterId: 1000,
+          instance: ['0'],
+          label: 'HPO terms:'
+        },
+        {
+          filterId: 4,
+          instance: ['0'],
+          array: ['0'],
+          label: 'Sex:'
+        },
+        {
+          filterId: 1,
+          instance: ['0'],
+          array: ['0'],
+          label: 'Ethnicity:'
+        }
+      ]
+    }
+  },
+  clinicalPortal: {
+    s3PatientSampleIgvFileBucket: process.env.S3_PATIENT_SAMPLE_IGV_FILE_BUCKET || 's3://igv/outputs'
   }
-}
+};
 
-export default config
+export default config;

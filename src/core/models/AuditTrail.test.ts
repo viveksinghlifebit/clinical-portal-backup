@@ -1,7 +1,7 @@
-import { Types } from 'mongoose'
-import { v4 } from 'uuid'
-import { AuditLevel } from 'enums'
-import { AuditTrail } from './AuditTrail'
+import { Types } from 'mongoose';
+import { v4 } from 'uuid';
+import { AuditLevel } from 'enums';
+import { AuditTrail } from './AuditTrail';
 
 describe('AuditTrail', () => {
   describe('view', () => {
@@ -18,7 +18,7 @@ describe('AuditTrail', () => {
         requestId: v4(),
         createdAt: new Date('2021-05-24'),
         updatedAt: new Date('2021-05-26')
-      })
+      });
       expect(auditTrail.view()).toEqual({
         _id: auditTrail._id.toHexString(),
         level: auditTrail.level,
@@ -27,7 +27,7 @@ describe('AuditTrail', () => {
         metadata: auditTrail.metadata,
         requestId: auditTrail.requestId,
         timestamp: auditTrail.timestamp
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});

@@ -1,1 +1,1 @@
-export * from './auditTrail.controller'
+export * from './auditTrail.controller';

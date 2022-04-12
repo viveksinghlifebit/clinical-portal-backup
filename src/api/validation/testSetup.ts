@@ -1,5 +1,5 @@
-import { HttpStatusCodes, HttpMethods } from 'enums'
-import { BadRequestHttpError } from 'errors/http-errors'
+import { HttpStatusCodes, HttpMethods } from 'enums';
+import { BadRequestHttpError } from 'errors/http-errors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getMockApiSpecification = (): any => ({
@@ -34,15 +34,15 @@ export const getMockApiSpecification = (): any => ({
       }
     }
   }
-})
+});
 
 export const getMockDocumentedEndpointsInfo = (): App.EndpointsInfo => ({
   testOk: {
     method: HttpMethods.Get,
     path: 'ok',
     operation: async (ctx) => {
-      ctx.status = HttpStatusCodes.OK
-      ctx.body = 'OK!'
+      ctx.status = HttpStatusCodes.OK;
+      ctx.body = 'OK!';
     },
     middlewares: [],
     postMiddlewares: []
@@ -51,22 +51,22 @@ export const getMockDocumentedEndpointsInfo = (): App.EndpointsInfo => ({
     method: HttpMethods.Get,
     path: 'error',
     operation: async () => {
-      throw new BadRequestHttpError('Error!')
+      throw new BadRequestHttpError('Error!');
     },
     middlewares: [],
     postMiddlewares: []
   }
-})
+});
 
 export const getMockNonDocumentedEndpointsInfo = (): App.EndpointsInfo => ({
   testNonDocumented: {
     method: HttpMethods.Get,
     path: 'non documented',
     operation: async (ctx) => {
-      ctx.status = HttpStatusCodes.OK
-      ctx.body = 'non documented!'
+      ctx.status = HttpStatusCodes.OK;
+      ctx.body = 'non documented!';
     },
     middlewares: [],
     postMiddlewares: []
   }
-})
+});

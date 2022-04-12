@@ -1,4 +1,4 @@
-import { Schema, SchemaTypeOptions } from 'mongoose'
+import { Schema, SchemaTypeOptions } from 'mongoose';
 
 const workgroupSchema: Partial<Record<keyof Workgroup.Attributes, SchemaTypeOptions<unknown>>> = {
   name: {
@@ -18,9 +18,9 @@ const workgroupSchema: Partial<Record<keyof Workgroup.Attributes, SchemaTypeOpti
     type: Schema.Types.ObjectId,
     required: true
   }
-}
+};
 
-const WorkgroupSchema = new Schema(workgroupSchema, { timestamps: true })
+const WorkgroupSchema = new Schema(workgroupSchema, { timestamps: true });
 // UserRoleSchema.index({ userId: 1, team: 1 }, { unique: true })
 
-export { WorkgroupSchema }
+export { WorkgroupSchema };

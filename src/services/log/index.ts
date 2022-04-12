@@ -1,4 +1,4 @@
-import { createLogger, format, transports, config } from 'winston'
+import { createLogger, format, transports, config } from 'winston';
 
 const consoleTransport = new transports.Console({
   level: 'info',
@@ -9,7 +9,7 @@ const consoleTransport = new transports.Console({
     }),
     format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.stack || info.message}`)
   )
-})
+});
 
 export const log = createLogger({
   levels: config.syslog.levels,
@@ -17,4 +17,4 @@ export const log = createLogger({
   transports: [consoleTransport],
   exceptionHandlers: [consoleTransport],
   exitOnError: false
-})
+});

@@ -310,3 +310,437 @@ schemas:
       type:
         type: string
         enum: ['exact', 'min', 'max', 'avg', 'all']
+  WorkgroupPatientCreateInput:
+    type: object
+    required:
+      - workgroupName
+      - patientId
+      - description
+    properties:
+      workgroupName:
+        type: string
+      patientId:
+        type: string
+      description:
+        type: string
+  PatientWorkgroup:
+    type: object
+    required:
+      - _id
+      - patient
+      - workgroup
+    properties:
+      _id:
+        $ref: '#/schemas/IdType'
+      markersDefinition:
+        type: array
+        items:
+          type: object
+          # TODO: to be reviewed
+      igvFiles:
+        type: array
+        items:
+          type: string
+      associatedDiseasesWithTieredVariants:
+        type: array
+        items:
+          $ref: '#/schemas/DiseasesWithTieredVariants'
+      comparisonFilters:
+        type: array
+        items:
+          type: object
+      description:
+        type: string
+      markers:
+        type: array
+        items:
+          $ref: '#/schemas/PatientMarkers'
+      diseaseGene:
+        type: object
+      tierSNV:
+        $ref: '#/schemas/TierData'
+      patient:
+        $ref: '#/schemas/Patient'
+      fields:
+        $ref: '#/schemas/PatientWorkgroupFieldArray'
+  DiseasesWithTieredVariants:
+    type: object
+    properties:
+      tier1:
+        type: integer
+      tier2:
+        type: integer
+      tier3:
+        type: integer
+      gene:
+        type: string
+      phenotype:
+        type: string
+        nullable: true
+  PatientMarkers:
+    type: object
+    required:
+      - _id
+      - cn
+      - location
+    properties:
+      _id:
+        $ref: '#/schemas/UUID'
+      cn:
+        type: string
+      location:
+        type: string
+  TierData:
+    type: object
+    properties:
+      tier1:
+        type: integer
+      tier2:
+        type: integer
+      tier3:
+        type: integer
+  Patient:
+    type: object
+    additionalProperties: false
+    required:
+      - _id
+      - i
+      - externalID
+      - externalIDType
+      - status
+      - name
+      - surname
+    properties:
+      externalID:
+        type: string
+      externalIDType:
+        type: string
+        enum: [HKID, Passport]
+      hospitalRef:
+        type: string
+      name:
+        type: string
+        nullable: true
+      surname:
+        type: string
+        nullable: true
+      chineseName:
+        type: string
+        nullable: true
+      chineseSurname:
+        type: string
+        nullable: true
+      dateOfBirth:
+        $ref: '#/schemas/DateType'
+      email:
+        $ref: '#/schemas/NullableEmail'
+      phoneNumber:
+        $ref: '#/schemas/NullablePhoneNumber'
+      addresses:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            address1:
+              type: string
+            address2:
+              type: string
+            cityAndCountry:
+              type: string
+            area:
+              type: string
+      familyId:
+        type: string
+      _id:
+        $ref: '#/schemas/IdType'
+      i:
+        $ref: '#/schemas/InternalID'
+      status:
+        type: string
+        enum: [Drafted, Enrolled, Withdraw]
+      subStatus:
+        type: string
+        enum: [PartiallyWithdrawn]
+        nullable: true
+      owner:
+        oneOf:
+          - type: string
+          - $ref: '#/schemas/User'
+      team:
+        type: string
+      consentForms:
+        type: array
+        items:
+          $ref: '#/schemas/ConsentForm'
+      sequencingLibrary:
+        type: array
+        items:
+          $ref: '#/schemas/SampleSequencingLibraries'
+      samples:
+        type: array
+        items:
+          $ref: '#/schemas/PatientSample'
+      images:
+        type: array
+        items:
+          type: object
+          properties:
+            location:
+              type: string
+      reports:
+        type: array
+        items:
+          type: object
+          properties:
+            location:
+              type: string
+      igvFiles:
+        type: array
+        items:
+          type: string
+      associatedDiseasesWithTieredVariants:
+        type: array
+        items:
+          $ref: '#/schemas/DiseasesWithTieredVariants'
+      diseaseGene:
+        type: object
+      nextsOfKin:
+        type: array
+        items:
+          $ref: '#/schemas/PatientNextOfKin'
+      phenotypes:
+        type: array
+        items:
+          $ref: '#/schemas/PatientPhenotype'
+      analysisEligibleTypes:
+        type: array
+        items:
+          $ref: '#/schemas/SampleAnalysisTypes'
+      analysisEligibleTypesOthers:
+        type: string
+      createdAt:
+        $ref: '#/schemas/DateType'
+      updatedAt:
+        $ref: '#/schemas/DateType'
+      updatedBy:
+        oneOf:
+          - type: string
+          - $ref: '#/schemas/User'
+      referringUsers:
+        type: array
+        nullable: true
+        items:
+          $ref: '#/schemas/PatientReferringUser'
+  PatientWorkgroupFieldArray:
+    type: array
+    items:
+      $ref: '#/schemas/PatientWorkgroupField'
+  PatientWorkgroupFieldInput:
+    type: object
+    properties:
+      filterId:
+        $ref: '#/schemas/FilterId'
+      instance:
+        $ref: '#/schemas/StringArray'
+      array:
+        $ref: '#/schemas/StringArray'
+  PatientWorkgroupField:
+    allOf:
+      - $ref: '#/schemas/PatientWorkgroupFieldInput'
+      - type: object
+        properties:
+          readOnly:
+            type: boolean
+          label:
+            type: string
+          value:
+            type: string
+          instanceNames:
+            $ref: '#/schemas/StringArray'
+  StringArray:
+    type: array
+    items:
+      type: string
+  DateType:
+    type: string
+  NullableEmail:
+    type: string
+    nullable: true
+    format: email
+  NullablePhoneNumber:
+    type: string
+    nullable: true
+    pattern: ^[0-9,-,+,(,)]*$
+  InternalID:
+    type: string
+    pattern: "^['A-Z'][0-9]{7}$"
+  User:
+    type: object
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+      email:
+        $ref: '#/schemas/Email'
+      picture:
+        type: string
+  ConsentForm:
+    type: object
+    properties:
+      url:
+        type: string
+      fileName:
+        type: string
+      consentType:
+        type: string
+      additionalFindings:
+        type: boolean
+      futureResearch:
+        type: boolean
+      signedAt:
+        $ref: '#/schemas/DateType'
+      minorSignedAt:
+        $ref: '#/schemas/DateType'
+      version:
+        type: string
+      createdAt:
+        $ref: '#/schemas/DateType'
+  SampleSequencingLibraries:
+    type: object
+    additionalProperties: true
+    required:
+      - labPortalID
+      - sample
+      - sequencingId
+    properties:
+      labPortalID:
+        type: string
+      sample:
+        type: string
+      sequencingId:
+        type: string
+  PatientSample:
+    type: object
+    properties:
+      _id:
+        type: string
+      sampleId:
+        type: string
+      type:
+        $ref: '#/schemas/PatientSampleType'
+      date:
+        $ref: '#/schemas/DateType'
+      barcode:
+        type: string
+      igvFile:
+        type: string
+      owner:
+        $ref: '#/schemas/UserBasic'
+      i:
+        type: string
+      qcStatus:
+        $ref: '#/schemas/PatientSampleQCStatus'
+      qcStatusUpdateAt:
+        $ref: '#/schemas/DateType'
+      qcJobLink:
+        type: string
+      createdAt:
+        $ref: '#/schemas/DateType'
+      updatedAt:
+        $ref: '#/schemas/DateType'
+  PatientNextOfKin:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      email:
+        $ref: '#/schemas/NullableEmail'
+      phoneNumber:
+        $ref: '#/schemas/NullablePhoneNumber'
+      addresses:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            address1:
+              type: string
+            address2:
+              type: string
+            cityAndCountry:
+              type: string
+            area:
+              type: string
+      relationship:
+        type: string
+  PatientPhenotype:
+    type: object
+    required:
+      - fieldId
+      - instance
+      - array
+      - value
+    properties:
+      fieldId:
+        type: number
+      instance:
+        type: string
+      array:
+        type: number
+      value:
+        type: string
+      createdAt:
+        $ref: '#/schemas/DateType'
+      updatedAt:
+        $ref: '#/schemas/DateType'
+  SampleAnalysisTypes:
+    enum: ['Solo', 'DuosPatientMother', 'DuosPatientFather', 'Trio', 'TumorNormalPaired', 'Others']
+  PatientReferringUser:
+    type: object
+    properties:
+      type:
+        type: string
+      name:
+        type: string
+  PatientSampleType:
+    type: string
+    enum:
+      [
+        'Blood',
+        'Buccal swab',
+        'Bone marrow',
+        'Buffy coat',
+        'Saliva',
+        'Plasma',
+        'FFPE tumor',
+        'FFPE non-tumor',
+        'Fresh/Frozen tumor',
+        'Fresh/Frozen non-tumor',
+        'Fine Needle',
+        'Others'
+      ]
+  UserBasic:
+    type: object
+    additionalProperties: false
+    required:
+      - _id
+      - name
+      - surname
+      - email
+    properties:
+      _id:
+        $ref: '#/schemas/IdType'
+      name:
+        type: string
+      surname:
+        type: string
+      email:
+        type: string
+      picture:
+        type: string
+  PatientSampleQCStatus:
+    type: string
+    enum: ['Passed', 'Failed']

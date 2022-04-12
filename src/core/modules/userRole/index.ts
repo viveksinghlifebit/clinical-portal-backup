@@ -1,1 +1,1 @@
-export * from './userRole.controller'
+export * from './userRole.controller';

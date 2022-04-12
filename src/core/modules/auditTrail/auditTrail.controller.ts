@@ -1,5 +1,5 @@
-import { log } from 'services/log'
-import { AuditTrail } from '@core/models'
+import { log } from 'services/log';
+import { AuditTrail } from '@core/models';
 
 export class AuditTrailService {
   static async log(
@@ -9,6 +9,6 @@ export class AuditTrailService {
     metadata: AuditTrail.ESInfoMetadata,
     actionOwner: AuditTrail.Attributes['actionOwner']
   ): Promise<void> {
-    await AuditTrail.create({ message, level, requestId, metadata, actionOwner }).catch(log.error)
+    await AuditTrail.create({ message, level, requestId, metadata, actionOwner }).catch(log.error);
   }
 }

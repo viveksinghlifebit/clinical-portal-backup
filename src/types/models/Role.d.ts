@@ -1,36 +1,36 @@
 declare namespace Role {
   interface Attributes extends Input, Mongoose.Document {
-    createdAt: Date
-    updatedAt: Date
+    createdAt: Date;
+    updatedAt: Date;
   }
 
   interface Document extends Attributes, Mongoose.Document {
-    view(): View
+    view(): View;
   }
 
   interface Model extends Mongoose.Model<Document> {
-    findRolesByRoleIds(rolesIds: string[]): Promise<Role.View[]>
+    findRolesByRoleIds(rolesIds: string[]): Promise<Role.View[]>;
   }
 
   interface View {
-    name: Role.Attributes['name']
-    displayName: Role.Attributes['displayName']
-    permissions: Role.Attributes['permissions']
+    name: Role.Attributes['name'];
+    displayName: Role.Attributes['displayName'];
+    permissions: Role.Attributes['permissions'];
   }
 
   interface Input {
-    name: string
-    displayName: string
-    permissions: RoleBaseAccessPermission[]
+    name: string;
+    displayName: string;
+    permissions: RoleBaseAccessPermission[];
   }
 
   interface RoleBaseAccessPermission {
-    name: string
+    name: string;
     access: {
-      read?: boolean
-      create?: boolean
-      update?: boolean
-      delete?: boolean
-    }
+      read?: boolean;
+      create?: boolean;
+      update?: boolean;
+      delete?: boolean;
+    };
   }
 }

@@ -1,13 +1,13 @@
-import { omit } from 'lodash'
-import { Types } from 'mongoose'
-import config from 'config'
-import { AuditLevel } from 'enums'
-import { AuditTrailService } from '@core/modules'
+import { omit } from 'lodash';
+import { Types } from 'mongoose';
+import config from 'config';
+import { AuditLevel } from 'enums';
+import { AuditTrailService } from '@core/modules';
 
 export const auditTrail = async ({ request: req, state, response: res }: Koa.Context): Promise<void> => {
-  const auditLogLevel = state.error ? AuditLevel.Error : AuditLevel.Info
-  const elapsedProcessHrTime = process.hrtime(state.startTime)
-  const responseTime = elapsedProcessHrTime[0] * 1000 + elapsedProcessHrTime[1] / 1e6
+  const auditLogLevel = state.error ? AuditLevel.Error : AuditLevel.Info;
+  const elapsedProcessHrTime = process.hrtime(state.startTime);
+  const responseTime = elapsedProcessHrTime[0] * 1000 + elapsedProcessHrTime[1] / 1e6;
   const infoLog: AuditTrail.InfoLog = {
     actionOwner: state.user?._id.toString(),
     level: auditLogLevel,
@@ -28,7 +28,7 @@ export const auditTrail = async ({ request: req, state, response: res }: Koa.Con
       },
       error: state.error
     }
-  }
+  };
   if (config.hkgiEnvironmentEnabled) {
     await AuditTrailService.log(
       infoLog.message,
@@ -36,6 +36,6 @@ export const auditTrail = async ({ request: req, state, response: res }: Koa.Con
       infoLog.requestId,
       infoLog.metadata,
       new Types.ObjectId(infoLog.actionOwner)
-    )
+    );
   }
-}
+};

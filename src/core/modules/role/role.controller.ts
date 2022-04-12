@@ -1,5 +1,5 @@
-import { Role } from '@core/models'
-import { MongoQuery } from '@core/mongoQuery'
+import { Role } from '@core/models';
+import { MongoQuery } from '@core/mongoQuery';
 
 export class RoleService {
   /**
@@ -9,22 +9,22 @@ export class RoleService {
   static async listRolesPaginated({
     pagination: paginationReq
   }: {
-    pagination: App.PaginationRequest
+    pagination: App.PaginationRequest;
   }): Promise<App.PaginationResponse<Role.View>> {
-    const mongoQuery = new MongoQuery(Role).withSort(paginationReq.sort)
+    const mongoQuery = new MongoQuery(Role).withSort(paginationReq.sort);
 
     const { sort, skip, pagination } = await mongoQuery
       .withPagination(paginationReq.pageNumber, paginationReq.pageSize)
-      .compile()
+      .compile();
 
-    const data = await Role.find({}).sort(sort).skip(skip).limit(pagination.pageSize)
+    const data = await Role.find({}).sort(sort).skip(skip).limit(pagination.pageSize);
     return {
       pageSize: Math.min(pagination.pageSize, data.length),
       pageNumber: pagination.pageNumber,
       totalCount: pagination.totalCount,
       totalPages: pagination.totalPages,
       data: data.map((role) => role.view())
-    }
+    };
   }
 
   /**
@@ -32,8 +32,8 @@ export class RoleService {
    * @param {Role.Input} role role
    */
   static async updateRole({ role }: { role: Role.Input }): Promise<Role.View> {
-    await Role.findOneAndUpdate({ name: role.name }, { $set: role })
-    return role
+    await Role.findOneAndUpdate({ name: role.name }, { $set: role });
+    return role;
   }
 
   /**
@@ -41,7 +41,7 @@ export class RoleService {
    * @param {string} name roleName
    */
   static async deleteRole(name: string): Promise<void> {
-    await Role.deleteOne({ name })
+    await Role.deleteOne({ name });
   }
 
   /**
@@ -49,7 +49,7 @@ export class RoleService {
    * @param {Role.Input} role role
    */
   static async createRole({ role }: { role: Role.Input }): Promise<Role.View> {
-    const data = await Role.create(role)
-    return data.view()
+    const data = await Role.create(role);
+    return data.view();
   }
 }

@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
-import { RolesRoutes } from 'enums'
-import { Role } from './Role'
+import mongoose from 'mongoose';
+import { RolesRoutes } from 'enums';
+import { Role } from './Role';
 
 describe('Role', () => {
   const permission1: Role.RoleBaseAccessPermission = {
@@ -11,7 +11,7 @@ describe('Role', () => {
       read: false,
       update: true
     }
-  }
+  };
   const permission2: Role.RoleBaseAccessPermission = {
     name: RolesRoutes.CohortFields,
     access: {
@@ -20,15 +20,15 @@ describe('Role', () => {
       read: false,
       update: true
     }
-  }
-  const permissions: Role.RoleBaseAccessPermission[] = [permission1, permission2]
+  };
+  const permissions: Role.RoleBaseAccessPermission[] = [permission1, permission2];
 
-  let mockRole: jest.SpyInstance
+  let mockRole: jest.SpyInstance;
   beforeAll(() => {
-    mockRole = jest.spyOn(Role, 'find')
-  })
+    mockRole = jest.spyOn(Role, 'find');
+  });
 
-  afterAll(jest.restoreAllMocks)
+  afterAll(jest.restoreAllMocks);
   describe('view', () => {
     test('When called, then it should transform Role properly.', () => {
       const role = new Role({
@@ -38,14 +38,14 @@ describe('Role', () => {
         permissions,
         createdAt: new Date('2021-05-24'),
         updatedAt: new Date('2021-05-26')
-      })
+      });
       expect(role.view()).toEqual({
         name: role.name,
         permissions: role.permissions.map(({ name, access }) => ({ name, access })),
         displayName: role.displayName
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('findRolesByRoleIds', () => {
     test('should return all the matching roles', async () => {
@@ -56,16 +56,16 @@ describe('Role', () => {
         permissions,
         createdAt: new Date('2021-05-24'),
         updatedAt: new Date('2021-05-26')
-      })
-      mockRole.mockResolvedValue([role])
-      const result = await Role.findRolesByRoleIds([new mongoose.Types.ObjectId().toHexString()])
+      });
+      mockRole.mockResolvedValue([role]);
+      const result = await Role.findRolesByRoleIds([new mongoose.Types.ObjectId().toHexString()]);
       expect(result).toMatchObject([
         {
           name: role.name,
           permissions: role.permissions.map(({ name, access }) => ({ name, access })),
           displayName: role.displayName
         }
-      ])
-    })
-  })
-})
+      ]);
+    });
+  });
+});

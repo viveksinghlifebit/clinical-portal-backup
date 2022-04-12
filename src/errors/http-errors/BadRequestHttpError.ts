@@ -1,12 +1,12 @@
-import { HttpStatusCodes } from 'enums'
+import { HttpStatusCodes } from 'enums';
 
-import AbstractHttpError from './AbstractHttpError'
+import AbstractHttpError from './AbstractHttpError';
 
 class BadRequestHttpError extends AbstractHttpError implements App.ErrorForm {
   constructor(message?: string) {
-    super(message || 'Bad Request.', HttpStatusCodes.BadRequest, HttpStatusCodes[HttpStatusCodes.BadRequest])
-    Object.setPrototypeOf(this, BadRequestHttpError.prototype)
+    super(message || 'Bad Request.', HttpStatusCodes.BadRequest, HttpStatusCodes[HttpStatusCodes.BadRequest]);
+    Object.setPrototypeOf(this, BadRequestHttpError.prototype);
   }
 }
 
-export default BadRequestHttpError
+export default BadRequestHttpError;

@@ -2,52 +2,52 @@ declare namespace App {
   type EndpointOperation = (
     ctx: import('koa').ParameterizedContext<App.State, App.Context>,
     authCtx: AuthenticatedCloudOs
-  ) => void | Promise<void>
+  ) => void | Promise<void>;
 
   type EndpointMiddleware = (
     ctx: import('koa').ParameterizedContext<App.State, App.Context>,
     next: import('koa').Next
-  ) => Promise<void>
+  ) => Promise<void>;
 
   interface AuthenticatedCloudOs {
-    user: User
-    team: Team
+    user: User;
+    team: Team;
   }
   interface EndpointInfo {
-    method: import('enums').HttpMethods
-    path: string
-    operation: EndpointOperation
-    middlewares: any
-    postMiddlewares: EndpointMiddleware[]
+    method: import('enums').HttpMethods;
+    path: string;
+    operation: EndpointOperation;
+    middlewares: any;
+    postMiddlewares: EndpointMiddleware[];
   }
 
-  type EndpointsInfo = { [id: string]: EndpointInfo }
+  type EndpointsInfo = { [id: string]: EndpointInfo };
 
   interface PaginationRequest {
-    pageSize?: number
-    pageNumber?: number
-    sort?: string
-    search?: string
-    searchField?: string
+    pageSize?: number;
+    pageNumber?: number;
+    sort?: string;
+    search?: string;
+    searchField?: string;
   }
 
   interface PaginationResponse<T = unknown> {
-    pageSize: number
-    pageNumber: number
-    totalCount: number
-    totalPages: number
-    data: T[]
+    pageSize: number;
+    pageNumber: number;
+    totalCount: number;
+    totalPages: number;
+    data: T[];
   }
 
   interface SearchPagingSpecs {
-    pageNumber?: number
-    pageSize?: number
-    sortBy?: string
-    sortByType?: string
+    pageNumber?: number;
+    pageSize?: number;
+    sortBy?: string;
+    sortByType?: string;
   }
   interface PaginationInfoResponse {
-    total: number
-    page: number
-    pages: number
+    total: number;
+    page: number;
+    pages: number;
   }
 }

@@ -1,37 +1,37 @@
-import { AuditTrailService } from '@core/modules/auditTrail/auditTrail.controller'
-import { Types } from 'mongoose'
-import config from 'config'
-import { auditTrail } from '.'
+import { AuditTrailService } from '@core/modules/auditTrail/auditTrail.controller';
+import { Types } from 'mongoose';
+import config from 'config';
+import { auditTrail } from '.';
 describe('auditTrail', () => {
-  let mockAuditTrailService: jest.SpyInstance
+  let mockAuditTrailService: jest.SpyInstance;
   beforeAll(() => {
-    mockAuditTrailService = jest.spyOn(AuditTrailService, 'log')
-  })
+    mockAuditTrailService = jest.spyOn(AuditTrailService, 'log');
+  });
   afterEach(() => {
-    config.hkgiEnvironmentEnabled = false
-    jest.clearAllMocks()
-  })
+    config.hkgiEnvironmentEnabled = false;
+    jest.clearAllMocks();
+  });
 
-  afterAll(jest.restoreAllMocks)
+  afterAll(jest.restoreAllMocks);
   test('should log in AuditTrailService if hkgiEnvironment is enabled', async () => {
-    config.hkgiEnvironmentEnabled = true
-    mockAuditTrailService.mockResolvedValue(undefined)
+    config.hkgiEnvironmentEnabled = true;
+    mockAuditTrailService.mockResolvedValue(undefined);
 
-    await auditTrail({ state: {}, request: {}, response: {} } as Koa.Context)
+    await auditTrail({ state: {}, request: {}, response: {} } as Koa.Context);
 
-    expect(mockAuditTrailService).toHaveBeenCalledTimes(1)
-  })
+    expect(mockAuditTrailService).toHaveBeenCalledTimes(1);
+  });
 
   test('should not log in AuditTrailService if hkgiEnvironment is not enabled', async () => {
-    await auditTrail({ state: {}, request: {}, response: {} } as Koa.Context)
-    expect(mockAuditTrailService).toHaveBeenCalledTimes(0)
-  })
+    await auditTrail({ state: {}, request: {}, response: {} } as Koa.Context);
+    expect(mockAuditTrailService).toHaveBeenCalledTimes(0);
+  });
 
   test('should log error in AuditTrailService if state holds error', async () => {
-    config.hkgiEnvironmentEnabled = true
-    mockAuditTrailService.mockResolvedValue(undefined)
-    const userId = new Types.ObjectId()
-    const stateError = new Error('error')
+    config.hkgiEnvironmentEnabled = true;
+    mockAuditTrailService.mockResolvedValue(undefined);
+    const userId = new Types.ObjectId();
+    const stateError = new Error('error');
     await auditTrail({
       state: {
         error: stateError,
@@ -41,9 +41,9 @@ describe('auditTrail', () => {
       },
       request: {},
       response: {}
-    } as Koa.Context)
+    } as Koa.Context);
 
-    expect(mockAuditTrailService).toHaveBeenCalledTimes(1)
+    expect(mockAuditTrailService).toHaveBeenCalledTimes(1);
     expect(mockAuditTrailService).toHaveBeenCalledWith(
       `Method: (undefined), Url: "undefined"`,
       'error',
@@ -54,6 +54,6 @@ describe('auditTrail', () => {
         response: expect.any(Object)
       }),
       userId
-    )
-  })
-})
+    );
+  });
+});

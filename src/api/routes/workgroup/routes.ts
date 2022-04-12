@@ -1,49 +1,60 @@
-import { RolesRoutes } from '@core/enums'
-import { WorkgroupService } from '@core/modules'
-import { ifTeamSpecifiedDo, rbac, auth, getTeamAndTeamMembershipAndCheckTheyAreActive } from 'api/middlewares'
-import { HttpMethods, HttpStatusCodes } from 'enums'
-import { auditTrail } from 'services/auditTrail'
+import { RolesRoutes } from '@core/enums';
+import { WorkgroupService } from '@core/modules';
+import { ifTeamSpecifiedDo, rbac, auth, getTeamAndTeamMembershipAndCheckTheyAreActive } from 'api/middlewares';
+import { HttpMethods, HttpStatusCodes } from 'enums';
+import { auditTrail } from 'services/auditTrail';
+import { PatientService } from 'services/patient';
 
 interface SearchRequestBody {
-  criteria: Filter.SearchItem[]
+  criteria: Filter.SearchItem[];
 }
 
 const createWorkgroupHandler: App.EndpointOperation = async (
   c: Koa.ParameterizedContext<App.State, App.Context>,
   { team, user }: App.AuthenticatedCloudOs
 ) => {
-  const name = c.request.body.name as string
-  const workgroup: Workgroup.Document = await WorkgroupService.createWorkgroup(name, team, user)
-  c.status = HttpStatusCodes.OK
-  c.body = workgroup
-}
+  const name = c.request.body.name as string;
+  const workgroup: Workgroup.Document = await WorkgroupService.createWorkgroup(name, team, user);
+  c.status = HttpStatusCodes.OK;
+  c.body = workgroup;
+};
 
 const deleteWorkgroupHandler: App.EndpointOperation = async (c: Koa.ParameterizedContext<App.State, App.Context>) => {
-  const workgroupId = c.params?.id
-  const { teamId } = c.request.query
+  const workgroupId = c.params?.id;
+  const { teamId } = c.request.query;
 
-  await WorkgroupService.deleteWorkgroup(workgroupId as string, teamId as string)
-  c.status = HttpStatusCodes.OK
-  c.body = {}
-}
+  await WorkgroupService.deleteWorkgroup(workgroupId as string, teamId as string);
+  c.status = HttpStatusCodes.OK;
+  c.body = {};
+};
 
 const searchWorkgroupHandler: App.EndpointOperation = async (
   c: Koa.ParameterizedContext<App.State, App.Context<SearchRequestBody>>,
   { user }: App.AuthenticatedCloudOs
 ) => {
-  const { criteria } = c.request.body
-  const { teamId } = c.request.query
-  const { pageNumber, pageSize, sortBy, sortType } = c.request.query
+  const { criteria } = c.request.body;
+  const { teamId } = c.request.query;
+  const { pageNumber, pageSize, sortBy, sortType } = c.request.query;
 
   const workgroupsData = await WorkgroupService.searchWorkgroups(criteria, teamId as string, user, {
     pageNumber: parseInt(pageNumber as string),
     pageSize: parseInt(pageSize as string),
     sortBy: sortBy as string,
     sortByType: sortType as string
-  })
-  c.status = HttpStatusCodes.OK
-  c.body = workgroupsData
-}
+  });
+  c.status = HttpStatusCodes.OK;
+  c.body = workgroupsData;
+};
+
+const createWorkgroupPatientHandler: App.EndpointOperation = async (
+  c: Koa.ParameterizedContext<App.State, App.Context<CorePatient.WorkgroupPatientCreateInput>>,
+  { user, team }: App.AuthenticatedCloudOs
+) => {
+  const input = c.request.body;
+  const patient = await PatientService.createPatient(input, user, team);
+  c.status = HttpStatusCodes.OK;
+  c.body = patient;
+};
 
 export const workgroupRoutes: App.EndpointsInfo = {
   createWorkgroup: {
@@ -78,5 +89,16 @@ export const workgroupRoutes: App.EndpointsInfo = {
       ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
     ],
     postMiddlewares: [auditTrail]
+  },
+  createWorkgroupPatient: {
+    method: HttpMethods.Post,
+    path: '/individual-browser/workgroup/patient',
+    operation: createWorkgroupPatientHandler,
+    middlewares: [
+      auth(['token', 'apikey']),
+      rbac(RolesRoutes.IndividualBrowserWorkGroupPatient),
+      ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
+    ],
+    postMiddlewares: [auditTrail]
   }
-}
+};

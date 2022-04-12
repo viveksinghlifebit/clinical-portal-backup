@@ -1,14 +1,14 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-import { PatientStatus, SampleAnalysisTypes } from 'enums'
+import { PatientStatus, SampleAnalysisTypes } from 'enums';
 
-import { SequenceId } from './SequenceId'
-import { Patient, generateID, preSave, postSave, saveEncrypted } from './Patient'
+import { SequenceId } from './SequenceId';
+import { Patient, generateID, preSave, postSave, saveEncrypted } from './Patient';
 
 describe('Patient', () => {
   describe('getSearchableEncryptedFields', () => {
     test('should return searchableEncryptedFields', () => {
-      const result = Patient.getSearchableEncryptedFields?.()
+      const result = Patient.getSearchableEncryptedFields?.();
       expect(result).toEqual([
         'externalID',
         'name',
@@ -18,77 +18,77 @@ describe('Patient', () => {
         'email',
         'phoneNumber',
         'dateOfBirth.year'
-      ])
-    })
-  })
+      ]);
+    });
+  });
 
   describe('updateById', () => {
-    let spyPatientFindOneAndUpdate: jest.SpyInstance
+    let spyPatientFindOneAndUpdate: jest.SpyInstance;
     beforeEach(() => {
-      spyPatientFindOneAndUpdate = jest.spyOn(Patient, 'findOneAndUpdate')
-    })
+      spyPatientFindOneAndUpdate = jest.spyOn(Patient, 'findOneAndUpdate');
+    });
 
-    afterEach(jest.restoreAllMocks)
+    afterEach(jest.restoreAllMocks);
     test('should return the patient', async () => {
       spyPatientFindOneAndUpdate.mockReturnValue({
         exec: jest.fn().mockResolvedValue(undefined)
-      })
-      await expect(Patient.updateById('id', { name: 'test' })).toMatchObject({})
-    })
-  })
+      });
+      await expect(Patient.updateById('id', { name: 'test' })).toMatchObject({});
+    });
+  });
   describe('generateID', () => {
     const mockSequenceIdGetNextByName = (value: string): void => {
       SequenceId.getNextByName = jest.fn().mockResolvedValue({
         toPadString: () => value
-      })
-    }
+      });
+    };
 
-    afterEach(jest.restoreAllMocks)
+    afterEach(jest.restoreAllMocks);
 
     test('When called and a doc is found, then it call incrementID fn.', async () => {
-      const i = 'P0000000001'
-      mockSequenceIdGetNextByName(i)
-      expect(await generateID()).toEqual(i)
-      expect(SequenceId.getNextByName).toHaveBeenCalledTimes(1)
-    })
-  })
+      const i = 'P0000000001';
+      mockSequenceIdGetNextByName(i);
+      expect(await generateID()).toEqual(i);
+      expect(SequenceId.getNextByName).toHaveBeenCalledTimes(1);
+    });
+  });
 
   describe('preSave', () => {
     beforeEach(() => {
-      jest.spyOn(Patient, 'generateID').mockResolvedValue('P0000000000')
-    })
+      jest.spyOn(Patient, 'generateID').mockResolvedValue('P0000000000');
+    });
 
-    afterEach(jest.restoreAllMocks)
-
-    test('When its a new document, then it should call proper methods.', async () => {
-      await preSave.bind({ isNew: true } as Patient.Document)()
-      expect(Patient.generateID).toHaveBeenCalledTimes(1)
-    })
+    afterEach(jest.restoreAllMocks);
 
     test('When its a new document, then it should call proper methods.', async () => {
-      await preSave.bind({ isNew: false } as Patient.Document)()
-      expect(Patient.generateID).not.toHaveBeenCalled()
-    })
-  })
+      await preSave.bind({ isNew: true } as Patient.Document)();
+      expect(Patient.generateID).toHaveBeenCalledTimes(1);
+    });
+
+    test('When its a new document, then it should call proper methods.', async () => {
+      await preSave.bind({ isNew: false } as Patient.Document)();
+      expect(Patient.generateID).not.toHaveBeenCalled();
+    });
+  });
 
   describe('postSave', () => {
     test('When the doc contains the decryptFieldsSync method that sould be called', () => {
-      const doc = ({ decryptFieldsSync: () => null } as unknown) as Patient.Document
-      const decryptFieldsSyncSpy = jest.spyOn(doc, 'decryptFieldsSync')
+      const doc = ({ decryptFieldsSync: () => null } as unknown) as Patient.Document;
+      const decryptFieldsSyncSpy = jest.spyOn(doc, 'decryptFieldsSync');
 
-      postSave.bind(doc)()
+      postSave.bind(doc)();
 
-      expect(decryptFieldsSyncSpy).toBeCalledTimes(1)
-    })
+      expect(decryptFieldsSyncSpy).toBeCalledTimes(1);
+    });
 
     test('When the doc does not contain the decryptFieldsSync method then it should not throw err', () => {
-      postSave.bind({} as Patient.Document)
-    })
-  })
+      postSave.bind({} as Patient.Document);
+    });
+  });
 
   describe('view', () => {
     test('When called, then it should transform patient properly.', async () => {
-      const dateOfBirth = new Date('1986-09-15')
+      const dateOfBirth = new Date('1986-09-15');
       const patient = new Patient({
         _id: new mongoose.Types.ObjectId(),
         i: 'test-i',
@@ -148,7 +148,7 @@ describe('Patient', () => {
         analysisEligibleTypes: [SampleAnalysisTypes.Trio],
         createdAt: new Date('2021-05-24'),
         updatedAt: new Date('2021-05-26')
-      })
+      });
       expect(patient.view()).toEqual({
         _id: patient._id.toHexString(),
         i: patient.i,
@@ -213,8 +213,8 @@ describe('Patient', () => {
         createdAt: patient.createdAt.toISOString(),
         updatedAt: patient.updatedAt.toISOString(),
         updatedBy: patient.owner.toHexString()
-      })
-    })
+      });
+    });
 
     test('When called, then it should transform patient properly with undefined values as well', async () => {
       const patient = new Patient({
@@ -241,7 +241,7 @@ describe('Patient', () => {
         analysisEligibleTypes: [SampleAnalysisTypes.Trio],
         createdAt: new Date('2021-05-24'),
         updatedAt: new Date('2021-05-26')
-      })
+      });
       expect(patient.view()).toEqual({
         _id: patient._id.toHexString(),
         i: patient.i,
@@ -271,9 +271,9 @@ describe('Patient', () => {
         createdAt: patient.createdAt.toISOString(),
         updatedAt: patient.updatedAt.toISOString(),
         updatedBy: patient.updatedBy.toHexString()
-      })
-    })
-  })
+      });
+    });
+  });
 
   describe('saveEncrypted', () => {
     test('remove encryption metadata from nested array fields(addresses and nextsOfKin)', () => {
@@ -366,8 +366,8 @@ describe('Patient', () => {
           }
         ],
         save: jest.fn()
-      }
-      saveEncrypted.call((patient as unknown) as Patient.Document)
+      };
+      saveEncrypted.call((patient as unknown) as Patient.Document);
       expect(patient.addresses).toStrictEqual([
         {
           address1: 'Some address 1',
@@ -381,7 +381,7 @@ describe('Patient', () => {
           cityAndCountry: 'Solar System',
           area: 'Mars'
         }
-      ])
+      ]);
       expect(patient.nextsOfKin).toStrictEqual([
         {
           name: 'Some name',
@@ -423,7 +423,7 @@ describe('Patient', () => {
           ],
           relationship: 'brother'
         }
-      ])
-    })
-  })
-})
+      ]);
+    });
+  });
+});

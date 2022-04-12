@@ -1,4 +1,4 @@
-import OpenApiBackend, { Document, OpenAPIBackend, Handler } from 'openapi-backend'
+import OpenApiBackend, { Document, OpenAPIBackend, Handler } from 'openapi-backend';
 
 export const createOpenApiBackend = (
   handlers: { [id: string]: Handler | undefined },
@@ -10,4 +10,4 @@ export const createOpenApiBackend = (
     validate: true,
     definition,
     ajvOpts: { nullable: true }
-  })
+  });

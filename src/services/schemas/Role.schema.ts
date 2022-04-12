@@ -1,5 +1,5 @@
-import { SchemaTypeOptions, Schema } from 'mongoose'
-import { RolesRoutes } from 'enums'
+import { SchemaTypeOptions, Schema } from 'mongoose';
+import { RolesRoutes } from 'enums';
 
 const roleSchema: Partial<Record<keyof Role.Attributes, SchemaTypeOptions<unknown>>> = {
   name: {
@@ -39,8 +39,8 @@ const roleSchema: Partial<Record<keyof Role.Attributes, SchemaTypeOptions<unknow
       }
     }
   ]
-}
+};
 
-const RoleSchema = new Schema(roleSchema, { timestamps: true })
+const RoleSchema = new Schema(roleSchema, { timestamps: true });
 
-export { RoleSchema }
+export { RoleSchema };

@@ -1,9 +1,10 @@
 declare namespace GenoMarker {
   interface Attributes {
-    index: number
-    id: number
-    cn: string
-    fullLocation: string
-    gene: string
+    _id?: Mongoose.ObjectId;
+    index: number;
+    id: number;
+    cn: string;
+    fullLocation: string;
+    gene: string;
   }
 }

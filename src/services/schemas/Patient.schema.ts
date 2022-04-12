@@ -1,10 +1,10 @@
-import mongoose, { Schema, SchemaTypeOptions, Model } from 'mongoose'
+import mongoose, { Schema, SchemaTypeOptions, Model } from 'mongoose';
 
-import { PatientReferringUserType, PatientStatus, PatientSubStatus, SampleAnalysisTypes } from 'enums'
-import { registerEncryptionPlugin } from 'services/mongoose'
-import config from 'config'
+import { PatientReferringUserType, PatientStatus, PatientSubStatus, SampleAnalysisTypes } from 'enums';
+import { registerEncryptionPlugin } from 'services/mongoose/encryption';
+import config from 'config';
 
-const { secret, salt, enabled: enableFieldEncryption } = config.mongooseFieldsEncryption
+const { secret, salt, enabled: enableFieldEncryption } = config.mongooseFieldsEncryption;
 
 const ConsentFormSchema = new mongoose.Schema({
   fileName: {
@@ -48,15 +48,15 @@ const ConsentFormSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'PatientFile'
   }
-})
+});
 
 const addressSchemaRaw = {
   address1: { type: String },
   address2: { type: String },
   cityAndCountry: { type: String },
   area: { type: String }
-}
-const AddressSchema = new mongoose.Schema(addressSchemaRaw)
+};
+const AddressSchema = new mongoose.Schema(addressSchemaRaw);
 
 registerEncryptionPlugin({
   featureFlag: enableFieldEncryption,
@@ -65,7 +65,7 @@ registerEncryptionPlugin({
   schemaLabel: 'PatientSchema.AddressSchema',
   schema: AddressSchema,
   secret
-})
+});
 
 const nextOfKinsSchemaRaw = {
   name: { type: String },
@@ -73,8 +73,8 @@ const nextOfKinsSchemaRaw = {
   phoneNumber: { type: String },
   addresses: [AddressSchema],
   relationship: { type: String }
-}
-const NextOfKinsSchema = new mongoose.Schema(nextOfKinsSchemaRaw)
+};
+const NextOfKinsSchema = new mongoose.Schema(nextOfKinsSchemaRaw);
 registerEncryptionPlugin({
   featureFlag: enableFieldEncryption,
   fields: ['name', 'email', 'phoneNumber', 'relationship'],
@@ -82,18 +82,18 @@ registerEncryptionPlugin({
   schemaLabel: 'PatientSchema.NextOfKinsSchema',
   schema: NextOfKinsSchema,
   secret
-})
+});
 
 const DateOfBirthSchema = new mongoose.Schema({
   year: { type: String },
   month: { type: String },
   day: { type: String }
-})
+});
 
 const ReferringUserSchema = new mongoose.Schema({
   type: { type: String, enum: Object.values(PatientReferringUserType), required: true },
   name: { type: String, required: true }
-})
+});
 registerEncryptionPlugin({
   featureFlag: enableFieldEncryption,
   fields: ['year', 'month', 'day'],
@@ -101,7 +101,7 @@ registerEncryptionPlugin({
   schemaLabel: 'PatientSchema.DateOfBirthSchema',
   schema: DateOfBirthSchema,
   secret
-})
+});
 
 const patientSchema: Partial<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -173,9 +173,9 @@ const patientSchema: Partial<
   dateOfEnrollment: {
     type: Date
   }
-}
+};
 
-const PatientSchema = new mongoose.Schema(patientSchema, { timestamps: true })
+const PatientSchema = new mongoose.Schema(patientSchema, { timestamps: true });
 
 export const searchableEncryptedFields = [
   'externalID',
@@ -186,7 +186,7 @@ export const searchableEncryptedFields = [
   'email',
   'phoneNumber',
   'dateOfBirth.year'
-]
+];
 
 registerEncryptionPlugin({
   featureFlag: enableFieldEncryption,
@@ -195,6 +195,6 @@ registerEncryptionPlugin({
   schemaLabel: 'PatientSchema',
   schema: PatientSchema,
   secret
-})
+});
 
-export { PatientSchema, AddressSchema, NextOfKinsSchema, DateOfBirthSchema, addressSchemaRaw, nextOfKinsSchemaRaw }
+export { PatientSchema, AddressSchema, NextOfKinsSchema, DateOfBirthSchema, addressSchemaRaw, nextOfKinsSchemaRaw };

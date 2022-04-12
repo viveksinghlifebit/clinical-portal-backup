@@ -1,36 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MongoQuery } from '@core/mongoQuery'
+import { MongoQuery } from '@core/mongoQuery';
 
-jest.mock('@core/mongoQuery', () => ({ MongoQuery: jest.fn() }))
+jest.mock('@core/mongoQuery', () => ({ MongoQuery: jest.fn() }));
 
 export const getMockedMongoQueryInstance = (): {
-  withTeamOrOwner: jest.Mock
-  withSearch: jest.Mock
-  withSort: jest.Mock
-  withPagination: jest.Mock
-  compile: jest.Mock
-  withFields: jest.Mock
+  withTeamOrOwner: jest.Mock;
+  withSearch: jest.Mock;
+  withSort: jest.Mock;
+  withPagination: jest.Mock;
+  compile: jest.Mock;
+  withFields: jest.Mock;
 } => {
   const mongoQuery = {
     withTeamOrOwner: jest.fn(function (this: any) {
-      return this
+      return this;
     }),
     withSearch: jest.fn(function (this: any) {
-      return this
+      return this;
     }),
     withSort: jest.fn(function (this: any) {
-      return this
+      return this;
     }),
     withPagination: jest.fn(function (this: any) {
-      return this
+      return this;
     }),
     compile: jest.fn(function (this: any) {
-      return { query: {}, pagination: {} }
+      return { query: {}, pagination: {} };
     }),
     withFields: jest.fn(function (this: any) {
-      return this
+      return this;
     })
-  }
-  ;(MongoQuery as jest.Mock).mockImplementation(() => mongoQuery)
-  return mongoQuery
-}
+  };
+  (MongoQuery as jest.Mock).mockImplementation(() => mongoQuery);
+  return mongoQuery;
+};

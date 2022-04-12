@@ -1,32 +1,32 @@
-import path from 'path'
-import Koa from 'koa'
-import Router from '@koa/router'
+import path from 'path';
+import Koa from 'koa';
+import Router from '@koa/router';
 
-import { createOpenApiBackend } from 'services/openapi-backend'
-import { NotFoundHttpError } from 'errors/http-errors'
+import { createOpenApiBackend } from 'services/openapi-backend';
+import { NotFoundHttpError } from 'errors/http-errors';
 
-import operations from './operations'
-import { Request } from 'openapi-backend'
-import { mapErrorWithContext } from 'api/middlewares/error'
+import operations from './operations';
+import { Request } from 'openapi-backend';
+import { mapErrorWithContext } from 'api/middlewares/error';
 
 export const loadEndpoints = async (
   app: Koa<App.State, App.Context>,
   endpointsInfo: App.EndpointsInfo,
   prefix = ''
 ): Promise<Koa<App.State, App.Context>> => {
-  const apiEndpoints = _getOperationMapFromEndpointsInfoMap(endpointsInfo)
+  const apiEndpoints = _getOperationMapFromEndpointsInfoMap(endpointsInfo);
 
   const handlers = {
     ...apiEndpoints,
     ...operations
-  }
+  };
 
-  const openApi = createOpenApiBackend(handlers, _getApiSpecification('../specification/openapi.yaml'))
+  const openApi = createOpenApiBackend(handlers, _getApiSpecification('../specification/openapi.yaml'));
 
-  await openApi.init()
+  await openApi.init();
 
   // // Registering all endpoints
-  const router = new Router<App.State, App.Context>({ prefix })
+  const router = new Router<App.State, App.Context>({ prefix });
   for (const endpoint of Object.values(endpointsInfo)) {
     router[endpoint.method](
       endpoint.path,
@@ -34,32 +34,32 @@ export const loadEndpoints = async (
         ...endpoint.middlewares,
         async (ctx: Koa.ParameterizedContext<App.State, App.Context>, next: Koa.Next) => {
           try {
-            await openApi.handleRequest(ctx.request as Request, ctx)
+            await openApi.handleRequest(ctx.request as Request, ctx);
           } catch (err) {
             ctx.state = {
               ...ctx.state,
               error: err
-            }
-            await mapErrorWithContext(ctx, err)
+            };
+            await mapErrorWithContext(ctx, err);
           } finally {
             if (endpoint.postMiddlewares.length > 0) {
-              await next()
+              await next();
             }
           }
         },
         ...endpoint.postMiddlewares
       ]
-    )
+    );
   }
 
-  app.use(router.middleware())
+  app.use(router.middleware());
 
   app.use(() => {
-    throw new NotFoundHttpError('The API endpoint does not exist.')
-  })
+    throw new NotFoundHttpError('The API endpoint does not exist.');
+  });
 
-  return app
-}
+  return app;
+};
 
 const _getOperationMapFromEndpointsInfoMap = (
   EndpointsInfo: App.EndpointsInfo
@@ -70,11 +70,11 @@ const _getOperationMapFromEndpointsInfoMap = (
       [key]: _wrapOpenApiContext(EndpointsInfo[key]!.operation)
     }),
     {}
-  )
+  );
 
 const _wrapOpenApiContext = (operation: App.EndpointOperation): OpenApiBackend.Handler => (
   _: OpenApiBackend.Context,
   ctx: Koa.ParameterizedContext<App.State, App.Context> & { user: User; team: Team }
-) => operation(ctx, { user: ctx.user, team: ctx.team })
+) => operation(ctx, { user: ctx.user, team: ctx.team });
 
-export const _getApiSpecification = (relativePath: string): string => path.resolve(__dirname, relativePath)
+export const _getApiSpecification = (relativePath: string): string => path.resolve(__dirname, relativePath);

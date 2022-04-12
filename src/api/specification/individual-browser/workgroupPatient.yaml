@@ -1,0 +1,18 @@
+post:
+  operationId: createWorkgroupPatient
+  description: Creates or update a workgroup with eid and description
+  parameters:
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components.yaml#/schemas/WorkgroupPatientCreateInput'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components.yaml#/schemas/PatientWorkgroup'

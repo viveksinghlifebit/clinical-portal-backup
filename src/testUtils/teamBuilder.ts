@@ -1,21 +1,21 @@
 export class TeamBuilder {
-  private readonly item: Partial<Team>
+  private readonly item: Partial<Team>;
 
   constructor() {
-    this.item = {}
+    this.item = {};
   }
 
   public withName(name: string): TeamBuilder {
-    this.item.name = name
-    return this
+    this.item.name = name;
+    return this;
   }
 
   public withId(id: string): TeamBuilder {
-    this.item._id = id
-    return this
+    this.item._id = id;
+    return this;
   }
 
   public build(): Team {
-    return this.item as Team
+    return this.item as Team;
   }
 }

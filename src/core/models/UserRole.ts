@@ -1,6 +1,6 @@
-import { UserRoleSchema } from '@schemas'
+import { UserRoleSchema } from '@schemas';
 
-export const userRoleModelName = 'UserRole'
+export const userRoleModelName = 'UserRole';
 
 /**
  * MODEL METHODS
@@ -12,12 +12,12 @@ function view(this: UserRole.Document): UserRole.View {
     userId: this.userId.toHexString(),
     team: this.team.toHexString(),
     roles: (this.rolesIds as Mongoose.ObjectId[]).map(String)
-  }
+  };
 }
 
 UserRoleSchema.methods = {
   view
-}
+};
 
 /**
  * MODEL Static Methods
@@ -29,21 +29,21 @@ async function findByUserAndTeamId(
   const userRole = await UserRole.findOne({
     userId: userId,
     team: teamId
-  })
+  });
 
   if (userRole) {
-    return userRole.view()
+    return userRole.view();
   }
 
-  return null
+  return null;
 }
 
 async function getUserRolesWithRolesByAggregation({
   users,
   team
 }: {
-  users: Mongoose.ObjectId[]
-  team: Mongoose.ObjectId
+  users: Mongoose.ObjectId[];
+  team: Mongoose.ObjectId;
 }): Promise<UserRole.View[]> {
   return UserRole.aggregate([
     {
@@ -70,20 +70,20 @@ async function getUserRolesWithRolesByAggregation({
         'roles.permissions': 1
       }
     }
-  ])
+  ]);
 }
 
 UserRoleSchema.statics = {
   findByUserAndTeamId,
   getUserRolesWithRolesByAggregation
-}
+};
 
 /**
  * MODEL INITIALIZATION
  */
 
-export let UserRole: UserRole.Model
+export let UserRole: UserRole.Model;
 
 export const init = (connection: Mongoose.Connection): void => {
-  UserRole = connection.model<UserRole.Document, UserRole.Model>(userRoleModelName, UserRoleSchema)
-}
+  UserRole = connection.model<UserRole.Document, UserRole.Model>(userRoleModelName, UserRoleSchema);
+};

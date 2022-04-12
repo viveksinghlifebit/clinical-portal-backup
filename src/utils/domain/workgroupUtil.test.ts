@@ -1,11 +1,11 @@
-import { UserRepository } from '@core/repos'
-import { TeamBuilder, UserBuilder } from 'testUtils'
-import { constructWorkgroupsSearchCriteria } from './workgroupUtil'
+import { UserRepository } from '@core/repos';
+import { TeamBuilder, UserBuilder } from 'testUtils';
+import { constructWorkgroupsSearchCriteria } from './workgroupUtil';
 
 describe('Workgroup Utils: Testing constructWorkgroupsSearchCriteria()', () => {
   afterEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
   const searchCriteria = [
     {
@@ -31,22 +31,22 @@ describe('Workgroup Utils: Testing constructWorkgroupsSearchCriteria()', () => {
       columnHeader: 'test-1',
       high: '2021-03-31'
     }
-  ]
-  const team = new TeamBuilder().withName('Team').withId('1').build()
-  const user = new UserBuilder().withName('User').withId('2').build()
+  ];
+  const team = new TeamBuilder().withName('Team').withId('1').build();
+  const user = new UserBuilder().withName('User').withId('2').build();
 
-  const mockedFindUsersFn: jest.Mock = jest.fn()
+  const mockedFindUsersFn: jest.Mock = jest.fn();
 
-  UserRepository.getUserIdsByTerm = mockedFindUsersFn
+  UserRepository.getUserIdsByTerm = mockedFindUsersFn;
 
   beforeEach(() => {
-    mockedFindUsersFn.mockReturnValueOnce([user._id])
-  })
+    mockedFindUsersFn.mockReturnValueOnce([user._id]);
+  });
 
-  afterEach(jest.restoreAllMocks)
+  afterEach(jest.restoreAllMocks);
 
   test('Should return the criteria to search by', async () => {
-    const criteria = await constructWorkgroupsSearchCriteria(searchCriteria, team._id as string)
+    const criteria = await constructWorkgroupsSearchCriteria(searchCriteria, team._id as string);
 
     expect(criteria).toStrictEqual({
       numberOfPatients: { $in: '3' },
@@ -62,15 +62,15 @@ describe('Workgroup Utils: Testing constructWorkgroupsSearchCriteria()', () => {
       'test-1': {
         $lte: '2021-03-31'
       }
-    })
-    expect(mockedFindUsersFn).toHaveBeenCalledWith('cb-test')
-  })
+    });
+    expect(mockedFindUsersFn).toHaveBeenCalledWith('cb-test');
+  });
 
   test('Should return base criteria if no search criteria is passed', async () => {
-    const criteria = await constructWorkgroupsSearchCriteria([], team._id as string)
+    const criteria = await constructWorkgroupsSearchCriteria([], team._id as string);
 
     expect(criteria).toStrictEqual({
       team: team._id
-    })
-  })
-})
+    });
+  });
+});

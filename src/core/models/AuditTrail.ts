@@ -1,6 +1,6 @@
-import { AuditTrailSchema } from '@schemas'
+import { AuditTrailSchema } from '@schemas';
 
-export const auditTrailModelName = 'AuditTrail'
+export const auditTrailModelName = 'AuditTrail';
 
 /**
  * MODEL METHODS
@@ -15,19 +15,19 @@ function view(this: AuditTrail.Document): AuditTrail.View {
     timestamp: this.timestamp,
     actionOwner: this.actionOwner.toHexString(),
     metadata: this.metadata
-  }
+  };
 }
 
 AuditTrailSchema.methods = {
   view
-}
+};
 
 /**
  * MODEL INITIALIZATION
  */
 
-export let AuditTrail: AuditTrail.Model
+export let AuditTrail: AuditTrail.Model;
 
 export const init = (connection: Mongoose.Connection): void => {
-  AuditTrail = connection.model<AuditTrail.Document, AuditTrail.Model>(auditTrailModelName, AuditTrailSchema)
-}
+  AuditTrail = connection.model<AuditTrail.Document, AuditTrail.Model>(auditTrailModelName, AuditTrailSchema);
+};

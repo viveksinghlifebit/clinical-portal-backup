@@ -1,77 +1,77 @@
-import supertest from 'supertest'
-import config from 'config'
-import createApp from 'createApp'
-import { loadEndpoints } from 'api/validation'
+import supertest from 'supertest';
+import config from 'config';
+import createApp from 'createApp';
+import { loadEndpoints } from 'api/validation';
 
-import { routes } from './routes'
+import { routes } from './routes';
 
 describe('health', () => {
-  let server: Http.Server
+  let server: Http.Server;
 
   beforeAll(async () => {
-    const app = createApp()
-    await loadEndpoints(app, routes, config.apiPrefix)
-    server = app.listen()
-  })
+    const app = createApp();
+    await loadEndpoints(app, routes, config.apiPrefix);
+    server = app.listen();
+  });
 
   afterAll(() => {
-    server.close()
-  })
+    server.close();
+  });
 
   describe('GET /not-found', () => {
-    const frequest = (): supertest.Test => supertest(server).get(`/not-found`)
+    const frequest = (): supertest.Test => supertest(server).get(`/not-found`);
 
     test('When request is not-found, then expect to response with 404.', async () => {
-      const expectedStatus = 404
+      const expectedStatus = 404;
       const expectedBody = {
         code: 'NotFound',
         message: 'The API endpoint does not exist.',
         statusCode: 404,
         time: expect.any(String)
-      }
-      const { status, body } = await frequest()
-      expect(status).toEqual(expectedStatus)
-      expect(body).toMatchObject(expectedBody)
-    })
-  })
+      };
+      const { status, body } = await frequest();
+      expect(status).toEqual(expectedStatus);
+      expect(body).toMatchObject(expectedBody);
+    });
+  });
   describe('GET /health', () => {
-    const request = (): supertest.Test => supertest(server).get(`${config.apiPrefix}/health`)
+    const request = (): supertest.Test => supertest(server).get(`${config.apiPrefix}/health`);
 
     test('When request health, then expect to successfully respond 200.', async () => {
-      const expectedStatus = 200
-      const expectedBody = { status: 'ok' }
-      const { status, body } = await request()
-      expect(status).toEqual(expectedStatus)
-      expect(body).toEqual(expectedBody)
-    })
-  })
+      const expectedStatus = 200;
+      const expectedBody = { status: 'ok' };
+      const { status, body } = await request();
+      expect(status).toEqual(expectedStatus);
+      expect(body).toEqual(expectedBody);
+    });
+  });
 
   describe('POST /health', () => {
     const request = (status?: string): supertest.Test =>
-      supertest(server).post(`${config.apiPrefix}/health`).send({ status })
+      supertest(server).post(`${config.apiPrefix}/health`).send({ status });
 
     test('When submit health, then expect to successfully repond 200 with the given status.', async () => {
-      const expectedStatus = 200
-      const expectedBody = { status: 'down' }
-      const { status, body } = await request('down')
-      expect(status).toEqual(expectedStatus)
-      expect(body).toEqual(expectedBody)
-    })
+      const expectedStatus = 200;
+      const expectedBody = { status: 'down' };
+      const { status, body } = await request('down');
+      expect(status).toEqual(expectedStatus);
+      expect(body).toEqual(expectedBody);
+    });
 
     test('When required fields are missing, then expect to respond 400 with validation error.', async () => {
-      const expectedStatus = 400
-      const expectedPartialMessage = /should have required property 'status'/
-      const { status, body } = await request()
-      expect(status).toEqual(expectedStatus)
-      expect(body.message).toMatch(expectedPartialMessage)
-    })
+      const expectedStatus = 400;
+      const expectedPartialMessage = /should have required property 'status'/;
+      const { status, body } = await request();
+      expect(status).toEqual(expectedStatus);
+      expect(body.message).toMatch(expectedPartialMessage);
+    });
 
     test('When fields are not valid, then expect to respond 400 with validation error.', async () => {
-      const expectedStatus = 400
-      const expectedPartialMessage = /should be equal to one of the allowed values/
-      const { status, body } = await request('invalid')
-      expect(status).toEqual(expectedStatus)
-      expect(body.message).toMatch(expectedPartialMessage)
-    })
-  })
-})
+      const expectedStatus = 400;
+      const expectedPartialMessage = /should be equal to one of the allowed values/;
+      const { status, body } = await request('invalid');
+      expect(status).toEqual(expectedStatus);
+      expect(body.message).toMatch(expectedPartialMessage);
+    });
+  });
+});

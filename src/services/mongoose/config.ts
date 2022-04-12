@@ -1,4 +1,4 @@
-import config from 'config'
+import config from 'config';
 
 export const db = {
   mongooseUsers: {
@@ -19,4 +19,4 @@ export const db = {
   mongooseMaster: {
     url: config.mongoMulti.mongooseClinicalPortal.uri
   }
-}
+};

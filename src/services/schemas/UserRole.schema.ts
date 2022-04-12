@@ -1,4 +1,4 @@
-import { Schema, SchemaTypeOptions } from 'mongoose'
+import { Schema, SchemaTypeOptions } from 'mongoose';
 
 const userRoleSchema: Partial<Record<keyof UserRole.Attributes, SchemaTypeOptions<unknown>>> = {
   userId: {
@@ -17,9 +17,9 @@ const userRoleSchema: Partial<Record<keyof UserRole.Attributes, SchemaTypeOption
       required: true
     }
   ]
-}
+};
 
-const UserRoleSchema = new Schema(userRoleSchema, { timestamps: true })
-UserRoleSchema.index({ userId: 1, team: 1 }, { unique: true })
+const UserRoleSchema = new Schema(userRoleSchema, { timestamps: true });
+UserRoleSchema.index({ userId: 1, team: 1 }, { unique: true });
 
-export { UserRoleSchema }
+export { UserRoleSchema };

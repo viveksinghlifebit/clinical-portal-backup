@@ -1,5 +1,5 @@
-import { SchemaTypeOptions, Types, Schema } from 'mongoose'
-import { AuditLevel } from 'enums'
+import { SchemaTypeOptions, Types, Schema } from 'mongoose';
+import { AuditLevel } from 'enums';
 
 const auditTrailSchema: Partial<Record<keyof AuditTrail.Attributes, SchemaTypeOptions<unknown>>> = {
   level: {
@@ -35,8 +35,8 @@ const auditTrailSchema: Partial<Record<keyof AuditTrail.Attributes, SchemaTypeOp
     immutable: true,
     index: true
   }
-}
+};
 
-const AuditTrailSchema = new Schema(auditTrailSchema, { timestamps: true })
+const AuditTrailSchema = new Schema(auditTrailSchema, { timestamps: true });
 
-export { AuditTrailSchema }
+export { AuditTrailSchema };

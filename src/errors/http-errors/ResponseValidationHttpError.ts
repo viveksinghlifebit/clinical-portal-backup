@@ -1,12 +1,12 @@
-import { HttpStatusCodes } from 'enums'
+import { HttpStatusCodes } from 'enums';
 
-import AbstractHttpError from './AbstractHttpError'
+import AbstractHttpError from './AbstractHttpError';
 
 class ResponseValidationHttpError extends AbstractHttpError implements App.ErrorForm {
   constructor(message: string, details?: unknown) {
-    super(message, HttpStatusCodes.InternalServerError, HttpStatusCodes[HttpStatusCodes.InternalServerError], details)
-    Object.setPrototypeOf(this, ResponseValidationHttpError.prototype)
+    super(message, HttpStatusCodes.InternalServerError, HttpStatusCodes[HttpStatusCodes.InternalServerError], details);
+    Object.setPrototypeOf(this, ResponseValidationHttpError.prototype);
   }
 }
 
-export default ResponseValidationHttpError
+export default ResponseValidationHttpError;
