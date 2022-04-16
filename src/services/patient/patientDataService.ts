@@ -24,7 +24,7 @@ export class PatientDataService {
    */
   static async getTierDistribution(eid: string): Promise<GenoTier.TierData> {
     // First load the tier data
-    const data: Array<GenoTier.Attributes> = await GenoTiersRepository.findGenotierData(eid, true);
+    const data: Array<GenoTier.Attributes> = await GenoTiersRepository.findGenotierData(eid);
     return GenoTierUtils.getTierDistribution(data);
   }
 
@@ -47,7 +47,7 @@ export class PatientDataService {
    * @param eid the eid
    */
   static async getDiseasesWithVariants(eid: string): Promise<Record<string, string>> {
-    const data = await GenoTiersRepository.findGenotierData(eid, true);
+    const data = await GenoTiersRepository.findGenotierData(eid);
     return GenoTierUtils.getDiseasesWithVariants(data);
   }
 
