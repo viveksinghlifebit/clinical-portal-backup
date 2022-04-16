@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 
-import { SequenceIdNames } from 'enums';
+import { SequenceIdNames } from '../../enums';
 import {
   searchableEncryptedFields,
   AddressSchema,
@@ -11,8 +11,23 @@ import {
   nextOfKinsSchemaRaw
 } from '@schemas';
 import { SequenceId } from './SequenceId';
+import { TeamPrefixesService } from 'services/team-prefixes/TeamPrefixesService';
 
-const patientModelName = 'Patient';
+export const patientModelName = 'Patient';
+
+// the length of the number part of the hospital ref
+const HOSPITAL_REF_SEQUENCE_LENGTH = 6;
+
+/**
+ * Returns the hospital/team prefix.
+ * e.g. PW, QM, CH etc...
+ */
+export async function getHospitalPrefix(teamId: string): Promise<string | undefined> {
+  const teamPrefixes = await TeamPrefixesService.get();
+  if (!teamPrefixes || !teamPrefixes[teamId]) return undefined;
+
+  return teamPrefixes[teamId]?.toUpperCase();
+}
 
 /**
  * MODEL STATICS
@@ -23,6 +38,36 @@ export async function generateID(): Promise<string> {
   return sequenceId.toPadString();
 }
 
+/**
+ * Returns the correct next hospital ref number for the specified hospital(workspace/team)
+ * e.g. PW001234
+ *
+ * NOTE:
+ * For each hospital there is a different sequence name (if not then should be created), so first we need
+ * to get the correct sequence for the patient's team.
+ *
+ * e.g. sequence document for Prince of Wales (in db.sequenceids)
+ * {
+ *    _id: 609a7388644abc1b9c91efca
+ *    name: PatientHospitalRef_PW    (with hospital prefix added)
+ *    value: 001234
+ * }
+ *
+ *
+ * @param teamId
+ * @returns
+ */
+export async function generateHospitalRef(teamId: string): Promise<string | undefined> {
+  const prefix = teamId ? await getHospitalPrefix(teamId) : undefined;
+  if (prefix) {
+    // build the sequence name to find/create, using the predefined name and the hospital prefix
+    const sequenceName = `${SequenceIdNames.PatientHospitalRef}_${prefix}`;
+    const sequenceId = await SequenceId.getOrCreateNextByName(sequenceName);
+    return `${prefix}${sequenceId.toPadString(HOSPITAL_REF_SEQUENCE_LENGTH)}`;
+  }
+  return undefined;
+}
+
 export function dateOfBirthFromString(value: string): Patient.Attributes['dateOfBirth'] {
   const date = new Date(value);
   return {
@@ -31,7 +76,6 @@ export function dateOfBirthFromString(value: string): Patient.Attributes['dateOf
     day: date.getDate().toString()
   };
 }
-
 async function updateById(
   patientId: string,
   updateData: Partial<Patient.Model>
@@ -52,13 +96,6 @@ function getSearchableEncryptedFields(): string[] {
   return searchableEncryptedFields;
 }
 
-PatientSchema.statics = {
-  generateID,
-  dateOfBirthFromString,
-  updateById,
-  getSearchableEncryptedFields
-};
-
 const mapAddressProperties = (
   address: Patient.Address
 ): { address1: string; address2: string; area: string; cityAndCountry: string } => ({
@@ -67,6 +104,15 @@ const mapAddressProperties = (
   area: address.area,
   cityAndCountry: address.cityAndCountry
 });
+
+PatientSchema.statics = {
+  generateID,
+  generateHospitalRef,
+  dateOfBirthFromString,
+  updateById,
+  getSearchableEncryptedFields
+};
+
 /**
  * MODEL METHODS
  */
@@ -79,6 +125,7 @@ function view(this: Patient.Document): Patient.View {
     i: this.i,
     externalID: this.externalID,
     externalIDType: this.externalIDType,
+    hospitalRef: this.team && this.hospitalRef ? this.hospitalRef : undefined,
     status: this.status,
     subStatus: this.subStatus,
     name: this.name,
@@ -91,9 +138,9 @@ function view(this: Patient.Document): Patient.View {
     email: this.email,
     phoneNumber: this.phoneNumber,
     addresses: this.addresses.map(mapAddressProperties),
-    familyId: this.familyId ? this.familyId.toHexString() : undefined,
+    familyId: this.familyId?.toHexString(),
     owner: this.owner.toHexString(),
-    team: this.team ? this.team.toHexString() : undefined,
+    team: this.team?.toHexString(),
     images: this.images,
     reports: this.reports,
     associatedDiseasesWithTieredVariants: this.associatedDiseasesWithTieredVariants,
@@ -109,8 +156,10 @@ function view(this: Patient.Document): Patient.View {
     createdAt: this.createdAt.toISOString(),
     updatedAt: this.updatedAt.toISOString(),
     analysisEligibleTypesOthers: this.analysisEligibleTypesOthers,
-    updatedBy: this.updatedBy ? this.updatedBy.toHexString() : this.owner.toHexString(),
-    referringUsers: this.referringUsers
+    updatedBy: this.updatedBy?.toHexString() ?? this.owner.toHexString(),
+    referringUsers: this.referringUsers,
+    lastExportAt: this.lastExportAt?.toISOString(),
+    labPortalID: this.labPortalID
   };
 }
 
@@ -118,44 +167,15 @@ function view(this: Patient.Document): Patient.View {
 // because schema.methods is also used by the mongoose-encrypt-field plugin
 PatientSchema.methods.view = view;
 
-export function saveEncrypted(this: Patient.Document): Promise<Patient.Document> {
-  // Use the .saveEncrypted() method instead of the .save() when,
-  // you want to call .save() on a patient document which had been,
-  // returned by .find or .findOne.
-  // The .saveEncrypted() method exlcudes any metadata fields used for en/de-cryption.
-  // We need it because if these metadata are present,
-  // for nested encrypted mongoose documents of array type,
-  // then the .save can fail with error "MongoError: Cannot create field '-1' in element ..."
-  // and the .saveEncrypted method prevents that.
-  const mapAddress = (address: Record<string, unknown>): Patient.Address => {
-    return Object.keys(addressSchemaRaw).reduce((acc, key) => {
-      acc[key] = address[key];
-      return acc;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }, {} as any);
-  };
-  this.addresses = this.addresses.map(mapAddress);
-  this.nextsOfKin = this.nextsOfKin.map(
-    (nextOfKin: Patient.NextOfKin): Patient.NextOfKin => {
-      const obj: Partial<Patient.Attributes> = Object.keys(nextOfKinsSchemaRaw).reduce((acc, key) => {
-        acc[key] = nextOfKin[key as keyof Patient.NextOfKin];
-        return acc;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }, {} as any);
-      obj.addresses = nextOfKin.addresses.map(mapAddress);
-      return obj as Patient.NextOfKin;
-    }
-  );
-  return this.save();
-}
-PatientSchema.method('saveEncrypted', saveEncrypted);
-
 /**
  * MODEL MIDDLEWARES
  */
 
 export async function preSave(this: Patient.Document): Promise<void> {
-  if (this.isNew) this.i = await Patient.generateID();
+  if (this.isNew) {
+    this.i = await Patient.generateID();
+    this.hospitalRef = this.team ? await Patient.generateHospitalRef(this.team.toHexString()) : undefined;
+  }
   if (!this.updatedBy) this.updatedBy = this.owner;
 }
 
@@ -178,6 +198,33 @@ DateOfBirthSchema.post('save', postSave);
 
 export let Patient: Patient.Model;
 
+const keepOnlyAddressSchemaProps = (address: Patient.Address): Patient.Address => {
+  const keys = Object.keys(addressSchemaRaw) as (keyof Patient.Address)[];
+  return keys.reduce((acc, key) => {
+    acc[key] = address[key];
+    return acc;
+  }, {} as Patient.Address);
+};
+const keepOnlyNextsOfKinSchemaProps = (nextOfKin: Patient.NextOfKin): Partial<Patient.Attributes> => {
+  const obj: Partial<Patient.Attributes> = Object.keys(nextOfKinsSchemaRaw).reduce((acc, key) => {
+    acc[key] = nextOfKin[key as keyof Patient.NextOfKin];
+    return acc;
+  }, {} as any);
+  obj.addresses = nextOfKin.addresses.map(keepOnlyAddressSchemaProps);
+  return obj;
+};
 export const init = (connection: Mongoose.Connection): void => {
   Patient = connection.model<Patient.Document, Patient.Model>(patientModelName, PatientSchema);
+  Patient.prototype.save = new Proxy(Patient.prototype.save, {
+    apply: function (target, that, args) {
+      // keep only the declared schema properties for nested encrypted data.
+      // Because the encryption plugin inserts some metadata: `__enc_*: boolean` in the nested objects,
+      // which cause the save to throw error,
+      // when a save is called on an encrypted document that have been retrieved from the database.
+      // I use a proxy because neither a pre save hook solves the problem.
+      if (that.addresses) that.addresses = that.addresses.map(keepOnlyAddressSchemaProps);
+      if (that.nextsOfKin) that.nextsOfKin = that.nextsOfKin.map(keepOnlyNextsOfKinSchemaProps);
+      return target.apply(that, args);
+    }
+  });
 };

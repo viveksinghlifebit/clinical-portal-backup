@@ -3,6 +3,7 @@ declare namespace Patient {
     i: string;
     externalID: string;
     externalIDType: string;
+    hospitalRef?: string;
     status: PatientStatus;
     subStatus?: PatientSubStatus;
     name: string;
@@ -34,21 +35,26 @@ declare namespace Patient {
     referringUsers?: ReferringUser[];
     updatedBy: Mongoose.ObjectId;
     dateOfEnrollment?: Date;
+    labPortalSyncFailures?: LabPortalFailure[];
+    lastExportAt?: Date;
   }
 
+  interface LabPortalFailure {
+    reason: string;
+    date: Date;
+  }
   interface Document extends Attributes, Mongoose.Document {
     view(): View;
-    saveEncrypted(): Promise<Document>;
   }
 
   interface Model extends Mongoose.Model<Document> {
     generateID(): Promise<string>;
+    generateHospitalRef(teamId: string): Promise<string>;
     dateOfBirthFromString(value: string): Patient.Attributes['dateOfBirth'];
     // TODO: remove once migrate to cohort v2
     countByWorkgroupAndEid(workgroupId: string, eid: string): Promise<number>;
     // TODO: remove once migrate to cohort v2
     countByWorkgroup(workgroupId: string): Promise<number>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateById(patientId: string, updateData: { [key: string]: any }): Promise<Document>;
     getSearchableEncryptedFields?: () => string[];
   }
@@ -58,19 +64,20 @@ declare namespace Patient {
     i: Attributes['i'];
     externalID: Attributes['externalID'];
     externalIDType: Attributes['externalIDType'];
+    hospitalRef?: Attributes['hospitalRef'];
     status: Attributes['status'];
     subStatus?: Attributes['subStatus'];
     name: Attributes['name'];
     surname: Attributes['surname'];
     chineseName: Attributes['chineseName'];
     chineseSurname: Attributes['chineseSurname'];
-    dateOfBirth: string | undefined;
+    dateOfBirth?: string;
     email: Attributes['email'];
     phoneNumber: Attributes['phoneNumber'];
     addresses: Attributes['addresses'];
-    familyId: string | undefined;
+    familyId?: string;
     owner: string | User;
-    team: string | Team | undefined;
+    team?: string | Team;
     consentForms?: ConsentFormView[];
     samples?: PatientSample.View[];
     sequencingLibrary?: PatientSampleSequencingLibrary.View[];
@@ -87,6 +94,7 @@ declare namespace Patient {
     analysisEligibleTypesOthers?: Attributes['analysisEligibleTypesOthers'];
     updatedBy: string | User;
     referringUsers?: Attributes['referringUsers'];
+    lastExportAt?: string;
   }
 
   type ConsentFormData = {
@@ -166,7 +174,6 @@ declare namespace Patient {
     id: string;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type PedigreeDataEditable = Record<string, any> & {
     name: string;
     display_name: string;

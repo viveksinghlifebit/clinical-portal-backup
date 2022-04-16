@@ -1,5 +1,6 @@
 export enum SequenceIdNames {
   Patient = 'patient',
   PatientSample = 'PatientSample',
-  PatientFamilyMember = 'patientFamilyMember'
+  PatientFamilyMember = 'patientFamilyMember',
+  PatientHospitalRef = 'patientHospitalRef'
 }

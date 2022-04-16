@@ -58,6 +58,12 @@ const addressSchemaRaw = {
 };
 const AddressSchema = new mongoose.Schema(addressSchemaRaw);
 
+const labPortalFailureErrorRaw = {
+  reason: { type: String },
+  date: { type: Date }
+};
+const LabPortalFailureSchema = new mongoose.Schema(labPortalFailureErrorRaw);
+
 registerEncryptionPlugin({
   featureFlag: enableFieldEncryption,
   fields: ['address1', 'address2', 'cityAndCountry', 'area'],
@@ -121,6 +127,10 @@ const patientSchema: Partial<
     type: String,
     required: true
   },
+  hospitalRef: {
+    type: String
+    // required: true
+  },
   status: {
     type: String,
     default: PatientStatus.Drafted,
@@ -172,6 +182,11 @@ const patientSchema: Partial<
   },
   dateOfEnrollment: {
     type: Date
+  },
+  labPortalSyncFailures: [LabPortalFailureSchema],
+  lastExportAt: {
+    type: Date,
+    index: true
   }
 };
 

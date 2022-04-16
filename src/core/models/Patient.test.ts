@@ -3,9 +3,11 @@ import mongoose from 'mongoose';
 import { PatientStatus, SampleAnalysisTypes } from 'enums';
 
 import { SequenceId } from './SequenceId';
-import { Patient, generateID, preSave, postSave, saveEncrypted } from './Patient';
+import { Patient, generateID, preSave, postSave, generateHospitalRef } from './Patient';
+import { TeamPrefixesService } from 'services/team-prefixes/TeamPrefixesService';
 
 describe('Patient', () => {
+  afterAll(jest.restoreAllMocks);
   describe('getSearchableEncryptedFields', () => {
     test('should return searchableEncryptedFields', () => {
       const result = Patient.getSearchableEncryptedFields?.();
@@ -37,8 +39,10 @@ describe('Patient', () => {
     });
   });
   describe('generateID', () => {
+    afterAll(jest.restoreAllMocks);
     const mockSequenceIdGetNextByName = (value: string): void => {
-      SequenceId.getNextByName = jest.fn().mockResolvedValue({
+      const spySequence: jest.SpyInstance = jest.spyOn(SequenceId, 'getNextByName');
+      spySequence.mockResolvedValue({
         toPadString: () => value
       });
     };
@@ -95,6 +99,7 @@ describe('Patient', () => {
         externalID: 'test-externalID',
         externalIDType: 'test-externalIDType',
         status: PatientStatus.Drafted,
+        hospitalRef: 'test',
         name: 'test-name',
         surname: 'test-surname',
         chineseName: 'test-chineseName',
@@ -147,7 +152,8 @@ describe('Patient', () => {
         ],
         analysisEligibleTypes: [SampleAnalysisTypes.Trio],
         createdAt: new Date('2021-05-24'),
-        updatedAt: new Date('2021-05-26')
+        updatedAt: new Date('2021-05-26'),
+        lastExportAt: new Date('2021-05-26')
       });
       expect(patient.view()).toEqual({
         _id: patient._id.toHexString(),
@@ -212,7 +218,9 @@ describe('Patient', () => {
         analysisEligibleTypes: patient.analysisEligibleTypes,
         createdAt: patient.createdAt.toISOString(),
         updatedAt: patient.updatedAt.toISOString(),
-        updatedBy: patient.owner.toHexString()
+        updatedBy: patient.owner.toHexString(),
+        lastExportAt: patient.lastExportAt?.toISOString(),
+        hospitalRef: patient.hospitalRef
       });
     });
 
@@ -273,157 +281,111 @@ describe('Patient', () => {
         updatedBy: patient.updatedBy.toHexString()
       });
     });
-  });
 
-  describe('saveEncrypted', () => {
-    test('remove encryption metadata from nested array fields(addresses and nextsOfKin)', () => {
+    test('save should call the nextOfKin and address', async () => {
+      const sequence = { _id: new mongoose.Types.ObjectId(), name: 'patient', value: 1, prefix: 'P' };
+
+      await SequenceId.create(sequence);
       const patient = {
-        name: 'jhon',
+        _id: new mongoose.Types.ObjectId(),
+        i: 'test-i',
+        externalID: 'test-externalID-1',
+        externalIDType: 'test-externalIDType',
+        status: PatientStatus.Drafted,
+        name: 'test-name',
+        surname: 'test-surname',
+        chineseName: 'test-chineseName',
+        chineseSurname: 'test-chineseSurname',
+        dateOfBirth: undefined,
+        email: 'test-email',
+        phoneNumber: 'test-phoneNumber',
+        addresses: [],
+        nextsOfKin: undefined,
+        owner: new mongoose.Types.ObjectId(),
+        images: [],
+        reports: [],
+        associatedDiseasesWithTieredVariants: [],
+        updatedBy: new mongoose.Types.ObjectId(),
+        diseaseGene: [],
+        analysisEligibleTypes: [SampleAnalysisTypes.Trio],
+        createdAt: new Date('2021-05-24'),
+        updatedAt: new Date('2021-05-26')
+      };
+
+      const patient2 = await new Patient({
+        ...patient,
+        i: 'test-2',
+        externalID: 'test-externalID-2',
+        _id: new mongoose.Types.ObjectId(),
         addresses: [
           {
-            address1: 'Some address 1',
-            address2: 'Some address 2',
-            cityAndCountry: 'Solar System',
-            area: 'Mars',
-            __enc_address1: false,
-            __enc_address2: false,
-            __enc_cityAndCountry: false,
-            __enc_area: false
+            address1: 'test-address1',
+            address2: 'test-address2',
+            cityAndCountry: 'test-cityAndCountry',
+            area: 'test-area'
           },
           {
-            address1: 'Some address 1',
-            address2: 'Some address 2',
-            cityAndCountry: 'Solar System',
-            area: 'Mars',
-            __enc_address1: false,
-            __enc_address2: false,
-            __enc_cityAndCountry: false,
-            __enc_area: false
+            address1: 'another-test-address1',
+            address2: 'another-test-address2',
+            cityAndCountry: 'another-test-cityAndCountry',
+            area: 'another-test-area'
           }
         ],
         nextsOfKin: [
           {
-            name: 'Some name',
-            email: 'someemail@gmail.com',
-            phoneNumber: '6944633432',
+            name: 'Alice',
+            email: 'alice@lifebit.ai',
+            phoneNumber: '0000',
             addresses: [
               {
-                address1: 'Some address 1',
-                address2: 'Some address 2',
-                cityAndCountry: 'Solar System',
-                area: 'Mars',
-                __enc_address1: false,
-                __enc_address2: false,
-                __enc_cityAndCountry: false,
-                __enc_area: false
-              },
-              {
-                address1: 'Some address 12',
-                address2: 'Some address 22',
-                cityAndCountry: 'Solar System',
-                area: 'Mars',
-                __enc_address1: false,
-                __enc_address2: false,
-                __enc_cityAndCountry: false,
-                __enc_area: false
+                address1: 'address1',
+                address2: 'address2',
+                cityAndCountry: 'city',
+                area: 'area'
               }
             ],
-            relationship: 'brother',
-            __enc_email: false,
-            __enc_name: false,
-            __enc_phoneNumber: false
+            relationship: 'Mother'
           },
           {
-            name: 'Some name',
-            email: 'someemail@gmail.com',
-            phoneNumber: '6944633432',
-            addresses: [
-              {
-                address1: 'Some address 1',
-                address2: 'Some address 2',
-                cityAndCountry: 'Solar System',
-                area: 'Mars',
-                __enc_address1: false,
-                __enc_address2: false,
-                __enc_cityAndCountry: false,
-                __enc_area: false
-              },
-              {
-                address1: 'Some address b12',
-                address2: 'Some address b22',
-                cityAndCountry: 'Solar System',
-                area: 'Mars',
-                __enc_address1: false,
-                __enc_address2: false,
-                __enc_cityAndCountry: false,
-                __enc_area: false
-              }
-            ],
-            relationship: 'brother',
-            __enc_email: false,
-            __enc_name: false,
-            __enc_phoneNumber: false
+            name: 'Alice',
+            email: 'alice@lifebit.ai',
+            phoneNumber: '0000',
+            relationship: 'Mother'
           }
-        ],
-        save: jest.fn()
-      };
-      saveEncrypted.call((patient as unknown) as Patient.Document);
-      expect(patient.addresses).toStrictEqual([
-        {
-          address1: 'Some address 1',
-          address2: 'Some address 2',
-          cityAndCountry: 'Solar System',
-          area: 'Mars'
-        },
-        {
-          address1: 'Some address 1',
-          address2: 'Some address 2',
-          cityAndCountry: 'Solar System',
-          area: 'Mars'
-        }
-      ]);
-      expect(patient.nextsOfKin).toStrictEqual([
-        {
-          name: 'Some name',
-          email: 'someemail@gmail.com',
-          phoneNumber: '6944633432',
-          addresses: [
-            {
-              address1: 'Some address 1',
-              address2: 'Some address 2',
-              cityAndCountry: 'Solar System',
-              area: 'Mars'
-            },
-            {
-              address1: 'Some address 12',
-              address2: 'Some address 22',
-              cityAndCountry: 'Solar System',
-              area: 'Mars'
-            }
-          ],
-          relationship: 'brother'
-        },
-        {
-          name: 'Some name',
-          email: 'someemail@gmail.com',
-          phoneNumber: '6944633432',
-          addresses: [
-            {
-              address1: 'Some address 1',
-              address2: 'Some address 2',
-              cityAndCountry: 'Solar System',
-              area: 'Mars'
-            },
-            {
-              address1: 'Some address b12',
-              address2: 'Some address b22',
-              cityAndCountry: 'Solar System',
-              area: 'Mars'
-            }
-          ],
-          relationship: 'brother'
-        }
-      ]);
+        ]
+      }).save();
+
+      const patient1 = await new Patient(patient).save();
+
+      expect(patient1).toHaveProperty('__v');
+      expect(patient2).toHaveProperty('__v');
+    });
+  });
+
+  describe('generateHospitalRef', () => {
+    let teamPrefixSpy: jest.SpyInstance;
+    beforeEach(() => {
+      teamPrefixSpy = jest.spyOn(TeamPrefixesService, 'get');
+    });
+
+    test('should return undefined if teamId is not present', async () => {
+      teamPrefixSpy.mockResolvedValueOnce(undefined);
+      expect(await generateHospitalRef('test')).toBe(undefined);
+    });
+
+    test('should return undefined if teamId is undefined', async () => {
+      expect(await generateHospitalRef((undefined as unknown) as string)).toBe(undefined);
+    });
+
+    test('should return "TEST-PREFIXpadstring" if teamId is not present', async () => {
+      teamPrefixSpy.mockResolvedValueOnce({
+        test: 'test-prefix'
+      });
+      const spySequenceGetOrCreate: jest.SpyInstance = jest.spyOn(SequenceId, 'getOrCreateNextByName');
+      spySequenceGetOrCreate.mockResolvedValueOnce({
+        toPadString: () => 'padstring'
+      });
+      expect(await generateHospitalRef('test')).toBe('TEST-PREFIXpadstring');
     });
   });
 });
