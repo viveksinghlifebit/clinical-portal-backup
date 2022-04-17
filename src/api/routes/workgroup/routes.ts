@@ -56,6 +56,16 @@ const createWorkgroupPatientHandler: App.EndpointOperation = async (
   c.body = patient;
 };
 
+const getWorkgroupSuggestionsHandler: App.EndpointOperation = async (
+  c: Koa.ParameterizedContext<App.State, App.Context<CorePatient.WorkgroupPatientCreateInput>>,
+  { team }: App.AuthenticatedCloudOs
+) => {
+  const { term }: { term?: string } = c.request.query;
+  const workgroups = await WorkgroupService.getWorkgroupSuggestions(String(team._id), term);
+  c.status = HttpStatusCodes.OK;
+  c.body = workgroups;
+};
+
 export const workgroupRoutes: App.EndpointsInfo = {
   createWorkgroup: {
     method: HttpMethods.Post,
@@ -97,6 +107,17 @@ export const workgroupRoutes: App.EndpointsInfo = {
     middlewares: [
       auth(['token', 'apikey']),
       rbac(RolesRoutes.IndividualBrowserWorkGroupPatient),
+      ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
+    ],
+    postMiddlewares: [auditTrail]
+  },
+  getWorkgroupSuggestions: {
+    method: HttpMethods.Get,
+    path: '/individual-browser/workgroup/suggestions',
+    operation: getWorkgroupSuggestionsHandler,
+    middlewares: [
+      auth(['token', 'apikey']),
+      rbac(RolesRoutes.IndividualBrowserWorkGroupSuggestions),
       ifTeamSpecifiedDo([getTeamAndTeamMembershipAndCheckTheyAreActive])
     ],
     postMiddlewares: [auditTrail]

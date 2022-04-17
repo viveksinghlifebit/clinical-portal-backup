@@ -2,7 +2,7 @@ import { ClinicalRole } from '@core/enums';
 import { PatientSample, PatientSampleSequencingLibrary, PatientWorkgroup, Workgroup } from '@core/models';
 import { UserRepository } from '@core/repos';
 import { IllegalArgumentError } from 'errors';
-import { keyBy } from 'lodash';
+import { isEmpty, keyBy } from 'lodash';
 import { PatientService } from 'services/patient';
 import { constructWorkgroupsSearchCriteria } from 'utils';
 
@@ -179,5 +179,20 @@ export class WorkgroupService {
     if ((workgroupPatient?.workgroup as Workgroup.Attributes)?.team?.toString() !== teamId.toString()) {
       throw new IllegalArgumentError(`Cannot find patient with provided id.`);
     }
+  }
+
+  /**
+   * Return the workgroup suggestions.
+   * @param term  the term
+   * @param teamId  the team id
+   */
+  static async getWorkgroupSuggestions(teamId: string, term?: string): Promise<Array<Workgroup.View>> {
+    if (isEmpty(term)) {
+      throw new IllegalArgumentError('The search term cannot be empty');
+    }
+    const searchTerm = term?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') as string;
+    const workgroups = await Workgroup.findByTermAndTeam(searchTerm, teamId);
+    const promises = workgroups.map((item) => WorkgroupService.populateWorkgroupWithOwner(item.view()));
+    return Promise.all(promises);
   }
 }

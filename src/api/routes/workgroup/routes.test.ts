@@ -10,6 +10,8 @@ import { HttpStatusCodes } from 'enums';
 import { Patient, SequenceId, Workgroup } from '@core/models';
 import { PatientBuilder } from 'testUtils/patientBuilder';
 import { PatientStatus } from '@core/enums';
+import * as connection from 'services/mongoose/connections';
+
 describe('Workgroup', () => {
   let server: Http.Server;
   const team = new TeamBuilder().withName('Team').withId(new mongoose.Types.ObjectId().toHexString()).build();
@@ -152,6 +154,43 @@ describe('Workgroup', () => {
         .send({ workgroupName: 'test', patientId: String(createdPatient._id), description: 'description' });
       expect(body).toHaveProperty('_id');
       expect(status).toBe(HttpStatusCodes.OK);
+    });
+  });
+
+  describe('GET /individual-browser/workgroup/suggestions', () => {
+    test('should find workgroup by name', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+
+      const { status, body } = await supertestRequest(server)
+        .get(`${config.apiPrefix}/individual-browser/workgroup/suggestions`)
+        .query({
+          teamId: team._id,
+          term: 'test'
+        });
+      expect(body).toStrictEqual([
+        {
+          _id: createdWorkgroup._id.toHexString(),
+          name: 'test-check',
+          numberOfPatients: 2,
+          owner: {
+            _id: user._id
+          },
+          team: team._id
+        }
+      ]);
+      expect(status).toBe(HttpStatusCodes.OK);
+
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
     });
   });
 });

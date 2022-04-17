@@ -1,5 +1,6 @@
 import { ClinicalRole, PatientStatus } from '@core/enums';
 import { PatientSample, PatientSampleSequencingLibrary, PatientWorkgroup, Workgroup } from '@core/models';
+import { UserRepository } from '@core/repos';
 import { IllegalArgumentError } from 'errors';
 import { cloneDeep } from 'lodash';
 import mongoose from 'mongoose';
@@ -173,12 +174,9 @@ describe('Workgroup Controller', () => {
     afterAll(jest.restoreAllMocks);
     test('When workgroupPatientId is invalid should return error', async () => {
       const spyFindOne: jest.SpyInstance = jest.spyOn(PatientWorkgroup, 'findOne');
-      spyFindOne.mockImplementation(() => {
-        const mockFind = {
-          populate: () => undefined
-        };
-        return mockFind;
-      });
+      spyFindOne.mockImplementation(() => ({
+        populate: () => undefined
+      }));
       expect(
         WorkgroupService.getWorkgroupPatientById('workgroupPatientId', 'workgroupId', String(team._id))
       ).rejects.toThrowError(IllegalArgumentError);
@@ -203,6 +201,41 @@ describe('Workgroup Controller', () => {
         false
       );
       expect(response).toBeDefined();
+    });
+  });
+
+  describe('suggestWorkgroups', () => {
+    let mockFindByTermFn: jest.SpyInstance;
+    let mockedFindUserByIdFn: jest.SpyInstance;
+    beforeAll(() => {
+      mockFindByTermFn = jest.spyOn(Workgroup, 'findByTermAndTeam');
+      mockFindByTermFn.mockImplementation(() => {
+        return Promise.resolve([
+          {
+            view: () => workgroup
+          }
+        ]);
+      });
+      mockedFindUserByIdFn = jest.spyOn(UserRepository, 'findById').mockImplementation(() => {
+        return Promise.resolve(user);
+      });
+    });
+    test('When no term defined should return error', async () => {
+      await expect(WorkgroupService.getWorkgroupSuggestions(String(team._id))).rejects.toThrow(
+        'The search term cannot be empty'
+      );
+      expect(mockFindByTermFn).toHaveBeenCalledTimes(0);
+    });
+
+    test('When term with special character provided should be replaced', async () => {
+      await WorkgroupService.getWorkgroupSuggestions(String(team._id), 'withSpecialCharacter*');
+      expect(mockFindByTermFn).toHaveBeenCalledWith('withSpecialCharacter\\*', String(team._id));
+    });
+
+    test('When valid term provided should return the workgroups with onwer populated', async () => {
+      const workgroups = await WorkgroupService.getWorkgroupSuggestions(String(team._id), 'term');
+      expect(mockedFindUserByIdFn).toHaveBeenCalledWith(user._id, { password: 0 });
+      expect(workgroups[0]?.owner).toBeDefined();
     });
   });
 });
@@ -255,10 +288,7 @@ function prepareSpyForPatientWorkgroup(user: User, workgroup: Workgroup.Document
   patientWorkgroup.toJSON = jest.fn().mockImplementation(() => patientWorkgroup);
 
   const spyFindOne: jest.SpyInstance = jest.spyOn(PatientWorkgroup, 'findOne');
-  spyFindOne.mockImplementationOnce(() => {
-    const mockFind = {
-      populate: () => patientWorkgroup
-    };
-    return mockFind;
-  });
+  spyFindOne.mockImplementationOnce(() => ({
+    populate: () => patientWorkgroup
+  }));
 }

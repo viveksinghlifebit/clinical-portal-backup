@@ -1,0 +1,18 @@
+get:
+  operationId: getWorkgroupSuggestions
+  description: Returns workgroup suggestions by the term provided
+  parameters:
+    - $ref: '../components.yaml#/parameters/term'
+    - $ref: '../components.yaml#/parameters/requiredTeamID'
+
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../components.yaml#/schemas/ArrayOfWorkgroups'
+    '400':
+      $ref: '../components.yaml#/responses/BadRequest'
+    '500':
+      $ref: '../components.yaml#/responses/InternalServerError'

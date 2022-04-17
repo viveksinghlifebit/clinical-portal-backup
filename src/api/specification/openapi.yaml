@@ -1,12 +1,12 @@
 openapi: 3.0.3
 
 info:
-  title: REST API TEMPLATE
+  title: Clinical portal rest api
   version: 1.0.0
-  description: Lifebit platform REST API template
+  description: Clinical portal rest api
 servers:
   - url: http://localhost:3000
-    description: REST API TEMPLATE
+    description: Clinical portal backend
 paths:
   /clinical-portal/v1/access-control/user-roles:
     $ref: './access-control/userRoles.yaml'
@@ -26,3 +26,5 @@ paths:
     $ref: './individual-browser/workgroupSearch.yaml'
   /clinical-portal/v1/individual-browser/workgroup/patient:
     $ref: './individual-browser/workgroupPatient.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/suggestions:
+    $ref: './individual-browser/workgroupSuggestions.yaml'

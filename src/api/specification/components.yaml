@@ -66,6 +66,13 @@ responses:
     description: Resource not found
 
 parameters:
+  term:
+    name: term
+    in: query
+    description: term to serch
+    required: true
+    schema:
+      type: string
   pageSize:
     name: pageSize
     in: query
@@ -744,3 +751,7 @@ schemas:
   PatientSampleQCStatus:
     type: string
     enum: ['Passed', 'Failed']
+  ArrayOfWorkgroups:
+    type: array
+    items:
+      $ref: '#/schemas/Workgroup'
