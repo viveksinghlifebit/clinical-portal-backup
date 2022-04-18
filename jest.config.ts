@@ -4,10 +4,10 @@
  */
 
 const setupRequiredProcessEnv = (): void => {
-  process.env.JWT_SECRET = 'test'
-}
+  process.env.JWT_SECRET = 'test';
+};
 
-setupRequiredProcessEnv()
+setupRequiredProcessEnv();
 
 export default {
   collectCoverage: true,
@@ -42,4 +42,4 @@ export default {
   transform: {
     '^.+\\.(ts)$': 'ts-jest'
   }
-}
+};
