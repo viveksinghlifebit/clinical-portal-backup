@@ -101,6 +101,13 @@ parameters:
     required: false
     schema:
       type: string
+  workgroupId:
+    name: id
+    in: path
+    description: The workgroup id
+    required: true
+    schema:
+      $ref: '#/schemas/IdType'
 
 schemas:
   RBACRoles:
@@ -755,3 +762,31 @@ schemas:
     type: array
     items:
       $ref: '#/schemas/Workgroup'
+  WorkgroupPatientMarker:
+    type: object
+    properties:
+      markers:
+        $ref: '#/schemas/StringArray'
+  ArrayOfPatientWorkgroup:
+    type: array
+    items:
+      $ref: '#/schemas/PatientWorkgroup'
+  ValidateWorkgroupPatientInput:
+    type: object
+    required:
+      - workgroupName
+      - patientId
+    properties:
+      workgroupName:
+        type: string
+      patientId:
+        type: string
+  ValidateWorkgroupPatientResponse:
+    type: object
+    required:
+      - isValid
+    properties:
+      isValid:
+        type: boolean
+      message:
+        type: string

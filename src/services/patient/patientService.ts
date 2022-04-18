@@ -128,7 +128,7 @@ export class PatientService {
     const phenotypes = filtersWithValue.map((filterWithValue) => {
       const key = `instance${filterWithValue.filter.instance}Name` as keyof PhenotypeField.Attributes;
       return {
-        readOnly: initFiltersLabels.has(filterWithValue.filter.label),
+        readOnly: initFiltersLabels.has(`${filterWithValue.filter.label}`),
         filterId: filterWithValue.filter.filterId,
         label: filterWithValue.filter.label
           ? filterWithValue.filter.label

@@ -31,7 +31,7 @@ declare namespace CorePatient {
   }
 
   interface PatientWorkgroupField {
-    label: string;
+    label?: string;
     filterId: Filter.FilterId;
     instance: Array<string>;
     array: Array<string>;

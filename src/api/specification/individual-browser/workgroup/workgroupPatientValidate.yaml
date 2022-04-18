@@ -1,0 +1,22 @@
+post:
+  summary: Validates the patient for the workgroup
+  operationId: validatePatientInWorkgroup
+  parameters:
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components.yaml#/schemas/ValidateWorkgroupPatientInput'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/ValidateWorkgroupPatientResponse'
+    '500':
+      $ref: '../../components.yaml#/responses/InternalServerError'
+    '404':
+      $ref: '../../components.yaml#/responses/ResourceNotFound'

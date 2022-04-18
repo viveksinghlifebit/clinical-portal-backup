@@ -19,12 +19,24 @@ paths:
   /clinical-portal/v1/health:
     $ref: './health.yaml'
   /clinical-portal/v1/individual-browser/workgroup:
-    $ref: './individual-browser/workgroup.yaml'
+    $ref: './individual-browser/workgroup/workgroup.yaml'
   /clinical-portal/v1/individual-browser/workgroup/{id}:
-    $ref: './individual-browser/workgroupById.yaml'
+    $ref: './individual-browser/workgroup/workgroupById.yaml'
   /clinical-portal/v1/individual-browser/workgroup/search:
-    $ref: './individual-browser/workgroupSearch.yaml'
+    $ref: './individual-browser/workgroup/workgroupSearch.yaml'
   /clinical-portal/v1/individual-browser/workgroup/patient:
-    $ref: './individual-browser/workgroupPatient.yaml'
+    $ref: './individual-browser/workgroup/workgroupPatient.yaml'
   /clinical-portal/v1/individual-browser/workgroup/suggestions:
-    $ref: './individual-browser/workgroupSuggestions.yaml'
+    $ref: './individual-browser/workgroup/workgroupSuggestions.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/{id}/patient/{pId}:
+    $ref: './individual-browser/workgroup/workgroupPatientById.yaml'
+  /clinical-porta/v1/individual-browser/workgroup/{id}/patient/{pId}/save-marker:
+    $ref: './individual-browser/workgroup/workgroupPatientByIdSaveMarker.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/{id}/patients:
+    $ref: './individual-browser/workgroup/patientByWorkgroupId.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/{id}/patient/{pId}/field:
+    $ref: './individual-browser/workgroup/workgroupPatientField.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/{id}/patient/{pId}/field/{fieldId}:
+    $ref: './individual-browser/workgroup/workgroupPatientFieldByFieldId.yaml'
+  /clinical-portal/v1/individual-browser/workgroup/patient/validate:
+    $ref: './individual-browser/workgroup/workgroupPatientValidate.yaml'

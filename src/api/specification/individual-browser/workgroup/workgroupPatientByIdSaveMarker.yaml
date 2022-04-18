@@ -1,0 +1,27 @@
+post:
+  operationId: saveWorkgroupPatientMarkers
+  description: Save the provided genomics marker to the workgroup patient.
+  parameters:
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../../components.yaml#/parameters/workgroupId'
+    - name: pId
+      in: path
+      description: The workgroup patient id
+      required: true
+      schema:
+        $ref: '../../components.yaml#/schemas/IdType'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components.yaml#/schemas/WorkgroupPatientMarker'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/PatientWorkgroup'
+    '400':
+      $ref: '../../components.yaml#/responses/BadRequest'

@@ -1,0 +1,17 @@
+get:
+  operationId: getWorkgroupPatients
+  description: Returns the workgroup patients
+  parameters:
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../../components.yaml#/parameters/workgroupId'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/ArrayOfPatientWorkgroup'
+    '404':
+      $ref: '../../components.yaml#/responses/ResourceNotFound'
+    '500':
+      $ref: '../../components.yaml#/responses/InternalServerError'

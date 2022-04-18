@@ -56,4 +56,10 @@ declare namespace PatientWorkgroup {
     array?: Array<string>;
     instanceNames?: Array<string>;
   }
+
+  interface FieldInput {
+    filterId: Filter.FilterId;
+    instance: Array<string>;
+    array: Array<string>;
+  }
 }

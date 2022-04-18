@@ -1,5 +1,5 @@
 export class PatientWorkgroupBuilder {
-  private readonly item: Partial<PatientWorkgroup.View>;
+  private readonly item: Partial<PatientWorkgroup.Document>;
 
   constructor() {
     this.item = {};
@@ -20,7 +20,7 @@ export class PatientWorkgroupBuilder {
     return this;
   }
 
-  public build(): PatientWorkgroup.View {
-    return this.item as PatientWorkgroup.View;
+  public build(): PatientWorkgroup.Document {
+    return this.item as PatientWorkgroup.Document;
   }
 }

@@ -2,7 +2,7 @@ delete:
   operationId: deleteWorkgroup
   description: Deletes a workgroup
   parameters:
-    - $ref: '../components.yaml#/parameters/optionalTeamID'
+    - $ref: '../../components.yaml#/parameters/optionalTeamID'
     - name: id
       in: path
       description: Workgroup ID
@@ -23,12 +23,12 @@ delete:
           schema:
             type: object
     '500':
-      $ref: '../components.yaml#/responses/InternalServerError'
+      $ref: '../../components.yaml#/responses/InternalServerError'
 get:
   operationId: getWorkgroupById
   description: Returns the workgroup by id
   parameters:
-    - $ref: '../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
     - name: id
       in: path
       description: Workgroup ID
@@ -41,6 +41,6 @@ get:
       content:
         application/json:
           schema:
-            $ref: '../components.yaml#/schemas/Workgroup'
+            $ref: '../../components.yaml#/schemas/Workgroup'
     '500':
-      $ref: '../components.yaml#/responses/InternalServerError'
+      $ref: '../../components.yaml#/responses/InternalServerError'

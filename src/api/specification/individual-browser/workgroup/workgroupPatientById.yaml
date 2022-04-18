@@ -1,0 +1,51 @@
+delete:
+  operationId: deleteWorkgroupPatient
+  description: Deletes the workgroup patient
+  parameters:
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+    - name: id
+      in: path
+      description: Workgroup ID
+      required: true
+      schema:
+        type: string
+    - name: pId
+      in: path
+      description: Workgroup Patient ID
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/Workgroup'
+    '404':
+      $ref: '../../components.yaml#/responses/ResourceNotFound'
+    '500':
+      $ref: '../../components.yaml#/responses/InternalServerError'
+get:
+  operationId: getWorkgroupPatient
+  description: Returns the workgroup patient
+  parameters:
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../../components.yaml#/parameters/workgroupId'
+    - name: pId
+      in: path
+      description: The workgroup patient id
+      required: true
+      schema:
+        $ref: '../../components.yaml#/schemas/IdType'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/PatientWorkgroup'
+    '404':
+      $ref: '../../components.yaml#/responses/ResourceNotFound'
+    '500':
+      $ref: '../../components.yaml#/responses/InternalServerError'

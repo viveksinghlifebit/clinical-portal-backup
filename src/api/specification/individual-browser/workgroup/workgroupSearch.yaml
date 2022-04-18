@@ -2,9 +2,9 @@ post:
   operationId: searchWorkgroups
   description: Searches workgroups
   parameters:
-    - $ref: '../components.yaml#/parameters/requiredTeamID'
-    - $ref: '../components.yaml#/parameters/pageSize'
-    - $ref: '../components.yaml#/parameters/pageNumber'
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+    - $ref: '../../components.yaml#/parameters/pageSize'
+    - $ref: '../../components.yaml#/parameters/pageNumber'
     - name: sortBy
       in: query
       description: Field to sort by
@@ -22,7 +22,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../components.yaml#/schemas/WorkgroupsSearchCriteria'
+          $ref: '../../components.yaml#/schemas/WorkgroupsSearchCriteria'
   responses:
     '200':
       description: OK

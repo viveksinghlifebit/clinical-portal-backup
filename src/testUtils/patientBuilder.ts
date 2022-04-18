@@ -57,7 +57,7 @@ export class PatientBuilder {
     return this;
   }
 
-  public build(): Patient.Attributes {
-    return this.item as Patient.Attributes;
+  public build(): Patient.Document {
+    return this.item as Patient.Document;
   }
 }
