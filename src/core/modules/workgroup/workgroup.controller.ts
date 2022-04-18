@@ -254,7 +254,7 @@ export class WorkgroupService {
     workgroupPatient!.markers = markers.map((marker) => {
       return {
         cn: marker,
-        location: markersDefinition.find((itDef) => itDef.cn === marker)!.fullLocation
+        location: markersDefinition?.find((itDef) => itDef.cn === marker)?.fullLocation ?? ''
       };
     });
     workgroupPatient!.markersDefinition = markersDefinition;

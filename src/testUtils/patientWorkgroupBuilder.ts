@@ -1,3 +1,5 @@
+import { PatientWorkgroup } from '@core/models';
+
 export class PatientWorkgroupBuilder {
   private readonly item: Partial<PatientWorkgroup.Document>;
 
@@ -24,3 +26,22 @@ export class PatientWorkgroupBuilder {
     return this.item as PatientWorkgroup.Document;
   }
 }
+
+export const createPatientWorkgroupInDB = (
+  entity: Pick<PatientWorkgroup.Attributes, 'patient' | 'workgroup' | 'fields'>
+): Promise<PatientWorkgroup.Document> => {
+  return PatientWorkgroup.create({
+    markersDefinition: [],
+    igvFiles: [],
+    associatedDiseasesWithTieredVariants: [],
+    comparisonFilters: [],
+    description: 'default',
+    workgroup: entity.workgroup,
+    patient: entity.patient,
+    markers: [],
+    fields: entity.fields ?? [],
+    createdAt: new Date('2021-07-26T10:28:12.302Z'),
+    updatedAt: new Date('2021-07-26T10:28:12.390Z'),
+    tierSNV: { tier1: 0, tier2: 0, tier3: 0 }
+  });
+};

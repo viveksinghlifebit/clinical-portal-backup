@@ -30,7 +30,7 @@ paths:
     $ref: './individual-browser/workgroup/workgroupSuggestions.yaml'
   /clinical-portal/v1/individual-browser/workgroup/{id}/patient/{pId}:
     $ref: './individual-browser/workgroup/workgroupPatientById.yaml'
-  /clinical-porta/v1/individual-browser/workgroup/{id}/patient/{pId}/save-marker:
+  /clinical-portal/v1/individual-browser/workgroup/{id}/patient/{pId}/save-marker:
     $ref: './individual-browser/workgroup/workgroupPatientByIdSaveMarker.yaml'
   /clinical-portal/v1/individual-browser/workgroup/{id}/patients:
     $ref: './individual-browser/workgroup/patientByWorkgroupId.yaml'

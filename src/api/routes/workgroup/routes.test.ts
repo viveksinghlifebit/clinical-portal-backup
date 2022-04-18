@@ -4,12 +4,11 @@ import supertestRequest from 'supertest';
 import config from 'config';
 import createApp from 'createApp';
 import mongoose from 'mongoose';
-import { TeamBuilder, UserBuilder } from 'testUtils';
+import { createPatientWorkgroupInDB, TeamBuilder, UserBuilder } from 'testUtils';
 import { workgroupRoutes } from './routes';
 import { HttpStatusCodes } from 'enums';
-import { Patient, SequenceId, Workgroup } from '@core/models';
-import { PatientBuilder } from 'testUtils/patientBuilder';
-import { PatientStatus } from '@core/enums';
+import { PatientWorkgroup, SequenceId, Workgroup } from '@core/models';
+import { basicPatient as getBasicPatient, createPatientInDB } from 'testUtils/patientBuilder';
 import * as connection from 'services/mongoose/connections';
 
 describe('Workgroup', () => {
@@ -128,23 +127,9 @@ describe('Workgroup', () => {
       const sequence = { _id: new mongoose.Types.ObjectId(), name: 'patient', value: 1, prefix: 'P' };
 
       await SequenceId.create(sequence);
-      const patient = new PatientBuilder()
-        .withI('P01')
-        .withId(new mongoose.Types.ObjectId())
-        .withName('name')
-        .withSurname('surname')
-        .withLabPortalId('MockedId')
-        .withOwner(new mongoose.Types.ObjectId(user._id))
-        .build();
+      const patient = getBasicPatient(String(user._id));
 
-      const createdPatient = await Patient.create({
-        ...patient,
-        team: team._id,
-        status: PatientStatus.Enrolled,
-        updatedBy: new mongoose.Types.ObjectId(user._id),
-        externalIDType: 'Passport',
-        externalID: 'externalId'
-      });
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
 
       const { status, body } = await supertestRequest(server)
         .post(`${config.apiPrefix}/individual-browser/workgroup/patient`)
@@ -190,6 +175,407 @@ describe('Workgroup', () => {
       ]);
       expect(status).toBe(HttpStatusCodes.OK);
 
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('DELETE /individual-browser/workgroup/:id/patient/:pId', () => {
+    test('should delete patientworkgroup by workgroupId and patientId', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      const patientWorkgroup = await createPatientWorkgroupInDB({
+        workgroup: createdWorkgroup._id,
+        patient: createdPatient._id,
+        fields: []
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+
+      const { status, body } = await supertestRequest(server)
+        .delete(
+          `${config.apiPrefix}/individual-browser/workgroup/${createdWorkgroup._id}/patient/${patientWorkgroup._id}`
+        )
+        .query({
+          teamId: team._id
+        });
+
+      expect(body).toStrictEqual({
+        _id: createdWorkgroup._id.toHexString(),
+        name: 'test-check',
+        numberOfPatients: 0,
+        owner: {
+          _id: user._id
+        },
+        team: team._id
+      });
+      expect(status).toBe(HttpStatusCodes.OK);
+
+      const expectedWorkgroup = await PatientWorkgroup.findById(patientWorkgroup._id);
+      expect(expectedWorkgroup).toBeNull();
+
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('GET /individual-browser/workgroup/:id/patient/:pId', () => {
+    test('should get patientworkgroup by workgroupId and patientId', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      const patientWorkgroup = await createPatientWorkgroupInDB({
+        workgroup: createdWorkgroup._id,
+        patient: createdPatient._id,
+        fields: []
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+
+      const { status, body } = await supertestRequest(server)
+        .get(`${config.apiPrefix}/individual-browser/workgroup/${createdWorkgroup._id}/patient/${patientWorkgroup._id}`)
+        .query({
+          teamId: team._id
+        });
+
+      expect(body).toStrictEqual({
+        _id: String(patientWorkgroup._id),
+        associatedDiseasesWithTieredVariants: [],
+        comparisonFilters: [],
+        createdAt: expect.any(String),
+        description: 'default',
+        fields: [
+          {
+            label: 'Date of Birth:',
+            readOnly: true,
+            value: '-'
+          },
+          {
+            label: 'Email:',
+            readOnly: true,
+            value: '-'
+          },
+          {
+            label: 'Phone Number:',
+            readOnly: true,
+            value: '-'
+          },
+          {
+            filterId: 1000,
+            instance: ['0'],
+            instanceNames: [],
+            label: 'HPO terms:',
+            readOnly: true,
+            value: '-'
+          },
+          {
+            array: ['0'],
+            filterId: 4,
+            instance: ['0'],
+            instanceNames: [],
+            label: 'Sex:',
+            readOnly: true,
+            value: '-'
+          },
+          {
+            array: ['0'],
+            filterId: 1,
+            instance: ['0'],
+            instanceNames: [],
+            label: 'Ethnicity:',
+            readOnly: true,
+            value: '-'
+          }
+        ],
+        igvFiles: [],
+        markers: [],
+        markersDefinition: [],
+        patient: {
+          _id: patient._id.toHexString(),
+          addresses: [],
+          analysisEligibleTypes: [],
+          associatedDiseasesWithTieredVariants: [],
+          createdAt: expect.any(String),
+          externalID: 'externalId',
+          externalIDType: 'Passport',
+          i: 'P0000002',
+          images: [],
+          labPortalID: 'MockedId',
+          name: 'name',
+          nextsOfKin: [],
+          owner: String(user._id),
+          referringUsers: [],
+          reports: [],
+          samples: [],
+          sequencingLibrary: [],
+          status: 'Enrolled',
+          surname: 'surname',
+          team: String(team._id),
+          updatedAt: expect.any(String),
+          updatedBy: String(user._id)
+        },
+        tierSNV: {
+          tier1: 0,
+          tier2: 0,
+          tier3: 0
+        },
+        updatedAt: expect.any(String),
+        workgroup: {
+          __v: 0,
+          _id: String(createdWorkgroup._id),
+          createdAt: expect.any(String),
+          name: 'test-check',
+          numberOfPatients: 2,
+          owner: String(user._id),
+          team: String(team._id),
+          updatedAt: expect.any(String)
+        }
+      });
+      expect(status).toBe(HttpStatusCodes.OK);
+
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('POST /individual-browser/workgroup/:id/patient/:pId/save-marker', () => {
+    test('should save workgroup patient markers', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      const patientWorkgroup = await createPatientWorkgroupInDB({
+        workgroup: createdWorkgroup._id,
+        patient: createdPatient._id,
+        fields: []
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+
+      const { status, body } = await supertestRequest(server)
+        .post(
+          `${config.apiPrefix}/individual-browser/workgroup/${createdWorkgroup._id}/patient/${patientWorkgroup._id}/save-marker`
+        )
+        .query({
+          teamId: team._id
+        })
+        .send({
+          markers: ['test']
+        });
+
+      expect(body.markers).toStrictEqual([
+        {
+          _id: expect.any(String),
+          cn: 'test',
+          location: ''
+        }
+      ]);
+      expect(status).toBe(HttpStatusCodes.OK);
+
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('GET /individual-browser/workgroup/:id/patients', () => {
+    test('should get workgroup patients', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      await createPatientWorkgroupInDB({
+        workgroup: createdWorkgroup._id,
+        patient: createdPatient._id,
+        fields: []
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+
+      const { status, body } = await supertestRequest(server)
+        .get(`${config.apiPrefix}/individual-browser/workgroup/${createdWorkgroup._id}/patients`)
+        .query({
+          teamId: team._id
+        });
+
+      expect(body.length).toStrictEqual(1);
+      expect(status).toBe(HttpStatusCodes.OK);
+
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('POST /individual-browser/workgroup/:id/patient/:pId/field', () => {
+    test('should save workgroup patient fields', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      const createdPatientWorkgroup = await createPatientWorkgroupInDB({
+        workgroup: createdWorkgroup._id,
+        patient: createdPatient._id,
+        fields: []
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+      const phenotypeFields = {
+        _id: new mongoose.Types.ObjectId(),
+        id: 991
+      };
+      await connection.clinicalPortalConnection.collection('phenotypefields').insertOne(phenotypeFields);
+
+      const { status } = await supertestRequest(server)
+        .post(
+          `${config.apiPrefix}/individual-browser/workgroup/${createdWorkgroup._id}/patient/${createdPatientWorkgroup._id}/field`
+        )
+        .query({
+          teamId: team._id
+        })
+        .send({
+          filterId: 991,
+          instance: ['instance'],
+          array: ['array']
+        });
+
+      expect(status).toBe(HttpStatusCodes.OK);
+
+      const expectedPatientWorkgroup = await PatientWorkgroup.findById(createdPatientWorkgroup._id);
+      expect(expectedPatientWorkgroup?.fields.length).toStrictEqual(1);
+
+      await connection.clinicalPortalConnection.collection('phenotypefields').deleteOne({ _id: phenotypeFields._id });
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('DELETE /individual-browser/workgroup/:id/patient/:pId/field/:fieldId', () => {
+    test('should delete workgroup patient field', async () => {
+      const createdWorkgroup = await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      const createdPatientWorkgroup = await createPatientWorkgroupInDB({
+        workgroup: createdWorkgroup._id,
+        patient: createdPatient._id,
+        fields: [
+          {
+            userAdded: true,
+            filterId: 199,
+            array: ['0'],
+            instance: ['instance']
+          },
+          {
+            filterId: 1,
+            array: ['0'],
+            instance: ['instance']
+          }
+        ]
+      });
+
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+      const phenotypeFields = {
+        _id: new mongoose.Types.ObjectId(),
+        id: 199
+      };
+      await connection.clinicalPortalConnection.collection('phenotypefields').insertOne(phenotypeFields);
+
+      const { status } = await supertestRequest(server)
+        .delete(
+          `${config.apiPrefix}/individual-browser/workgroup/${createdWorkgroup._id}/patient/${createdPatientWorkgroup._id}/field/199`
+        )
+        .query({
+          teamId: team._id
+        });
+
+      expect(status).toBe(HttpStatusCodes.OK);
+      const expectedPatientWorkgroup = await PatientWorkgroup.findById(createdPatientWorkgroup._id);
+      expect(expectedPatientWorkgroup?.fields.length).toStrictEqual(1);
+
+      await connection.clinicalPortalConnection.collection('phenotypefields').deleteOne({ _id: phenotypeFields._id });
+      await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
+    });
+  });
+
+  describe('POST /individual-browser/workgroup/patient/validate', () => {
+    test('should validate patient in workgroup', async () => {
+      await Workgroup.create({
+        name: 'test-check',
+        numberOfPatients: 2,
+        team: team._id,
+        owner: new mongoose.Types.ObjectId(user._id)
+      });
+
+      const patient = getBasicPatient(String(user._id));
+
+      const createdPatient = await createPatientInDB(patient, String(user._id), String(team._id));
+      const userInput = {
+        _id: new mongoose.Types.ObjectId(user._id)
+      };
+      await connection.usersConnection.collection('users').insertOne(userInput);
+
+      const { status, body } = await supertestRequest(server)
+        .post(`${config.apiPrefix}/individual-browser/workgroup/patient/validate`)
+        .query({
+          teamId: team._id
+        })
+        .send({
+          workgroupName: 'test-check',
+          patientId: createdPatient._id.toHexString()
+        });
+
+      expect(status).toBe(HttpStatusCodes.OK);
+      expect(body).toStrictEqual({ isValid: true });
       await connection.usersConnection.collection('users').deleteOne({ _id: new mongoose.Types.ObjectId(user._id) });
     });
   });

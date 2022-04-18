@@ -1,4 +1,6 @@
 import { PatientStatus } from '@core/enums';
+import { Patient, SequenceId } from '@core/models';
+import mongoose from 'mongoose';
 
 export class PatientBuilder {
   private readonly item: Partial<Patient.Document>;
@@ -61,3 +63,38 @@ export class PatientBuilder {
     return this.item as Patient.Document;
   }
 }
+
+export const basicPatient = (userId: string): Patient.Document => {
+  return new PatientBuilder()
+    .withI('P01')
+    .withId(new mongoose.Types.ObjectId())
+    .withName('name')
+    .withSurname('surname')
+    .withLabPortalId('MockedId')
+    .withOwner(new mongoose.Types.ObjectId(userId))
+    .build();
+};
+
+export const createSequenceIfNotPresent = async (): Promise<void> => {
+  const sequence = { _id: new mongoose.Types.ObjectId(), name: 'patient', value: 1, prefix: 'P' };
+  const sequenceExists = await SequenceId.findOne({ name: 'patient' });
+  if (!sequenceExists) {
+    await SequenceId.create(sequence);
+  }
+};
+
+export const createPatientInDB = async (
+  patient: Patient.Document,
+  userId: string,
+  teamId: string
+): Promise<Patient.Document> => {
+  await createSequenceIfNotPresent();
+  return Patient.create({
+    ...patient,
+    team: teamId,
+    status: PatientStatus.Enrolled,
+    updatedBy: new mongoose.Types.ObjectId(userId),
+    externalIDType: 'Passport',
+    externalID: 'externalId'
+  });
+};
