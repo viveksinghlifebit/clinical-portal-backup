@@ -5,7 +5,7 @@ RUN apk add --no-cache \
         g++ \
         make \
         python3 \
-        py-pip \
+        py-pip 
 # Create app directory
 
 RUN pip3 install awscli
@@ -29,7 +29,6 @@ RUN npm run compile
 
 ### Final layer
 FROM node:16.14.0-alpine3.14 AS Final
-
 RUN apk add --no-cache \
         bash \
         g++ \
@@ -47,8 +46,9 @@ COPY ./package*.json ./
 
 RUN npm install --production --no-package-lock 
 
-COPY --from=Base /usr/src/app/dist ./dist
-COPY *.sh .
+USER node
+COPY --from=Base --chown=node:node /usr/src/app/dist ./dist
+COPY --chown=node:node *.sh .
 
 ARG COMMIT_ID
 ENV COMMIT_ID=${COMMIT_ID:-non-codeship-version}
