@@ -33,7 +33,7 @@ const config: App.Config = {
       uri: process.env.LIFEBIT_MONGODB_URI_GENOMARKERS
     },
     mongooseClinicalPortal: {
-      uri: process.env.LIFEBIT_MONGODB_URI_MASTER
+      uri: process.env.LIFEBIT_MONGODB_URI_CLINICAL_PORTAL
     }
   },
   hkgiEnvironmentEnabled: castEnvToBoolOrUseDefault('HKGI_ENVIRONMENT_ENABLED', false),
