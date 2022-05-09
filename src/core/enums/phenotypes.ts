@@ -14,3 +14,10 @@ export enum PhenotypeFieldValueTypes {
   Integer = 'Integer',
   Text = 'Text'
 }
+
+export enum PhenotypeQueryType {
+  TEXT_SEARCH,
+  BUCKET,
+  MEDICAL,
+  NORMAL
+}

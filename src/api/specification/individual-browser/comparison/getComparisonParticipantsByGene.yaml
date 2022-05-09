@@ -1,0 +1,29 @@
+get:
+  operationId: getComparisonParticipantsByGene
+  description: Get distinct participant ids for a specific gene
+  parameters:
+    - $ref: '../../components.yaml#/parameters/optionalTeamID'
+    - name: gene
+      in: path
+      description: The gene
+      required: true
+      schema:
+        type: string
+    - name: excludeEid
+      in: query
+      description: The participant id to be excluded from comparison
+      required: false
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            properties:
+              participants:
+                $ref: '../../components.yaml#/schemas/StringArray'
+    '400':
+      $ref: '../../components.yaml#/responses/BadRequest'

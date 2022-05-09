@@ -4,3 +4,5 @@ export * from './GenoTiersRepository';
 export * from './ParticipantRepository';
 export * from './PhenotypeFieldRepository';
 export * from './GenoMarkerRepository';
+export * from './PhenotypeNestedListRepository';
+export * from './MedicalValueRepository';

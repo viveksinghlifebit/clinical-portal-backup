@@ -36,3 +36,8 @@ export enum PatientReferringUserType {
   ReferringClinician = 'ReferringClinician',
   FieldSpecialist = 'FieldSpecialist'
 }
+
+export enum PatientExternalType {
+  HKID = 'HKID',
+  Passport = 'Passport'
+}

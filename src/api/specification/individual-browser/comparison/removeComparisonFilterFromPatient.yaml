@@ -1,0 +1,32 @@
+delete:
+  operationId: removeComparisonFilterFromPatient
+  description: Remove the provided comparison filter from the workgroup patient
+  parameters:
+    - $ref: '../../components.yaml#/parameters/requiredTeamID'
+    - name: id
+      in: path
+      description: Workgroup id
+      required: true
+      schema:
+        type: string
+    - name: pId
+      in: path
+      description: Workgroup patient id
+      required: true
+      schema:
+        type: string
+    - name: fieldId
+      in: path
+      description: Field id
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/PatientWorkgroup'
+    '400':
+      $ref: '../../components.yaml#/responses/BadRequest'

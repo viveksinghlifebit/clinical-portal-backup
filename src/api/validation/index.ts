@@ -36,6 +36,7 @@ export const loadEndpoints = async (
           try {
             await openApi.handleRequest(ctx.request as Request, ctx);
           } catch (err) {
+            console.log(err);
             ctx.state = {
               ...ctx.state,
               error: err

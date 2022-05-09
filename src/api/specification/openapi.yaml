@@ -40,3 +40,17 @@ paths:
     $ref: './individual-browser/workgroup/workgroupPatientFieldByFieldId.yaml'
   /clinical-portal/v1/individual-browser/workgroup/patient/validate:
     $ref: './individual-browser/workgroup/workgroupPatientValidate.yaml'
+  /clinical-portal/v1/individual-browser/comparison/field/{id}/variant/{variant}:
+    $ref: './individual-browser/comparison/getComparisonByFieldAndVariant.yaml'
+  /clinical-portal/v1/individual-browser/comparison/variant/{variant}/participants:
+    $ref: './individual-browser/comparison/getComparisonParticipantsByVariant.yaml'
+  /clinical-portal/v1/individual-browser/comparison/workgroup/{id}/patients/{pId}/field:
+    $ref: './individual-browser/comparison/addComparisonFilterToPatient.yaml'
+  /clinical-portal/v1/individual-browser/comparison/gene/{gene}/participants:
+    $ref: './individual-browser/comparison/getComparisonParticipantsByGene.yaml'
+  /clinical-portal/v1/individual-browser/comparison/field/{id}/gene/{gene}:
+    $ref: './individual-browser/comparison/getComparisonByFieldAndGene.yaml'
+  /clinical-portal/v1/individual-browser/comparison/workgroup/{id}/patients/{pId}/field/{fieldId}:
+    $ref: './individual-browser/comparison/removeComparisonFilterFromPatient.yaml'
+  /clinical-portal/v1/individual-browser/comparison/variant/{variant}/graph:
+    $ref: './individual-browser/comparison/getComparisonGraphDataByVariant.yaml'

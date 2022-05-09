@@ -16,6 +16,8 @@ declare namespace App {
     mongooseFieldsEncryption: MongooseEncryption;
     individualBrowser: IndividualBrowserConfig;
     clinicalPortal: ClinicalPortalConfig;
+    phenotypeNestedListReturnFlat: boolean;
+    featureFlags: Record<string, boolean>;
   }
 
   type MongooseEncryption = {

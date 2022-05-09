@@ -1,0 +1,34 @@
+get:
+  operationId: getComparisonByFieldAndVariant
+  description: Get comparison information for a field and a variant
+  parameters:
+    - $ref: '../../components.yaml#/parameters/optionalTeamID'
+    - name: id
+      in: path
+      description: The field id
+      required: true
+      schema:
+        type: string
+    - name: variant
+      in: path
+      description: The variant
+      required: true
+      schema:
+        type: string
+    - name: excludeEid
+      in: query
+      description: The participant id to be excluded from comparison
+      required: false
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/FieldComparisonResults'
+    '400':
+      $ref: '../../components.yaml#/responses/BadRequest'
+    '404':
+      $ref: '../../components.yaml#/responses/ResourceNotFound'

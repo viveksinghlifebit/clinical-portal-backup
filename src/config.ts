@@ -68,6 +68,10 @@ const config: App.Config = {
   },
   clinicalPortal: {
     s3PatientSampleIgvFileBucket: process.env.S3_PATIENT_SAMPLE_IGV_FILE_BUCKET || 's3://igv/outputs'
+  },
+  phenotypeNestedListReturnFlat: castEnvToBoolOrUseDefault('PHENOTYPE_NESTED_LIST_RETURN_FLAT', false),
+  featureFlags: {
+    BARS_STRING_VALUES: castEnvToBoolOrUseDefault('BARS_STRING_VALUES', false)
   }
 };
 

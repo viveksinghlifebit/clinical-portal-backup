@@ -7,3 +7,5 @@ export * from './phenotypeFieldBuilder';
 export * from './phenotypeValueBuilder';
 export * from './genoMarkerBuilder';
 export * from './genoTierBuilder';
+export * from './patientBuilder';
+export * from './phenotypeNestedListResponseBuilder';

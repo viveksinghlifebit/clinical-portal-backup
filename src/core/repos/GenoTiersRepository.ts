@@ -14,6 +14,21 @@ export class GenoTiersRepository {
   }
 
   /**
+   *
+   * @param find
+   * @returns genotiers
+   */
+  public static async find(
+    query: Record<string, unknown>,
+    projection: Record<string, number>
+  ): Promise<Array<GenoTier.Attributes>> {
+    return (connection.genomarkersConnection
+      .collection('genotiers')
+      .find(query, projection)
+      .toArray() as unknown) as Promise<Array<GenoTier.Attributes>>;
+  }
+
+  /**
    * Creates the participant collection.
    * @param eid the eid
    * @param lean the lean
@@ -103,5 +118,13 @@ export class GenoTiersRepository {
         $sort: { tier1: -1, tier2: -1, tier3: -1 }
       }
     ];
+  }
+
+  public static getAggregatedResult(
+    aggregationStages: Record<string, unknown>[]
+  ): Promise<{ _id: string; number: number }[]> {
+    return connection.genomarkersConnection.collection('genotiers').aggregate(aggregationStages).toArray() as Promise<
+      { _id: string; number: number }[]
+    >;
   }
 }

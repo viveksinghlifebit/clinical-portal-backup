@@ -1,0 +1,28 @@
+get:
+  operationId: getComparisonParticipantsByVariant
+  description: Get distinct participant ids for a specific variant
+  parameters:
+    - $ref: '../../components.yaml#/parameters/optionalTeamID'
+    - name: variant
+      in: path
+      description: The variant
+      required: true
+      schema:
+        type: string
+    - name: excludeEid
+      in: query
+      description: The participant id to be excluded from comparison
+      required: false
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            properties:
+              participants:
+                $ref: '../../components.yaml#/schemas/StringArray'
+    '400':
+      $ref: '../../components.yaml#/responses/BadRequest'

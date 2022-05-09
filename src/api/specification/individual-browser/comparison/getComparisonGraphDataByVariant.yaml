@@ -1,0 +1,26 @@
+get:
+  operationId: getComparisonGraphDataByVariant
+  description: Get comparison graph information for a variant
+  parameters:
+    - $ref: '../../components.yaml#/parameters/optionalTeamID'
+    - name: variant
+      in: path
+      description: The variant
+      required: true
+      schema:
+        type: string
+    - name: excludeEid
+      in: query
+      description: The participant id to be excluded from comparison
+      required: false
+      schema:
+        type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../components.yaml#/schemas/VariantComparisonGraphResponse'
+    '400':
+      $ref: '../../components.yaml#/responses/BadRequest'

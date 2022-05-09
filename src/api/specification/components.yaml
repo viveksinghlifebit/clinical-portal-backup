@@ -790,3 +790,188 @@ schemas:
         type: boolean
       message:
         type: string
+  FieldComparisonResults:
+    type: object
+    properties:
+      total:
+        type: number
+      fieldId:
+        $ref: '#/schemas/FilterMetadata'
+      existingValues:
+        type: object
+      notExistingValues:
+        type: object
+  FilterMetadata:
+    type: object
+    properties:
+      id:
+        type: number
+      _id:
+        $ref: '#/schemas/IdType'
+      bucket300:
+        type: boolean
+      bucket500:
+        type: boolean
+      bucket1000:
+        type: boolean
+      bucket2500:
+        type: boolean
+      bucket5000:
+        type: boolean
+      bucket10000:
+        type: boolean
+      categoryPathLevel1:
+        type: string
+      categoryPathLevel2:
+        type: string
+      categoryPathLevel3:
+        type: string
+      categoryPathLevel4:
+        type: string
+      instances:
+        type: number
+      name:
+        type: string
+      type:
+        type: string
+        enum: ['bars', 'histogram', 'nested list', 'text_search']
+      Sorting:
+        type: string
+        nullable: true
+      valueType:
+        type: string
+        enum: ['Categorical multiple', 'Categorical single', 'Continuous', 'Date', 'Time', 'Integer', 'Text']
+      units:
+        type: string
+        nullable: true
+      coding:
+        type: string
+        nullable: true
+      description:
+        type: string
+      link:
+        type: string
+      array:
+        type: number
+      descriptionStability:
+        type: string
+        nullable: true
+      descriptionCategoryID:
+        type: string
+        nullable: true
+      descriptionItemType:
+        type: string
+        nullable: true
+      descriptionStrata:
+        type: string
+        nullable: true
+      descriptionSexed:
+        type: string
+        nullable: true
+      descriptionParticipantsNo:
+        $ref: '#/schemas/StringOrNumber'
+      orderPhenotype:
+        $ref: '#/schemas/StringOrNumber'
+      instance0Name:
+        type: string
+        nullable: true
+      instance1Name:
+        type: string
+        nullable: true
+      instance2Name:
+        type: string
+        nullable: true
+      instance3Name:
+        type: string
+        nullable: true
+      instance4Name:
+        type: string
+        nullable: true
+      instance5Name:
+        type: string
+        nullable: true
+      instance6Name:
+        type: string
+        nullable: true
+      instance7Name:
+        type: string
+        nullable: true
+      instance8Name:
+        type: string
+        nullable: true
+      instance9Name:
+        type: string
+        nullable: true
+      instance10Name:
+        type: string
+        nullable: true
+      instance11Name:
+        type: string
+        nullable: true
+      instance12Name:
+        type: string
+        nullable: true
+      instance13Name:
+        type: string
+        nullable: true
+      instance14Name:
+        type: string
+        nullable: true
+      instance15Name:
+        type: string
+        nullable: true
+      instance16Name:
+        type: string
+        nullable: true
+      values:
+        type: object
+    required:
+      - id
+      - _id
+      - bucket300
+      - bucket500
+      - bucket1000
+      - bucket2500
+      - bucket5000
+      - bucket10000
+      - categoryPathLevel1
+      - instances
+      - name
+      - type
+      - valueType
+      - units
+      - coding
+      - description
+      - link
+      - array
+      - descriptionCategoryID
+      - descriptionItemType
+      - descriptionStrata
+      - descriptionSexed
+      - instance0Name
+      - instance1Name
+      - instance2Name
+      - instance3Name
+      - instance4Name
+      - instance5Name
+      - instance6Name
+      - instance7Name
+      - instance8Name
+      - instance9Name
+      - instance10Name
+      - instance11Name
+      - instance12Name
+      - instance13Name
+      - instance14Name
+      - instance15Name
+      - instance16Name
+  StringOrNumber:
+    oneOf:
+      - type: string
+      - type: number
+  VariantComparisonGraphResponse:
+    properties:
+      genotypes:
+        type: object
+      acmgVerdicts:
+        type: object

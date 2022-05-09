@@ -6,6 +6,7 @@ import { IllegalArgumentError, ResourceNotFoundError } from 'errors';
 import { isEmpty, keyBy } from 'lodash';
 import { PatientService } from 'services/patient';
 import { constructWorkgroupsSearchCriteria, NumberUtils } from 'utils';
+import { IndividualComparisonService } from '../comparison';
 
 export class WorkgroupService {
   /**
@@ -429,5 +430,63 @@ export class WorkgroupService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Returns the workgroup patient.
+   * @param workgroupPatientId the workgroup patient id
+   * @param workgroupId the workgroup id
+   * @param fieldId the field id
+   * @param teamId  the team id
+   */
+  static async addComparisonFilterToPatient(
+    workgroupId: string,
+    workgroupPatientId: string,
+    fieldId: Filter.FilterId,
+    teamId: string
+  ): Promise<PatientWorkgroup.View> {
+    // Load the patient workgroup.
+    const workgroupPatient = (await WorkgroupService.getWorkgroupPatientById(
+      workgroupPatientId,
+      workgroupId,
+      teamId,
+      false
+    )) as PatientWorkgroup.Document;
+    // Add the filter to the patient and return the response
+    await IndividualComparisonService.addComparisonFilterToThePatient(fieldId, workgroupPatient);
+    return WorkgroupService.getWorkgroupPatientById(
+      workgroupPatientId,
+      workgroupId,
+      teamId
+    ) as Promise<PatientWorkgroup.View>;
+  }
+
+  /**
+   * Returns the workgroup patient.
+   * @param workgroupPatientId the workgroup patient id
+   * @param workgroupId the workgroup id
+   * @param fieldId the field id
+   * @param teamId  the team id
+   */
+  static async removeComparisonFilterFromPatient(
+    workgroupId: string,
+    workgroupPatientId: string,
+    fieldId: Filter.FilterId,
+    teamId: string
+  ): Promise<PatientWorkgroup.View> {
+    // Load the patient workgroup.
+    const workgroupPatient = (await WorkgroupService.getWorkgroupPatientById(
+      workgroupPatientId,
+      workgroupId,
+      teamId,
+      false
+    )) as PatientWorkgroup.Document;
+    // Remove the filter to the patient and return the response
+    await IndividualComparisonService.removeComparisonFilterToThePatient(fieldId, workgroupPatient);
+    return WorkgroupService.getWorkgroupPatientById(
+      workgroupPatientId,
+      workgroupId,
+      teamId
+    ) as Promise<PatientWorkgroup.View>;
   }
 }

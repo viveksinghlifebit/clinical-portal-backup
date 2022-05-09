@@ -23,4 +23,19 @@ export class GenoMarkerRepository extends ParentRepository {
       .find({ cn: { $in: genomicsId } })
       .toArray() as Promise<GenoMarker.Attributes[]>;
   }
+
+  /**
+   *
+   * @param find
+   * @returns genotiers
+   */
+  public static async find(
+    query: Record<string, unknown>,
+    projection: Record<string, number>
+  ): Promise<Array<GenoMarker.Attributes>> {
+    return (connection.genomarkersConnection
+      .collection('genomarkers')
+      .find(query, projection)
+      .toArray() as unknown) as Promise<Array<GenoMarker.Attributes>>;
+  }
 }
