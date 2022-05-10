@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     container: node:16.4.0-buster
     steps:
-      - uses: actions/checkout@v2
-      - uses: everlytic/branch-merge@1.1.2
+      - name: Mirror action step
+        id: mirror
+        uses: google/mirror-branch-action@v1.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          source_ref: 'main'
-          target_branch: 'code-coverage'
-          commit_message_template: '[Automated] Code-coverage {source_ref} into target {target_branch}'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          source: 'main'
+          dest: 'hkgi-staging'
       - uses: actions/checkout@v2
         with:
           ref: 'code-coverage'
