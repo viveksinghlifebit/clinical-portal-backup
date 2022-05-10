@@ -16,7 +16,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           source: 'main'
-          dest: 'hkgi-staging'
+          dest: 'code-coverage'
       - uses: actions/checkout@v2
         with:
           ref: 'code-coverage'
